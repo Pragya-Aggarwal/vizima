@@ -1,0 +1,1 @@
+export { CorporateInfoSection } from "./CorporateInfoSection";

@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Homepage } from '../screens/Homepage/Homepage';
 import { ProductPage } from '../screens/Product/Productpage';
@@ -11,6 +10,7 @@ import { Blog } from '../screens/Blog/Blog';
 
 const App = () => {
     return (
+
         <Router>
             <div className="min-h-screen flex flex-col">
                 <NavigationMenuSection />
@@ -21,6 +21,7 @@ const App = () => {
                         <Route path="/book" element={<BookARoom />} />
                         <Route path="/blog" element={<Blog />} />
                         {/* <Route path="/contact" element={<Contact />} /> */}
+                        <Route path="*" element={<Homepage />} />
                     </Routes>
                 </main>
                 <BulkAccommodationSection />

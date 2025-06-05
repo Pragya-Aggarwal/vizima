@@ -7,6 +7,7 @@ import { ChevronDownIcon } from 'lucide-react';
 import { BookARoom } from '../screens/BookARoom/BookARoom';
 import { Blog } from '../screens/Blog/Blog';
 import PropertyDetails from '../screens/PropertyDetails/PropertyDetails';
+import Contact from '../screens/Contact/Contact';
 
 
 const App = () => {
@@ -22,7 +23,7 @@ const App = () => {
                         <Route path="/book" element={<BookARoom />} />
                         <Route path="/aboutUs" element={<Blog />} />
                         <Route path="/property-details" element={<PropertyDetails />} />
-                        {/* <Route path="/contact" element={<Contact />} /> */}
+                        <Route path="/contact" element={<Contact />} />
                         <Route path="*" element={<Homepage />} />
                     </Routes>
                 </main>

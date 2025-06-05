@@ -30,11 +30,12 @@ import {
 } from "lucide-react"
 import { home } from "../../assets"
 import { TestimonialsSection } from "../Homepage/TestimonialsSection"
+import { useNavigate } from "react-router-dom"
 
 export default function PropertyDetails() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
     const [selectedSharing, setSelectedSharing] = useState("single")
-
+    const navigate = useNavigate()
     const images = [
         home,
         home,
@@ -145,6 +146,20 @@ export default function PropertyDetails() {
         setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
     }
 
+    const handleBookRoom = () => {
+        navigate("/book")
+    }
+    const handleScheduleRoom = () => {
+        navigate("/book")
+    }
+    const handleContact = () => {
+        navigate("/contact")
+    }
+    const handleViewDetails = () => {
+        navigate("/property-details")
+    }
+
+
     return (
         <div className="min-h-screen bg-gray-50 mt-20">
             <div className="max-w-7xl mx-auto px-4 py-6">
@@ -202,11 +217,11 @@ export default function PropertyDetails() {
                             </div>
                         </div>
                         <div className="flex gap-3">
-                            <Button className="w-full py-5 bg-green hover:bg-green flex rounded-[40px] items-center px-9 justify-center gap-2">
+                            <Button onClick={handleBookRoom} className="w-full py-5 bg-green hover:bg-green flex rounded-[40px] items-center px-9 justify-center gap-2">
 
                                 Book This Room
                             </Button>
-                            <Button className="w-full py-5 bg-green hover:bg-green flex rounded-[40px] items-center px-9 justify-center gap-2">
+                            <Button onClick={handleScheduleRoom} className="w-full py-5 bg-green hover:bg-green flex rounded-[40px] items-center px-9 justify-center gap-2">
 
                                 Schedule Visit
                             </Button>
@@ -221,7 +236,6 @@ export default function PropertyDetails() {
                             <img
                                 src={images[currentImageIndex] || "/placeholder.svg"}
                                 alt={`PG img ${currentImageIndex + 1}`}
-                                fill
                                 className="object-cover"
                             />
                         </div>
@@ -277,7 +291,7 @@ export default function PropertyDetails() {
                                                     <td className="py-4 px-4">{room.acType}</td>
                                                     <td className="py-4 px-4">{room.mealsIncluded ? "Yes" : "No"}</td>
                                                     <td className="py-4 px-4">
-                                                        <button
+                                                        <button onClick={handleBookRoom}
                                                             className={`text-white text-sm px-4 py-1.5 rounded-full ${room.isAvailable
                                                                 ? "bg-[#064749] hover:bg-[#053a3c]"
                                                                 : "bg-gray-400 cursor-not-allowed"
@@ -411,7 +425,7 @@ export default function PropertyDetails() {
                                     In nullam eget urna suspendisse odio nunc. Eu sodales vestibulum, donec rutrum justo, amet porttitor vitae et. Interdum consectetur dictum mattis gravida sed vulputate. Tempus sagittis cras sagittis viverra erat proin duis enim.
                                     <br />Phone Number: +91- xxxxx xxxxx
                                 </p>
-                                <Button
+                                <Button onClick={handleContact}
                                     className="border-[#064749] text-white rounded-[40px] hover:bg-[#064749] hover:text-white"
                                 >
                                     <Phone className="w-4 h-4 mr-2" />
@@ -476,6 +490,7 @@ export default function PropertyDetails() {
                                             </div>
                                         </div>
                                         <Button
+                                            onClick={handleViewDetails}
                                             size="sm"
                                             className="w-full bg-[#064749] rounded-[40px] text-[white] hover:bg-[#064749] hover:text-white"
                                         >

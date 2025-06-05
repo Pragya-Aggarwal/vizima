@@ -29,13 +29,13 @@ export const SearchSection = (): JSX.Element => {
                     <Input
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
-                        placeholder="Select a city"
-                        className="w-[150px] h-8 border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 m-0 text-sm font-semibold placeholder:text-black text-black bg-transparent"
+                        placeholder="Search Your Pg and Hostel.."
+                        className="w-[400px] h-8 border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 m-0 text-sm font-semibold placeholder:text-black text-black bg-transparent"
                     />
                 </div>
 
                 {/* Vertical Separator */}
-                <Separator orientation="vertical" className="h-8 bg-green ml-36" />
+                <Separator orientation="vertical" className="h-8 bg-green" />
 
                 {/* Gender dropdown */}
                 <div className="flex items-center gap-2 relative w-fit text-text">

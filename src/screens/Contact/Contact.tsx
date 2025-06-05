@@ -7,7 +7,7 @@ import { MapPin, Mail, Phone, MessageCircle } from "lucide-react"
 import { useState } from "react"
 import { Textarea } from "../../components/ui/textarea"
 
-export default function ContactPage() {
+export default function Contact() {
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',

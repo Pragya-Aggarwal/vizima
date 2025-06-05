@@ -265,7 +265,7 @@ export default function PropertyDetails() {
 
                 <div className="flex flex-col md:flex-row gap-4 rounded-lg overflow-hidden p-4">
                     {/* Large Image */}
-                    <div className="flex-2 w-[1300px]">
+                    <div className="flex-2 w-[1500px]">
                         <img
                             src={images[currentImageIndex]}
                             alt="Main"
@@ -274,7 +274,7 @@ export default function PropertyDetails() {
                     </div>
 
                     {/* 2x2 Thumbnail Grid */}
-                    <div className="w-full md:w-[350px] grid grid-cols-2 gap-2">
+                    <div className="w-full md:w-[450px] grid grid-cols-2 gap-2">
                         {images.slice(1, 5).map((img, index) => (
                             <img
                                 key={index}

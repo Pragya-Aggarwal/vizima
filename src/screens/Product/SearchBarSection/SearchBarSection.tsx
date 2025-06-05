@@ -21,7 +21,7 @@ export const SearchBarSection = (): JSX.Element => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search Listings or Find PGs..."
-                className="flex-1 h-12 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-4 text-md text-black placeholder:text-black font-semibold shadow-none"
+                className="flex-1 h-12 border-0 focus-visible:ring-0 placeholder:text-gray-400 focus-visible:ring-offset-0 px-4 text-md text-black  font-semibold shadow-none"
             />
 
             {/* Location Icon Button */}

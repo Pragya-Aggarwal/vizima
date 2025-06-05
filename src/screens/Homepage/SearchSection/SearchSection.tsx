@@ -1,4 +1,4 @@
-import { ChevronDownIcon, MapPinIcon, SearchIcon, UsersIcon } from "lucide-react";
+import { MapPinIcon, SearchIcon, UsersIcon } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Separator } from "../../../components/ui/separator";
@@ -21,30 +21,30 @@ export const SearchSection = (): JSX.Element => {
 
     return (
         <div className="flex justify-center w-full px-4 mt-[-10px] z-[100]">
-            <div className="flex w-full max-w-[1300px] items-center justify-between p-1.5 pl-10 pr-1.5 bg-white rounded-[15px] border-4 border-solid border-green shadow-lg gap-6">
+            <div className="flex w-full max-w-[1300px] items-center justify-between p-4 bg-white rounded-2xl border-2 border-green shadow-lg gap-4 hover:shadow-xl transition-shadow duration-300">
 
-                {/* City input with icon */}
-                <div className="flex items-center gap-2 relative text-text">
-                    <MapPinIcon className="w-5 h-5" />
+                {/* City input with proper focus */}
+                <div className="flex items-center flex-1 gap-3 rounded-lg px-4 py-2 focus-within:ring-2 focus-within:ring-green focus-within:bg-white transition-all duration-200">
+                    <MapPinIcon className="w-5 h-5 text-gray-500" />
                     <Input
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
-                        placeholder="Search Your Pg and Hostel.."
-                        className="w-[400px] h-8 border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 m-0 text-sm font-semibold placeholder:text-black text-black bg-transparent"
+                        placeholder="Search your PG or hostel location..."
+                        className="flex-1 h-10 border-0 focus:border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-base font-medium placeholder:text-gray-400 text-gray-800 bg-transparent shadow-none"
                     />
                 </div>
 
                 {/* Vertical Separator */}
-                <Separator orientation="vertical" className="h-8 bg-green" />
+                <Separator orientation="vertical" className="h-10 bg-gray-200 mx-2" />
 
-                {/* Gender dropdown */}
-                <div className="flex items-center gap-2 relative w-fit text-text">
-                    <UsersIcon className="w-5 h-5" />
+                {/* Gender dropdown with fixed focus */}
+                <div className="flex items-center gap-3  rounded-lg px-4 py-2 ">
+                    <UsersIcon className="w-5 h-5 text-gray-500" />
                     <Select value={gender} onValueChange={setGender}>
-                        <SelectTrigger className="w-[120px] h-8 px-0 text-sm font-semibold border-none focus:ring-0 focus:ring-offset-0 bg-transparent">
-                            <SelectValue placeholder="Gender" />
+                        <SelectTrigger className="w-[440px] h-10 px-3 text-base font-medium border-0 focus:ring-0 focus:ring-offset-0 focus:bg-white bg-transparent shadow-none">
+                            <SelectValue placeholder="Select Gender" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="border-0 shadow-lg">
                             <SelectItem value="male">Male</SelectItem>
                             <SelectItem value="female">Female</SelectItem>
                             <SelectItem value="unisex">Unisex</SelectItem>
@@ -55,10 +55,10 @@ export const SearchSection = (): JSX.Element => {
                 {/* Search button */}
                 <Button
                     onClick={handleSearch}
-                    className="flex items-center gap-2.5 px-6 py-2 rounded-[15px] bg-green text-white text-sm font-semibold hover:bg-green/90"
+                    className="flex items-center gap-2 px-6 py-6 rounded-xl bg-green hover:bg-green-dark text-white text-base font-semibold transition-colors duration-200 shadow-md hover:shadow-lg"
                 >
-                    <SearchIcon className="w-4 h-4" />
-                    Search
+                    <SearchIcon className="w-5 h-5" />
+                    <span>Search</span>
                 </Button>
             </div>
         </div>

@@ -1,3 +1,5 @@
+
+
 import React, { useState } from "react";
 import { SearchIcon, LocateFixed } from "lucide-react";
 import { Button } from "../../../components/ui/button";
@@ -12,14 +14,14 @@ export const SearchBarSection = (): JSX.Element => {
     };
 
     return (
-        <div className="w-full max-w-5xl mx-auto flex items-center bg-white border-2 border-[#064749] rounded-full overflow-hidden mt-[120px] px-4 py-2">
+        <div className="w-full max-w-5xl mx-auto flex items-center bg-white border-2 border-[#064749] rounded-full overflow-hidden mt-[120px] px-4 py-1">
             {/* Input Field */}
             <Input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search Listings or Find PGs"
-                className="flex-1 h-12 border-none focus-visible:ring-0 focus-visible:ring-offset-0 px-4 text-sm text-black placeholder:text-black font-semibold"
+                placeholder="Search Listings or Find PGs..."
+                className="flex-1 h-12 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-4 text-md text-black placeholder:text-black font-semibold shadow-none"
             />
 
             {/* Location Icon Button */}

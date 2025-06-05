@@ -19,24 +19,26 @@ export const Homepage = (): JSX.Element => {
                 {/* Navigation Menu */}
 
 
-                {/* Hero Section with Background Image */}
+
                 <div className="w-full relative">
                     <img
-                        className="w-full h-[667px] object-cover"
+                        className="w-full h-[720px] object-cover"
                         alt="Hero background"
                         src={home}
                     />
 
                     {/* Overlay Sections */}
-                    <div className="absolute inset-0 flex flex-col justify-between mt-36">
-                        <RentYourSpaceSection />
+                    <div className="absolute inset-0 flex flex-col justify-between">
+                        <div className="mt-36">
+                            <RentYourSpaceSection />
+                        </div>
 
-                    </div>
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-20 w-full px-4">
-                        <SearchSection />
+                        {/* Adjusted SearchSection position - now at 70% from top */}
+                        <div className="absolute bottom-[20%] left-1/2 transform -translate-x-1/2 z-20 w-full px-4">
+                            <SearchSection />
+                        </div>
                     </div>
                 </div>
-
                 {/* Main Content Sections */}
                 <WhyChooseUsSection />
                 <HeroSection />

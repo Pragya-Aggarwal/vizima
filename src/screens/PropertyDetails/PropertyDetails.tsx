@@ -230,7 +230,7 @@ export default function PropertyDetails() {
                 </div>
 
                 {/* img Carousel */}
-                <div className="pb-6 mb-6">
+                {/* <div className="pb-6 mb-6">
                     <div className="relative">
                         <div className="aspect-video rounded-lg overflow-hidden bg-gray-100">
                             <img
@@ -261,6 +261,30 @@ export default function PropertyDetails() {
                             ))}
                         </div>
                     </div>
+                </div> */}
+
+                <div className="flex flex-col md:flex-row gap-4 rounded-lg overflow-hidden p-4">
+                    {/* Large Image */}
+                    <div className="flex-2 w-[1300px]">
+                        <img
+                            src={images[currentImageIndex]}
+                            alt="Main"
+                            className="w-full h-full object-cover aspect-[4/3] rounded-lg"
+                        />
+                    </div>
+
+                    {/* 2x2 Thumbnail Grid */}
+                    <div className="w-full md:w-[350px] grid grid-cols-2 gap-2">
+                        {images.slice(1, 5).map((img, index) => (
+                            <img
+                                key={index}
+                                src={img}
+                                alt={`Thumbnail ${index + 1}`}
+                                onClick={() => setCurrentImageIndex(index + 1)}
+                                className="w-full aspect-square object-cover rounded-lg cursor-pointer hover:opacity-80 border border-gray-300"
+                            />
+                        ))}
+                    </div>
                 </div>
 
                 <div className="grid lg:grid-cols-3 gap-6">
@@ -268,7 +292,9 @@ export default function PropertyDetails() {
                     <div className="lg:col-span-2 space-y-6">
                         {/* Room Options */}
                         <div>
-                            <h2 className="text-2xl font-semibold mb-4">Room Options</h2>
+                            <div className="flex items-center justify-between mb-4">
+                                <h1 className="text-3xl font-semibold flex items-center">Room Options</h1>
+                            </div>
                             <div className="bg-white shadow rounded-lg overflow-hidden border">
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-sm">
@@ -328,7 +354,7 @@ export default function PropertyDetails() {
 
                     {/* Right Side – Pricing & House Rules */}
                     <div className="space-y-6">
-                        <div className="mb-11"></div>
+                        <div className="mb-12"></div>
                         {/* Pricing & Facilities */}
                         <div className="bg-[#E2F1E8] p-4 rounded-lg shadow-md border border-[#CDEAD5] space-y-4 text-sm text-gray-800">
                             <h2 className="text-lg font-semibold">Pricing & Facilities</h2>
@@ -380,63 +406,65 @@ export default function PropertyDetails() {
 
                 <div className="mt-6 ">
                     {/* Location */}
-                    <div className="mb-6">
-                        <h2 className="font-desktop-h3 font-[number:var(--desktop-h3-font-weight)] text-text text-[length:var(--desktop-h3-font-size)] text-center tracking-[var(--desktop-h3-letter-spacing)] leading-[var(--desktop-h3-line-height)] [font-style:var(--desktop-h3-font-style)]">Location</h2>
-                        <div className="space-y-4">
-                            <div className="aspect-video bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
-                                <div className="text-center text-gray-500">
-                                    <MapPin className="w-8 h-8 mx-auto mb-2" />
-                                    <p>Google Maps Integration</p>
-                                    <p className="text-sm">Karol Bagh, New Delhi</p>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                    <span>Near Karol Bagh Metro</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                    <span>Nearby Colleges</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                                    <span>Shopping Centers</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
 
                     {/* About Property Owner */}
+
                     <div className="mb-6 mt-10">
                         <div className="flex items-center justify-between mb-4">
                             <h1 className="text-3xl font-semibold flex items-center">About the Property Owner / Warden</h1>
                         </div>
 
-                        <div className="flex items-start gap-4">
-                            <Avatar className="w-16 h-16">
-                                <AvatarImage src="/placeholder.svg?height=64&width=64" />
-                                <AvatarFallback>RS</AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1">
-                                <h3 className="font-semibold text-lg">Rajesh Sharma</h3>
-                                <p className="text-gray-600 text-sm mb-3">
-                                    Experience, how they manage PG -
-                                    In nullam eget urna suspendisse odio nunc. Eu sodales vestibulum, donec rutrum justo, amet porttitor vitae et. Interdum consectetur dictum mattis gravida sed vulputate. Tempus sagittis cras sagittis viverra erat proin duis enim.
-                                    <br />Phone Number: +91- xxxxx xxxxx
-                                </p>
-                                <Button onClick={handleContact}
-                                    className="border-[#064749] text-white rounded-[40px] hover:bg-[#064749] hover:text-white"
-                                >
-                                    <Phone className="w-4 h-4 mr-2" />
-                                    Contact Owner
-                                </Button>
+                        <div className="border rounded-lg shadow-sm p-6 bg-white">
+                            <div className="flex items-start gap-4">
+                                <Avatar className="w-16 h-16">
+                                    <AvatarImage src="/placeholder.svg?height=64&width=64" />
+                                    <AvatarFallback>RS</AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1">
+                                    <h3 className="font-semibold text-lg">Rajesh Sharma</h3>
+                                    <p className="text-gray-600 text-sm mb-3">
+                                        Experience, how they manage PG -
+                                        In nullam eget urna suspendisse odio nunc. Eu sodales vestibulum, donec rutrum justo, amet porttitor vitae et. Interdum consectetur dictum mattis gravida sed vulputate. Tempus sagittis cras sagittis viverra erat proin duis enim.
+                                        <br />Phone Number: +91- xxxxx xxxxx
+                                    </p>
+                                    <Button
+                                        onClick={handleContact}
+                                        className="border-[#064749] text-white rounded-[40px] hover:bg-[#064749] hover:text-white"
+                                    >
+                                        <Phone className="w-4 h-4 mr-2" />
+                                        Contact Owner
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
+                    <div className="py-12">
+                        <div className=" mx-auto px-4">
+
+                            <h2 className=" mb-10 font-desktop-h3 font-[number:var(--desktop-h3-font-weight)] text-text text-[length:var(--desktop-h3-font-size)] text-center tracking-[var(--desktop-h3-letter-spacing)] leading-[var(--desktop-h3-line-height)] [font-style:var(--desktop-h3-font-style)]">
+                                Our Location</h2>
+
+
+                            <div className="max-w-10xl mx-auto">
+                                <div className="rounded-lg overflow-hidden h-96 shadow-lg">
+                                    <iframe
+                                        src="https://maps.google.com/maps?q=40.757985,-73.987844&z=15&output=embed"
+                                        width="100%"
+                                        height="100%"
+                                        style={{ border: 0 }}
+                                        allowFullScreen
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                        title="Business Location"
+                                    ></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     {/* User Reviews */}
-                    <TestimonialsSection />
+                    {/* <TestimonialsSection /> */}
                     <h2 className=" mb-10 font-desktop-h3 font-[number:var(--desktop-h3-font-weight)] text-text text-[length:var(--desktop-h3-font-size)] text-center tracking-[var(--desktop-h3-letter-spacing)] leading-[var(--desktop-h3-line-height)] [font-style:var(--desktop-h3-font-style)]">
                         Related PGs Nearby Section
                     </h2>

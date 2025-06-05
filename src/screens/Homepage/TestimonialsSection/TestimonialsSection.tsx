@@ -51,7 +51,7 @@ export const TestimonialsSection = (): JSX.Element => {
     ];
 
     return (
-        <section className="w-full py-16">
+        <section className="w-full py-16 max-w-[1400px] mx-auto px-4">
             <div className="container mx-auto">
                 <div className="flex flex-col items-center gap-4 mb-12">
                     <h2 className="font-desktop-h3 font-[number:var(--desktop-h3-font-weight)] text-text text-[length:var(--desktop-h3-font-size)] text-center tracking-[var(--desktop-h3-letter-spacing)] leading-[var(--desktop-h3-line-height)] [font-style:var(--desktop-h3-font-style)]">

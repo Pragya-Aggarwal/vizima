@@ -180,13 +180,16 @@ export default function Contact() {
             </div>
 
             {/* Location Section */}
+
+
+            {/* Location Section */}
             <div className="bg-white py-12">
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Our Location</h2>
                     <div className="max-w-4xl mx-auto">
                         <div className="rounded-lg overflow-hidden h-96 shadow-lg">
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.215390912878!2d-73.987844924225!3d40.75798510000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1717641234567!5m2!1sen!2sus"
+                                src="https://maps.google.com/maps?q=40.757985,-73.987844&z=15&output=embed"
                                 width="100%"
                                 height="100%"
                                 style={{ border: 0 }}
@@ -194,7 +197,7 @@ export default function Contact() {
                                 loading="lazy"
                                 referrerPolicy="no-referrer-when-downgrade"
                                 title="Business Location"
-                            />
+                            ></iframe>
                         </div>
                     </div>
                 </div>

@@ -158,7 +158,7 @@ export const BulkAccommodationSection = (): JSX.Element => {
 
                             <Button
                                 type="submit"
-                                className="rounded-[40px] px-10 py-3 bg-green hover:bg-green/90 font-desktop-subtitle-bold text-white"
+                                className="rounded-[40px] px-10 py-3 bg-green hover:bg-green font-desktop-subtitle-bold text-white"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? "Subscribing..." : "Subscribe"}

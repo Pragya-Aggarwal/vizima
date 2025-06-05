@@ -35,7 +35,7 @@ export const ProductPage = (): JSX.Element => {
                     </div>
 
                     {/* Right column - Map */}
-                    <div className="w-[600px] relative">
+                    <div className="w-[500px] relative">
                         <LocationMapSection />
                         <div className="absolute w-full h-full top-0 left-0">
                             <div className="justify-center gap-0.5 p-2 absolute top-5 right-5 rounded-[10px] inline-flex items-start bg-green">

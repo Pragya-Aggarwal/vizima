@@ -47,7 +47,7 @@ export const FAQSection = (): JSX.Element => {
         .join(" ");
 
     return (
-        <section className="flex flex-col w-full max-w-[1280px] items-start gap-[60px] mx-auto my-16">
+        <section className="flex flex-col w-full max-w-[1280px] items-start gap-[20px] mx-auto my-6">
             <Accordion
                 type="multiple"
                 defaultValue={defaultOpenValues ? defaultOpenValues.split(" ") : []}

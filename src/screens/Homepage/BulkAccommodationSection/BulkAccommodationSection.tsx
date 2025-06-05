@@ -1,9 +1,49 @@
 import { FacebookIcon, TwitterIcon } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 
 export const BulkAccommodationSection = (): JSX.Element => {
+    // State for email input
+    const [email, setEmail] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState(false);
+
+    // Email validation function
+    const isValidEmail = (email: string) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    };
+
+    // Handle form submission
+    const handleSubscribe = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+        setSuccess(false);
+
+        if (!email) {
+            setError("Please enter your email address");
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            setError("Please enter a valid email address");
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+            // TODO: Replace with your actual API call
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated API call
+            setSuccess(true);
+            setEmail("");
+        } catch (err) {
+            setError("Failed to subscribe. Please try again later.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     // Footer link data for mapping
     const footerLinks = [
         {
@@ -82,7 +122,7 @@ export const BulkAccommodationSection = (): JSX.Element => {
 
                     {/* Newsletter subscription */}
                     <div className="md:col-span-4">
-                        <div className="flex flex-col gap-5">
+                        <form onSubmit={handleSubscribe} className="flex flex-col gap-5">
                             <div className="flex flex-col gap-2">
                                 <h4 className="font-desktop-subtitle-bold text-text">
                                     Stay up to date
@@ -92,15 +132,38 @@ export const BulkAccommodationSection = (): JSX.Element => {
                                 </p>
                             </div>
 
-                            <Input
-                                className="bg-bg rounded-xl px-10 py-3 font-desktop-subtitle text-[#49735a]"
-                                placeholder="Email address"
-                            />
+                            <div className="flex flex-col gap-2">
+                                <Input
+                                    className={`bg-bg rounded-xl px-10 py-3 font-desktop-subtitle text-[#49735a] ${error ? "border-red-500" : ""
+                                        }`}
+                                    placeholder="Email address"
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => {
+                                        setEmail(e.target.value);
+                                        setError("");
+                                        setSuccess(false);
+                                    }}
+                                    disabled={isSubmitting}
+                                />
+                                {error && (
+                                    <p className="text-red-500 text-sm">{error}</p>
+                                )}
+                                {success && (
+                                    <p className="text-green-600 text-sm">
+                                        Successfully subscribed to newsletter!
+                                    </p>
+                                )}
+                            </div>
 
-                            <Button className="rounded-[40px] px-10 py-3 bg-green hover:bg-green/90 font-desktop-subtitle-bold text-white">
-                                Subscribe
+                            <Button
+                                type="submit"
+                                className="rounded-[40px] px-10 py-3 bg-green hover:bg-green/90 font-desktop-subtitle-bold text-white"
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? "Subscribing..." : "Subscribe"}
                             </Button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </footer>

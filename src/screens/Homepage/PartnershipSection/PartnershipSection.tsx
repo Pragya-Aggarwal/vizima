@@ -1,5 +1,5 @@
 import { CalendarIcon } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
@@ -7,21 +7,49 @@ import {
     Select,
     SelectTrigger,
     SelectValue,
+    SelectContent,
+    SelectItem,
 } from "../../../components/ui/select";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
+import { format } from "date-fns";
 
 export const PartnershipSection = (): JSX.Element => {
-    // Form field data
+    // State for form fields
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+    const [time, setTime] = useState("");
+    const [meetingType, setMeetingType] = useState("");
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [showTimePicker, setShowTimePicker] = useState(false);
+
+    // Generate time slots
+    const timeSlots = [];
+    for (let hour = 9; hour <= 17; hour++) {
+        for (let minute = 0; minute < 60; minute += 30) {
+            const period = hour >= 12 ? "PM" : "AM";
+            const displayHour = hour % 12 || 12;
+            const formattedMinute = minute.toString().padStart(2, "0");
+            timeSlots.push(`${displayHour}:${formattedMinute} ${period}`);
+        }
+    }
+
+    // Form field configuration
     const formFields = [
         {
             id: "date",
             label: "Choose date",
-            placeholder: "DD/MM/TTTT",
+            placeholder: "DD/MM/YYYY",
+            value: selectedDate ? format(selectedDate, "dd/MM/yyyy") : "",
+            onChange: (date: Date | undefined) => setSelectedDate(date),
             icon: <CalendarIcon className="w-6 h-6" />,
+            picker: true,
         },
         {
             id: "time",
             label: "Time slot",
-            placeholder: "Time",
+            placeholder: "Select time",
+            value: time,
+            onChange: (value: string) => setTime(value),
             icon: (
                 <div className="relative w-6 h-6">
                     <img
@@ -31,11 +59,15 @@ export const PartnershipSection = (): JSX.Element => {
                     />
                 </div>
             ),
+            picker: true,
         },
         {
             id: "meetingType",
             label: "Physical / Virtual",
             placeholder: "Physical",
+            options: ["Physical", "Virtual"],
+            value: meetingType,
+            onChange: (value: string) => setMeetingType(value),
             icon: (
                 <img
                     className="w-6 h-6"
@@ -73,7 +105,7 @@ export const PartnershipSection = (): JSX.Element => {
                             {formFields.map((field) => (
                                 <div
                                     key={field.id}
-                                    className="flex flex-col w-full items-start gap-4"
+                                    className="flex flex-col w-full items-start gap-4 relative"
                                 >
                                     <div className="flex items-center gap-2">
                                         {field.icon}
@@ -86,16 +118,92 @@ export const PartnershipSection = (): JSX.Element => {
                                     </div>
 
                                     {field.id === "meetingType" ? (
-                                        <Select>
+                                        <Select
+                                            value={field.value}
+                                            onValueChange={field.onChange}
+                                        >
                                             <SelectTrigger className="w-full px-5 py-4 bg-white rounded-xl">
                                                 <SelectValue
                                                     placeholder={field.placeholder}
                                                     className="font-main-text-p1-500 font-[number:var(--main-text-p1-500-font-weight)] text-[#8b8b8b] text-[length:var(--main-text-p1-500-font-size)] tracking-[var(--main-text-p1-500-letter-spacing)] leading-[var(--main-text-p1-500-line-height)] [font-style:var(--main-text-p1-500-font-style)]"
                                                 />
                                             </SelectTrigger>
+                                            <SelectContent>
+                                                {field.options?.map((option) => (
+                                                    <SelectItem key={option} value={option}>
+                                                        {option}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
                                         </Select>
+                                    ) : field.picker ? (
+                                        <div className="relative w-full">
+                                            <div
+                                                className="w-full px-5 py-4 bg-white rounded-xl font-main-text-p1-500 font-[number:var(--main-text-p1-500-font-weight)] text-[#8b8b8b] text-[length:var(--main-text-p1-500-font-size)] tracking-[var(--main-text-p1-500-letter-spacing)] leading-[var(--main-text-p1-500-line-height)] [font-style:var(--main-text-p1-500-font-style)] cursor-pointer flex items-center justify-between"
+                                                onClick={() => {
+                                                    if (field.id === "date") {
+                                                        setShowDatePicker(!showDatePicker);
+                                                        setShowTimePicker(false);
+                                                    } else {
+                                                        setShowTimePicker(!showTimePicker);
+                                                        setShowDatePicker(false);
+                                                    }
+                                                }}
+                                            >
+                                                {field.value || field.placeholder}
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    className="h-5 w-5 text-gray-400"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                >
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                        clipRule="evenodd"
+                                                    />
+                                                </svg>
+                                            </div>
+
+                                            {/* Date Picker */}
+                                            {field.id === "date" && showDatePicker && (
+                                                <div className="absolute top-full left-0 mt-2 w-full bg-white rounded-lg shadow-lg z-10 p-4 border border-gray-200">
+                                                    <DayPicker
+                                                        mode="single"
+                                                        selected={selectedDate}
+                                                        onSelect={(date) => {
+                                                            field.onChange(date);
+                                                            setShowDatePicker(false);
+                                                        }}
+                                                        disabled={{ before: new Date() }}
+                                                        className="p-3"
+                                                    />
+                                                </div>
+                                            )}
+
+                                            {/* Time Picker */}
+                                            {field.id === "time" && showTimePicker && (
+                                                <div className="absolute top-full left-0 mt-2 w-full bg-white rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto border border-gray-200">
+                                                    {timeSlots.map((slot) => (
+                                                        <div
+                                                            key={slot}
+                                                            className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
+                                                            onClick={() => {
+                                                                field.onChange(slot);
+                                                                setShowTimePicker(false);
+                                                            }}
+                                                        >
+                                                            {slot}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
                                     ) : (
                                         <Input
+                                            id={field.id}
+                                            value={field.value}
+                                            onChange={(e) => field.onChange(e.target.value)}
                                             placeholder={field.placeholder}
                                             className="w-full px-5 py-4 bg-white rounded-xl font-main-text-p1-500 font-[number:var(--main-text-p1-500-font-weight)] text-[#8b8b8b] text-[length:var(--main-text-p1-500-font-size)] tracking-[var(--main-text-p1-500-letter-spacing)] leading-[var(--main-text-p1-500-line-height)] [font-style:var(--main-text-p1-500-font-style)]"
                                         />

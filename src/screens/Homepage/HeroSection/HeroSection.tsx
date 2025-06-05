@@ -58,7 +58,7 @@ export const HeroSection = (): JSX.Element => {
                 Choose Your City
             </h2>
 
-            <div className="flex flex-wrap items-end justify-center gap-[95px] w-full">
+            <div className="flex flex-wrap items-end justify-center gap-[65px] w-full">
                 {displayedCities.map((city, index) => (
                     <div key={index} className="flex flex-col items-center gap-5">
                         <h3 className="font-desktop-h4 font-[number:var(--desktop-h4-font-weight)] text-text text-[length:var(--desktop-h4-font-size)] text-center tracking-[var(--desktop-h4-letter-spacing)] leading-[var(--desktop-h4-line-height)] [font-style:var(--desktop-h4-font-style)]">

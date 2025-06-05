@@ -89,8 +89,8 @@ export const BookARoom = (): JSX.Element => {
                 </div>
 
 
-                <div className="w-full max-w-[1285px] mx-auto">
-                    <Tabs defaultValue="book" className="w-full">
+                <div className="w-full max-w-[1000px] mx-auto">
+                    <Tabs defaultValue="book" className="w-full ">
                         {/* Tabs Navigation */}
                         <TabsList className="w-full h-[103px] p-0 bg-transparent">
                             <TabsTrigger
@@ -114,34 +114,22 @@ export const BookARoom = (): JSX.Element => {
                         {/* Tab Content */}
                         <div className="mt-8">
                             <TabsContent value="book">
-                                <div className="w-full max-w-[1285px] mx-auto mt-10">
-                                    <h2 className="font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-[length:var(--desktop-h2-font-size)] tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] mb-6">
-                                        Booking Form
-                                    </h2>
-
-                                    <div className="flex flex-col md:flex-row gap-6">
-                                        <div className="w-full md:w-1/2">
-                                            <BookAForm />
-                                        </div>
-                                        <div className="w-full md:w-1/2">
-                                            <CancellationPolicySection />
-                                        </div>
+                                <div className="flex justify-center">
+                                    <div className="w-full max-w-[900px]"> {/* Centered container */}
+                                        <h2 className="font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-[length:var(--desktop-h2-font-size)] tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] mb-6">
+                                            Booking Form
+                                        </h2>
+                                        <BookAForm />
                                     </div>
                                 </div>
                             </TabsContent>
                             <TabsContent value="schedule">
-                                <div className="w-full max-w-[1285px] mx-auto mt-10">
-                                    <h2 className="font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-[length:var(--desktop-h2-font-size)] tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] mb-6">
-                                        Schedule A Visit
-                                    </h2>
-
-                                    <div className="flex flex-col md:flex-row gap-6">
-                                        <div className="w-full md:w-1/2">
-                                            <ScheduleAForm />
-                                        </div>
-                                        <div className="w-full md:w-1/2">
-                                            <DateForm />
-                                        </div>
+                                <div className="flex justify-center">
+                                    <div className="w-full max-w-[900px]"> {/* Centered container */}
+                                        <h2 className="font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-[length:var(--desktop-h2-font-size)] tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] mb-6">
+                                            Schedule A Form
+                                        </h2>
+                                        <ScheduleAForm />
                                     </div>
                                 </div>
                             </TabsContent>

@@ -76,11 +76,11 @@ export const ApartmentListingsSection = (): JSX.Element => {
                         className="flex w-full overflow-hidden rounded-[60px_60px_60px_12px] bg-bg"
                     >
                         <img
-                            className="w-[305px] object-cover"
+                            className="w-[205px] object-cover"
                             alt={`${apartment.name} property`}
                             src={apartment.image}
                         />
-                        <CardContent className="flex flex-col items-start gap-1 px-8 py-5 flex-1">
+                        <CardContent className="flex flex-col items-start gap-1 px-2 py-5 flex-1">
                             <h3 className="self-stretch font-desktop-subtitle-bold font-[number:var(--desktop-subtitle-bold-font-weight)] text-text text-[length:var(--desktop-subtitle-bold-font-size)] tracking-[var(--desktop-subtitle-bold-letter-spacing)] leading-[var(--desktop-subtitle-bold-line-height)]">
                                 {apartment.name}
                             </h3>

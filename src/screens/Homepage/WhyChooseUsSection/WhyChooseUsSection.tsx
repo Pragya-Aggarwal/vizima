@@ -57,7 +57,7 @@ export const WhyChooseUsSection = (): JSX.Element => {
                 {featureCards.map((card) => (
                     <Card
                         key={card.id}
-                        className="flex flex-col w-[375px] h-[278px] bg-[#e2f1e8] rounded-[30px] border-none shadow-none"
+                        className="flex flex-col w-[345px] h-[278px] bg-[#e2f1e8] rounded-[30px] border-none shadow-none"
                     >
                         <CardContent className="flex flex-col items-start gap-4 px-10 py-8 h-full">
                             {card.iconType === "img" ? (

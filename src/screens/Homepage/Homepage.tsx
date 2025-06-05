@@ -22,13 +22,13 @@ export const Homepage = (): JSX.Element => {
                 {/* Hero Section with Background Image */}
                 <div className="w-full relative">
                     <img
-                        className="w-full h-[767px] object-cover"
+                        className="w-full h-[667px] object-cover"
                         alt="Hero background"
                         src={home}
                     />
 
                     {/* Overlay Sections */}
-                    <div className="absolute inset-0 flex flex-col justify-between mt-24">
+                    <div className="absolute inset-0 flex flex-col justify-between mt-36">
                         <RentYourSpaceSection />
 
                     </div>

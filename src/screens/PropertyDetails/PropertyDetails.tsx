@@ -229,40 +229,6 @@ export default function PropertyDetails() {
                     </div>
                 </div>
 
-                {/* img Carousel */}
-                {/* <div className="pb-6 mb-6">
-                    <div className="relative">
-                        <div className="aspect-video rounded-lg overflow-hidden bg-gray-100">
-                            <img
-                                src={images[currentImageIndex] || "/placeholder.svg"}
-                                alt={`PG img ${currentImageIndex + 1}`}
-                                className="object-cover"
-                            />
-                        </div>
-                        <button
-                            onClick={prevImage}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md"
-                        >
-                            <ChevronLeft className="w-5 h-5" />
-                        </button>
-                        <button
-                            onClick={nextImage}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md"
-                        >
-                            <ChevronRight className="w-5 h-5" />
-                        </button>
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                            {images.map((_, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => setCurrentImageIndex(index)}
-                                    className={`w-2 h-2 rounded-full ${index === currentImageIndex ? "bg-white" : "bg-white/50"}`}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </div> */}
-
                 <div className="flex flex-col md:flex-row gap-4 rounded-lg overflow-hidden p-4">
                     {/* Large Image */}
                     <div className="flex-2 w-[1500px]">

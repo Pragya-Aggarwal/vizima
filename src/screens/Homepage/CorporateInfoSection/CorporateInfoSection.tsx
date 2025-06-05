@@ -45,7 +45,7 @@ export const CorporateInfoSection = (): JSX.Element => {
                 {accommodationCards.map((card, index) => (
                     <Card
                         key={index}
-                        className="flex-1 rounded-[30px] p-0 overflow-hidden border-0 w-full h-[300px] bg-cover bg-center"
+                        className="flex-1 rounded-[30px] p-0 overflow-hidden border-0 w-full h-[200px] bg-cover bg-center"
                         style={{
                             background: `linear-gradient(270deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,1) 100%), url(${card.backgroundImage}) 50% 50% / cover`,
                         }}

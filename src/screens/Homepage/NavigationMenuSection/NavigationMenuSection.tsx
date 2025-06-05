@@ -13,7 +13,7 @@ export const NavigationMenuSection = (): JSX.Element => {
         { label: "Home", href: "/" },
         { label: "Find PG/Hostel", href: "/product" },
         { label: "Book a Visit", href: "/book" },
-        { label: "Blog", href: "/blog" },
+        { label: "AboutUs", href: "/aboutUs" },
         { label: "Contact Us", href: "/contact" },
     ];
 

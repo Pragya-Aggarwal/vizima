@@ -1,9 +1,15 @@
 import React from "react";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 export const ApartmentListingsSection = (): JSX.Element => {
     // Data for apartment listings
+    const navigate = useNavigate();
+
+    const handleViewDetails = () => {
+        navigate("/property-details");
+    };
     const apartmentListings = [
         {
             id: 1,
@@ -132,7 +138,7 @@ export const ApartmentListingsSection = (): JSX.Element => {
                                 </div>
 
                                 <div className="flex items-center gap-3">
-                                    <Button className="px-5 py-1 bg-[#064749] rounded-[30px] text-white font-bold">
+                                    <Button onClick={handleViewDetails} className="px-5 py-1 bg-[#064749] rounded-[30px] text-white font-bold" >
                                         View Details
                                     </Button>
                                     <span className="[font-family:'Lato',Helvetica] font-extrabold text-[#49735a] text-base tracking-[0] leading-5 whitespace-nowrap">

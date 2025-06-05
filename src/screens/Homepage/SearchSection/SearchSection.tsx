@@ -6,7 +6,7 @@ import { Separator } from "../../../components/ui/separator";
 export const SearchSection = (): JSX.Element => {
     return (
         <div className="flex justify-center w-full px-4 mt-[-10px] z-[100]"> {/* Centering container */}
-            <div className="flex w-full max-w-[1610px] items-center justify-between p-1.5 pl-10 pr-1.5 bg-white rounded-[15px] border-4 border-solid border-green shadow-lg">
+            <div className="flex w-full max-w-[1300px] items-center justify-between p-1.5 pl-10 pr-1.5 bg-white rounded-[15px] border-4 border-solid border-green shadow-lg">
                 {/* Location selector */}
                 <div className="inline-flex items-center gap-3 relative">
                     <div className="relative w-6 h-6">
@@ -14,10 +14,10 @@ export const SearchSection = (): JSX.Element => {
                     </div>
 
                     <div className="relative w-fit font-desktop-subtitle-bold font-[number:var(--desktop-subtitle-bold-font-weight)] text-text text-[length:var(--desktop-subtitle-bold-font-size)] tracking-[var(--desktop-subtitle-bold-letter-spacing)] leading-[var(--desktop-subtitle-bold-line-height)] whitespace-nowrap [font-style:var(--desktop-subtitle-bold-font-style)]">
-                        Select a city
+                        Select a city..
                     </div>
 
-                    <ChevronDownIcon className="w-6 h-6 text-text" />
+                    {/* <ChevronDownIcon className="w-6 h-6 text-text" /> */}
                 </div>
 
                 {/* Divider */}

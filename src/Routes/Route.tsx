@@ -6,6 +6,7 @@ import { BulkAccommodationSection } from '../screens/Homepage/BulkAccommodationS
 import { ChevronDownIcon } from 'lucide-react';
 import { BookARoom } from '../screens/BookARoom/BookARoom';
 import { Blog } from '../screens/Blog/Blog';
+import PropertyDetails from '../screens/PropertyDetails/PropertyDetails';
 
 
 const App = () => {
@@ -19,7 +20,8 @@ const App = () => {
                         <Route path="/" element={<Homepage />} />
                         <Route path="/product" element={<ProductPage />} />
                         <Route path="/book" element={<BookARoom />} />
-                        <Route path="/blog" element={<Blog />} />
+                        <Route path="/aboutUs" element={<Blog />} />
+                        <Route path="/property-details" element={<PropertyDetails />} />
                         {/* <Route path="/contact" element={<Contact />} /> */}
                         <Route path="*" element={<Homepage />} />
                     </Routes>

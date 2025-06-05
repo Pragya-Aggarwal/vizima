@@ -21,6 +21,7 @@ export const PartnershipSection = (): JSX.Element => {
     const [meetingType, setMeetingType] = useState("");
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
+    const [description, setDescription] = useState("");
 
     // Generate time slots
     const timeSlots = [];
@@ -68,6 +69,20 @@ export const PartnershipSection = (): JSX.Element => {
             options: ["Physical", "Virtual"],
             value: meetingType,
             onChange: (value: string) => setMeetingType(value),
+            icon: (
+                <img
+                    className="w-6 h-6"
+                    alt="Meeting type icon"
+                    src="https://c.animaapp.com/mbhmsf5eMRDRNk/img/simple-icons-gotomeeting.svg"
+                />
+            ),
+        },
+        {
+            id: "description",
+            label: "Description",
+            placeholder: "Description",
+            value: description,
+            onChange: (value: string) => setDescription(value),
             icon: (
                 <img
                     className="w-6 h-6"

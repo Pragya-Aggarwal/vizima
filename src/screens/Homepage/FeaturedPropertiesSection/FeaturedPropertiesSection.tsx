@@ -1,8 +1,14 @@
 import React from "react";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 export const FeaturedPropertiesSection = (): JSX.Element => {
+    const navigate = useNavigate();
+
+    const handleViewDetails = () => {
+        navigate("/property-details");
+    };
     // Property data array for mapping
     const properties = [
         {
@@ -99,7 +105,7 @@ export const FeaturedPropertiesSection = (): JSX.Element => {
         <section className="py-16 px-5 w-full">
             <div className="container mx-auto">
                 <h2 className="text-center mb-10 font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-[length:var(--desktop-h2-font-size)] tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
-                    Featured Properties
+                    Featured PG/Hostels
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -150,7 +156,9 @@ export const FeaturedPropertiesSection = (): JSX.Element => {
                                 </div>
 
                                 <div className="flex justify-center">
-                                    <Button className="bg-[#064749] text-white rounded-[30px] px-5 py-1 h-7 font-desktop-text-regular font-[number:var(--desktop-text-regular-font-weight)] text-[length:var(--desktop-text-regular-font-size)] tracking-[var(--desktop-text-regular-letter-spacing)] leading-[var(--desktop-text-regular-line-height)] [font-style:var(--desktop-text-regular-font-style)]">
+                                    <Button
+                                        onClick={handleViewDetails}
+                                        className="bg-[#064749] text-white rounded-[30px] px-5 py-1 h-7 font-desktop-text-regular font-[number:var(--desktop-text-regular-font-weight)] text-[length:var(--desktop-text-regular-font-size)] tracking-[var(--desktop-text-regular-letter-spacing)] leading-[var(--desktop-text-regular-line-height)] [font-style:var(--desktop-text-regular-font-style)]">
                                         View Details
                                     </Button>
                                 </div>

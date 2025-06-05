@@ -1,51 +1,64 @@
-import { ChevronDownIcon, MapPinIcon, SearchIcon } from "lucide-react";
-import React from "react";
+import { ChevronDownIcon, MapPinIcon, SearchIcon, UsersIcon } from "lucide-react";
+import React, { useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Separator } from "../../../components/ui/separator";
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
+} from "../../../components/ui/select";
+import { Input } from "../../../components/ui/input";
 
 export const SearchSection = (): JSX.Element => {
+    const [city, setCity] = useState("");
+    const [gender, setGender] = useState("");
+
+    const handleSearch = () => {
+        console.log("Search with:", { city, gender });
+    };
+
     return (
-        <div className="flex justify-center w-full px-4 mt-[-10px] z-[100]"> {/* Centering container */}
-            <div className="flex w-full max-w-[1300px] items-center justify-between p-1.5 pl-10 pr-1.5 bg-white rounded-[15px] border-4 border-solid border-green shadow-lg">
-                {/* Location selector */}
-                <div className="inline-flex items-center gap-3 relative">
-                    <div className="relative w-6 h-6">
-                        <MapPinIcon className="w-6 h-6 text-text" />
-                    </div>
+        <div className="flex justify-center w-full px-4 mt-[-10px] z-[100]">
+            <div className="flex w-full max-w-[1300px] items-center justify-between p-1.5 pl-10 pr-1.5 bg-white rounded-[15px] border-4 border-solid border-green shadow-lg gap-6">
 
-                    <div className="relative w-fit font-desktop-subtitle-bold font-[number:var(--desktop-subtitle-bold-font-weight)] text-text text-[length:var(--desktop-subtitle-bold-font-size)] tracking-[var(--desktop-subtitle-bold-letter-spacing)] leading-[var(--desktop-subtitle-bold-line-height)] whitespace-nowrap [font-style:var(--desktop-subtitle-bold-font-style)]">
-                        Select a city..
-                    </div>
-
-                    {/* <ChevronDownIcon className="w-6 h-6 text-text" /> */}
+                {/* City input with icon */}
+                <div className="flex items-center gap-2 relative text-text">
+                    <MapPinIcon className="w-5 h-5" />
+                    <Input
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="Select a city"
+                        className="w-[150px] h-8 border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 m-0 text-sm font-semibold placeholder:text-black text-black bg-transparent"
+                    />
                 </div>
 
-                {/* Divider */}
-                <Separator orientation="vertical" className="h-12" />
+                {/* Vertical Separator */}
+                <Separator orientation="vertical" className="h-8 bg-green ml-36" />
 
-                {/* Gender filter */}
-                <div className="inline-flex items-start gap-5 relative">
-                    <div className="inline-flex items-center gap-2 relative">
-                        <img
-                            className="relative w-[26px] h-6"
-                            alt="Vector"
-                            src="https://c.animaapp.com/mbhqlborYGJdod/img/vector.svg"
-                        />
-
-                        <div className="relative w-fit font-desktop-subtitle-bold font-[number:var(--desktop-subtitle-bold-font-weight)] text-text text-[length:var(--desktop-subtitle-bold-font-size)] tracking-[var(--desktop-subtitle-bold-letter-spacing)] leading-[var(--desktop-subtitle-bold-line-height)] whitespace-nowrap [font-style:var(--desktop-subtitle-bold-font-style)]">
-                            Gender
-                        </div>
-
-                        <ChevronDownIcon className="w-5 h-5 text-text" />
-                    </div>
+                {/* Gender dropdown */}
+                <div className="flex items-center gap-2 relative w-fit text-text">
+                    <UsersIcon className="w-5 h-5" />
+                    <Select value={gender} onValueChange={setGender}>
+                        <SelectTrigger className="w-[120px] h-8 px-0 text-sm font-semibold border-none focus:ring-0 focus:ring-offset-0 bg-transparent">
+                            <SelectValue placeholder="Gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="male">Male</SelectItem>
+                            <SelectItem value="female">Female</SelectItem>
+                            <SelectItem value="unisex">Unisex</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
 
                 {/* Search button */}
-                <Button className="flex items-center gap-2.5 px-10 py-3 rounded-[15px] bg-green text-white h-auto hover:bg-green/90">
-                    <SearchIcon className="w-7 h-7" />
-                    <span className="font-desktop-subtitle-bold font-[number:var(--desktop-subtitle-bold-font-weight)] text-[length:var(--desktop-subtitle-bold-font-size)] tracking-[var(--desktop-subtitle-bold-letter-spacing)] leading-[var(--desktop-subtitle-bold-line-height)] [font-style:var(--desktop-subtitle-bold-font-style)]">
-                        Search
-                    </span>
+                <Button
+                    onClick={handleSearch}
+                    className="flex items-center gap-2.5 px-6 py-2 rounded-[15px] bg-green text-white text-sm font-semibold hover:bg-green/90"
+                >
+                    <SearchIcon className="w-4 h-4" />
+                    Search
                 </Button>
             </div>
         </div>

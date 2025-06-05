@@ -1,21 +1,43 @@
-import { SearchIcon } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
+import { SearchIcon, LocateFixed } from "lucide-react";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 
 export const SearchBarSection = (): JSX.Element => {
-    return (
-        <div className="w-full flex items-center bg-white rounded-[40px] border-4 border-solid border-green overflow-hidden mt-[120px]">
-            <div className="flex-1">
-                <Input
-                    className="w-full h-14 border-none shadow-none text-text font-desktop-subtitle-bold text-[length:var(--desktop-subtitle-bold-font-size)] tracking-[var(--desktop-subtitle-bold-letter-spacing)] leading-[var(--desktop-subtitle-bold-line-height)] focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-text px-6"
-                    type="text"
-                    placeholder="Search Listings or Find PGs"
-                />
-            </div>
+    const [searchQuery, setSearchQuery] = useState("");
 
-            <Button className="bg-green hover:bg-green/90 text-white rounded-[40px] h-10 w-10 p-0 flex items-center justify-center mr-1.5">
-                <SearchIcon className="w-5 h-5 text-white" />
+    const handleSearch = () => {
+        console.log("Searching for:", searchQuery);
+        // Trigger your search logic here
+    };
+
+    return (
+        <div className="w-full max-w-5xl mx-auto flex items-center bg-white border-2 border-[#064749] rounded-full overflow-hidden mt-[120px] px-4 py-2">
+            {/* Input Field */}
+            <Input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search Listings or Find PGs"
+                className="flex-1 h-12 border-none focus-visible:ring-0 focus-visible:ring-offset-0 px-4 text-sm text-black placeholder:text-black font-semibold"
+            />
+
+            {/* Location Icon Button */}
+            <button
+                type="button"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-[#064749] text-white hover:bg-[#053a3c] mx-2"
+                aria-label="Use my location"
+            >
+                <LocateFixed className="w-5 h-5" />
+            </button>
+
+            {/* Search Button */}
+            <Button
+                type="button"
+                onClick={handleSearch}
+                className="h-10 px-6 rounded-full bg-[#064749] text-white hover:bg-[#053a3c] text-sm font-semibold"
+            >
+                Search
             </Button>
         </div>
     );

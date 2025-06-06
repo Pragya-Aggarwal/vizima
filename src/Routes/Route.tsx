@@ -8,11 +8,10 @@ import { BookARoom } from '../screens/BookARoom/BookARoom';
 import { Blog } from '../screens/Blog/Blog';
 import PropertyDetails from '../screens/PropertyDetails/PropertyDetails';
 import Contact from '../screens/Contact/Contact';
-
+import { Login } from '../screens/Login/Login';
 
 const App = () => {
     return (
-
         <Router>
             <div className="min-h-screen flex flex-col">
                 <NavigationMenuSection />
@@ -24,6 +23,7 @@ const App = () => {
                         <Route path="/aboutUs" element={<Blog />} />
                         <Route path="/property-details" element={<PropertyDetails />} />
                         <Route path="/contact" element={<Contact />} />
+                        <Route path="/login" element={<Login />} />
                         <Route path="*" element={<Homepage />} />
                     </Routes>
                 </main>

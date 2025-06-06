@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
 import {
     NavigationMenu,
@@ -6,8 +7,34 @@ import {
     NavigationMenuLink,
     NavigationMenuList,
 } from "../../../components/ui/navigation-menu";
+import { isLoggedIn, logout } from "../../../utils/auth";
+import { LogIn, LogOut } from "lucide-react";
 
 export const NavigationMenuSection = (): JSX.Element => {
+    const navigate = useNavigate();
+    const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+
+    // Check login status on mount and when localStorage changes
+    useEffect(() => {
+        const checkLoginStatus = () => {
+            setIsUserLoggedIn(isLoggedIn());
+        };
+
+        // Check initial status
+        checkLoginStatus();
+
+        // Listen for storage changes
+        window.addEventListener('storage', checkLoginStatus);
+
+        // Custom event listener for login status changes
+        window.addEventListener('loginStatusChanged', checkLoginStatus);
+
+        return () => {
+            window.removeEventListener('storage', checkLoginStatus);
+            window.removeEventListener('loginStatusChanged', checkLoginStatus);
+        };
+    }, []);
+
     // Navigation menu items data
     const menuItems = [
         { label: "Home", href: "/" },
@@ -16,6 +43,16 @@ export const NavigationMenuSection = (): JSX.Element => {
         { label: "AboutUs", href: "/aboutUs" },
         { label: "Contact Us", href: "/contact" },
     ];
+
+    const handleAuthAction = () => {
+        if (isUserLoggedIn) {
+            logout();
+            setIsUserLoggedIn(false);
+            navigate("/login");
+        } else {
+            navigate("/login");
+        }
+    };
 
     return (
         <header className="w-full h-[83px] bg-white fixed top-0 left-0 z-50 flex items-center justify-center px-[60px]">
@@ -39,8 +76,24 @@ export const NavigationMenuSection = (): JSX.Element => {
                             </NavigationMenuItem>
                         ))}
                         <NavigationMenuItem>
-                            <Button className="bg-green rounded-[40px] px-10 py-3 text-white font-desktop-subtitle-bold">
-                                Login
+                            <Button
+                                className={`rounded-[40px] px-10 py-3 font-desktop-subtitle-bold flex items-center gap-2 transition-colors ${isUserLoggedIn
+                                    ? 'bg-red-500 hover:bg-red-600 text-white'
+                                    : 'bg-green hover:bg-green-700 text-white'
+                                    }`}
+                                onClick={handleAuthAction}
+                            >
+                                {isUserLoggedIn ? (
+                                    <>
+                                        <LogOut className="w-5 h-5" />
+                                        Logout
+                                    </>
+                                ) : (
+                                    <>
+                                        <LogIn className="w-5 h-5" />
+                                        Login
+                                    </>
+                                )}
                             </Button>
                         </NavigationMenuItem>
                     </NavigationMenuList>

@@ -119,14 +119,15 @@ export default function Contact() {
                                         required
                                     />
                                 </div>
+                                <Button
+                                    type="submit"
+                                    className="w-full mt-4 bg-green hover:bg-green-700 text-white rounded-full py-6 text-lg"
+                                >
+                                    Send Message
+                                </Button>
                             </CardContent>
                         </Card>
-                        <Button
-                            type="submit"
-                            className="w-full mt-4 bg-green hover:bg-green-700 text-white rounded-full py-6 text-lg"
-                        >
-                            Send Message
-                        </Button>
+
                     </form>
 
                     {/* Contact Details */}

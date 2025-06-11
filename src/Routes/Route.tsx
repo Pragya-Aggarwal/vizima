@@ -9,7 +9,9 @@ import { Blog } from '../screens/Blog/Blog';
 import PropertyDetails from '../screens/PropertyDetails/PropertyDetails';
 import Contact from '../screens/Contact/Contact';
 import { Login } from '../screens/Login/Login';
-
+import { BookingsPage } from '../screens/UserProfile/BookingsPage';
+import { DocumentsPage } from '../screens/UserProfile/DocumentPage';
+import { ProfilePage } from '../screens/UserProfile/ProfilePage';
 const App = () => {
     return (
         <Router>
@@ -24,6 +26,9 @@ const App = () => {
                         <Route path="/property-details" element={<PropertyDetails />} />
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/login" element={<Login />} />
+                        <Route path="/booking" element={<BookingsPage />} />
+                        <Route path="/documents" element={<DocumentsPage />} />
+                        <Route path="/profile" element={<ProfilePage />} />
                         <Route path="*" element={<Homepage />} />
                     </Routes>
                 </main>

@@ -1,9 +1,7 @@
-import { StarIcon, MapPinIcon, BedDoubleIcon } from "lucide-react";
-import React from "react";
 import { Card, CardContent } from "../../components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "../../components/ui/tabs";
+import { Star, MapPin, BedDouble } from "lucide-react";
 import { BookingConfirmationSection } from "./BookingConfirmationSection/BookingConfirmationSection";
-import { CancellationPolicySection } from "./CancellationPolicySection/CancellationPolicySection";
 import { HeaderSection } from "./HeaderSection/HeaderSection";
 import { TrustBoostersSection } from "./TrustBoostersSection/TrustBoostersSection";
 import { BookingFormSection } from "./BookingFormSection/BookingFormSection";
@@ -58,7 +56,7 @@ export const BookARoom = (): JSX.Element => {
                                 <div className="flex flex-col p-8 md:p-12 flex-grow bg-white">
                                     {/* Location and Rating Row */}
                                     <div className="flex items-center gap-2 text-gray-600 mb-4">
-                                        <MapPinIcon className="w-5 h-5" />
+                                        <MapPin className="w-5 h-5" />
                                         <span className="text-sm">{propertyData.location}</span>
                                     </div>
 
@@ -71,7 +69,7 @@ export const BookARoom = (): JSX.Element => {
                                     <div className="flex items-center gap-4 mb-8">
                                         <div className="flex items-center gap-1">
                                             {[...Array(5)].map((_, index) => (
-                                                <StarIcon
+                                                <Star
                                                     key={index}
                                                     className={`w-5 h-5 ${index < Math.floor(Number(propertyData.rating))
                                                         ? "text-yellow-400 fill-current"
@@ -88,7 +86,7 @@ export const BookARoom = (): JSX.Element => {
                                     <div className="grid grid-cols-2 gap-4 mb-8">
                                         {propertyData.amenities.map((amenity, index) => (
                                             <div key={index} className="flex items-center gap-2">
-                                                <BedDoubleIcon className="w-5 h-5 text-gray-600" />
+                                                <BedDouble className="w-5 h-5 text-gray-600" />
                                                 <span className="text-gray-700">{amenity}</span>
                                             </div>
                                         ))}

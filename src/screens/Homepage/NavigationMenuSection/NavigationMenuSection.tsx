@@ -8,7 +8,13 @@ import {
     NavigationMenuList,
 } from "../../../components/ui/navigation-menu";
 import { isLoggedIn, logout } from "../../../utils/auth";
-import { LogIn, LogOut, Menu, X } from "lucide-react";
+import { LogIn, LogOut, Menu, X, User, FileText, Settings, Calendar } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../../components/ui/dropdown-menu";
 
 export const NavigationMenuSection = (): JSX.Element => {
     const navigate = useNavigate();
@@ -57,17 +63,71 @@ export const NavigationMenuSection = (): JSX.Element => {
     };
 
     return (
-        <header className="w-full h-16 md:h-[83px] bg-white fixed top-0 left-0 z-50 flex items-center justify-center px-4 md:px-[60px] shadow-sm">
+        <header className="w-full h-16 bg-white fixed top-0 left-0 z-50 flex items-center justify-center px-4 md:px-[60px] shadow-sm">
             <div className="w-full max-w-[1600px] flex items-center justify-between">
-                <a href="/" className="flex items-center h-full">
-                    <img
-                        className="w-[100px] md:w-[141px] h-auto md:h-[47px] object-contain"
-                        alt="Vizima logo"
-                        src="https://c.animaapp.com/mbi2us3vKS97yu/img/vizima--logo-01--1--1.png"
-                    />
-                </a>
+                
+                
+                    <a href="/" className="flex items-center h-full">
+                        <img
+                            className="w-[100px] md:w-[141px] h-auto md:h-[47px] object-contain"
+                            alt="Vizima logo"
+                            src="https://c.animaapp.com/mbi2us3vKS97yu/img/vizima--logo-01--1--1.png"
+                        />
+                    </a>
 
                 {/* Mobile Menu Button */}
+                <div className="md:hidden flex items-center gap-2">
+                    {/* Profile Icon - Mobile Only */}
+              
+                                {isUserLoggedIn ? (
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="p-2 rounded-full hover:bg-gray-100">
+                                                <User className="h-5 w-5" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent className="w-56" align="end">
+                                            <DropdownMenuItem 
+                                                className="cursor-pointer flex items-center gap-2"
+                                                onClick={() => navigate('/booking')}
+                                            >
+                                                <Calendar className="h-4 w-4" />
+                                                <span>View and manage bookings</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem 
+                                                className="cursor-pointer flex items-center gap-2"
+                                                onClick={() => navigate('/documents')}
+                                            >
+                                                <FileText className="h-4 w-4" />
+                                                <span>Upload personal documents</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem 
+                                                className="cursor-pointer flex items-center gap-2"
+                                                onClick={() => navigate('/profile')}
+                                            >
+                                                <Settings className="h-4 w-4" />
+                                                <span>Profile editing</span>
+                                            </DropdownMenuItem>
+                                            <div className="border-t my-1"></div>
+                                            <DropdownMenuItem 
+                                                className="cursor-pointer text-red-600 hover:bg-red-50 flex items-center gap-2"
+                                                onClick={handleAuthAction}
+                                            >
+                                                <LogOut className="h-4 w-4" />
+                                                <span>Logout</span>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                ) : (
+                                    <Button
+                                        className="rounded-full px-6 py-2 font-medium flex items-center gap-2 transition-all duration-200 bg-green hover:bg-green-600 text-white shadow-md hover:shadow-lg"
+                                        onClick={handleAuthAction}
+                                    >
+                                        Login
+                                    </Button>
+                                )}
+                            
+                    
                 <button
                     className="md:hidden p-2"
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -78,41 +138,70 @@ export const NavigationMenuSection = (): JSX.Element => {
                         <Menu className="h-6 w-6" />
                     )}
                 </button>
+                </div>
 
                 {/* Desktop Navigation */}
-                <div className="hidden md:block">
+                <div className="hidden md:flex items-center gap-6">
                     <NavigationMenu>
-                        <NavigationMenuList className="flex items-center gap-10">
+                        <NavigationMenuList className="flex items-center gap-6">
                             {menuItems.map((item, index) => (
                                 <NavigationMenuItem key={index}>
                                     <NavigationMenuLink
                                         href={item.href}
-                                        className="font-['Lato',Helvetica] font-semibold text-text text-lg leading-6"
+                                        className="font-['Lato',Helvetica] font-semibold text-gray-700 hover:text-green-600 text-base leading-6 transition-colors duration-200"
                                     >
                                         {item.label}
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
                             ))}
                             <NavigationMenuItem>
-                                <Button
-                                    className={`rounded-[40px] px-10 py-3 font-desktop-subtitle-bold flex items-center gap-2 transition-colors ${isUserLoggedIn
-                                        ? 'bg-red-500 hover:bg-red-600 text-white'
-                                        : 'bg-green hover:bg-green-700 text-white'
-                                        }`}
-                                    onClick={handleAuthAction}
-                                >
-                                    {isUserLoggedIn ? (
-                                        <>
-                                            {/* <LogOut className="w-5 h-5" /> */}
-                                            Logout
-                                        </>
-                                    ) : (
-                                        <>
-                                            {/* <LogIn className="w-5 h-5" /> */}
-                                            Login
-                                        </>
-                                    )}
-                                </Button>
+                                {isUserLoggedIn ? (
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="p-2 rounded-full hover:bg-gray-100">
+                                                <User className="h-5 w-5" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent className="w-56" align="end">
+                                            <DropdownMenuItem 
+                                                className="cursor-pointer flex items-center gap-2"
+                                                onClick={() => navigate('/booking')}
+                                            >
+                                                <Calendar className="h-4 w-4" />
+                                                <span>View and manage bookings</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem 
+                                                className="cursor-pointer flex items-center gap-2"
+                                                onClick={() => navigate('/documents')}
+                                            >
+                                                <FileText className="h-4 w-4" />
+                                                <span>Upload personal documents</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem 
+                                                className="cursor-pointer flex items-center gap-2"
+                                                onClick={() => navigate('/profile')}
+                                            >
+                                                <Settings className="h-4 w-4" />
+                                                <span>Profile editing</span>
+                                            </DropdownMenuItem>
+                                            <div className="border-t my-1"></div>
+                                            <DropdownMenuItem 
+                                                className="cursor-pointer text-red-600 hover:bg-red-50 flex items-center gap-2"
+                                                onClick={handleAuthAction}
+                                            >
+                                                <LogOut className="h-4 w-4" />
+                                                <span>Logout</span>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                ) : (
+                                    <Button
+                                        className="rounded-full px-6 py-2 font-medium flex items-center gap-2 transition-all duration-200 bg-green hover:bg-green-600 text-white shadow-md hover:shadow-lg"
+                                        onClick={handleAuthAction}
+                                    >
+                                        Login
+                                    </Button>
+                                )}
                             </NavigationMenuItem>
                         </NavigationMenuList>
                     </NavigationMenu>
@@ -129,7 +218,7 @@ export const NavigationMenuSection = (): JSX.Element => {
                 
                 {/* Mobile Menu Panel */}
                 <div 
-                    className={`fixed top-0 left-0 h-full w-4/5 max-w-sm bg-white shadow-xl md:hidden transition-transform duration-300 ease-in-out z-50 ${
+                    className={`fixed top-0 left-0 h-full w-4/5 max-w-sm bg-white shadow-2xl md:hidden transition-all duration-300 ease-in-out z-50 ${
                         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
                     }`}
                 >
@@ -153,33 +242,13 @@ export const NavigationMenuSection = (): JSX.Element => {
                                 <a
                                     key={index}
                                     href={item.href}
-                                    className="px-6 py-3 text-text text-lg font-semibold hover:bg-gray-50"
+                                    className="block px-6 py-4 text-gray-700 hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     {item.label}
                                 </a>
                             ))}
-                            <div className="px-6 py-3">
-                                <Button
-                                    className={`w-full rounded-[40px] px-6 py-3 font-desktop-subtitle-bold flex items-center justify-center gap-2 transition-colors ${isUserLoggedIn
-                                        ? 'bg-red-500 hover:bg-red-600 text-white'
-                                        : 'bg-green hover:bg-green-700 text-white'
-                                        }`}
-                                    onClick={handleAuthAction}
-                                >
-                                    {isUserLoggedIn ? (
-                                        <>
-                                            {/* <LogOut className="w-5 h-5" /> */}
-                                            Logout
-                                        </>
-                                    ) : (
-                                        <>
-                                            {/* <LogIn className="w-5 h-5" /> */}
-                                            Login
-                                        </>
-                                    )}
-                                </Button>
-                            </div>
+                            
                         </nav>
                     </div>
                 </div>

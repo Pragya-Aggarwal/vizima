@@ -12,6 +12,8 @@ import { Login } from '../screens/Login/Login';
 import { BookingsPage } from '../screens/UserProfile/BookingsPage';
 import { DocumentsPage } from '../screens/UserProfile/DocumentPage';
 import { ProfilePage } from '../screens/UserProfile/ProfilePage';
+import WhatsAppButton from '../components/WhatsAppButton';
+
 const App = () => {
     return (
         <Router>
@@ -33,6 +35,9 @@ const App = () => {
                     </Routes>
                 </main>
                 <BulkAccommodationSection />
+                
+                {/* WhatsApp Floating Button */}
+                <WhatsAppButton />
 
                 {/* Dropdown Icon - Using Lucide Icon instead of image */}
                 <div className="fixed top-[30px] left-[834px]">

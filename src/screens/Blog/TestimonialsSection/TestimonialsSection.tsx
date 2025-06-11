@@ -5,29 +5,35 @@ export const TestimonialsSection = (): JSX.Element => {
     return (
         <section className="w-full relative">
             <div
-                className="w-full h-[360px] bg-cover bg-center flex items-center"
+                className="w-full min-h-[400px] md:h-[500px] bg-cover bg-center flex items-center relative"
                 style={{
-                    backgroundImage:
-                        "url(https://c.animaapp.com/mbi8y6iwSJDdWE/img/image-1.png)",
+                    backgroundImage: "url(https://c.animaapp.com/mbi8y6iwSJDdWE/img/image-1.png)",
                 }}
             >
-                <div className="container px-6 md:px-8">
-                    <div className="flex flex-col max-w-[1075px] gap-6">
-                        <h2 className="font-desktop-h1 font-[number:var(--desktop-h1-font-weight)] text-white text-[length:var(--desktop-h1-font-size)] tracking-[var(--desktop-h1-letter-spacing)] leading-[var(--desktop-h1-line-height)] [font-style:var(--desktop-h1-font-style)] [text-shadow:0px_4px_87.5px_#00000040]">
+                {/* Dark overlay for better text readability */}
+                <div className="absolute inset-0 bg-black/40"></div>
+                
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-16">
+                    <div className="max-w-4xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl p-8 md:p-12 shadow-xl">
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 text-center">
                             Looking for your next PG or hostel?
                         </h2>
 
-                        <p className="font-desktop-subtitle font-[number:var(--desktop-subtitle-font-weight)] text-white text-[length:var(--desktop-subtitle-font-size)] tracking-[var(--desktop-subtitle-letter-spacing)] leading-[var(--desktop-subtitle-line-height)] [font-style:var(--desktop-subtitle-font-style)] [text-shadow:0px_4px_87.5px_#00000040]">
+                        <p className="text-lg md:text-xl text-white mb-8 text-center leading-relaxed">
                             At Vizima, our goal is simple — to take the stress out of finding
-                            safe, comfortable,&nbsp;&nbsp;and affordable PGs &amp; hostels.
-                            Whether you&apos;re a student or a working
-                            professional,&nbsp;&nbsp;we bring you verified spaces with meals,
-                            amenities, and full transparency.
+                            safe, comfortable, and affordable PGs & hostels.
+                            Whether you're a student or a working professional, we bring you 
+                            verified spaces with meals, amenities, and full transparency.
                         </p>
 
-                        <Button className="bg-green text-white rounded-[40px] px-10 py-3 w-fit font-desktop-subtitle-bold font-[number:var(--desktop-subtitle-bold-font-weight)] text-[length:var(--desktop-subtitle-bold-font-size)] tracking-[var(--desktop-subtitle-bold-letter-spacing)] leading-[var(--desktop-subtitle-bold-line-height)] [font-style:var(--desktop-subtitle-bold-font-style)]">
-                            Start Exploring
-                        </Button>
+                        <div className="flex justify-center">
+                            <Button 
+                                className="bg-[#064749] hover:bg-[#053a3c] text-white text-lg px-8 py-6 rounded-full transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1"
+                                size="lg"
+                            >
+                                Start Exploring
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>

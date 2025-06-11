@@ -10,7 +10,6 @@ import { BookingFormSection } from "./BookingFormSection/BookingFormSection";
 import { BookAForm } from "./BookForm/BookAForm";
 import { TabsContent } from "@radix-ui/react-tabs";
 import { ScheduleAForm } from "./ScheduleAForm/ScheduleAForm";
-import { DateForm } from "./ScheduleAForm/DateForm";
 
 export const BookARoom = (): JSX.Element => {
     // Property data
@@ -112,24 +111,24 @@ export const BookARoom = (): JSX.Element => {
                     </Card>
                 </div>
 
-                <div className="w-full max-w-[1000px] mx-auto">
+                <div className="w-full max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8">
                     <Tabs defaultValue="book" className="w-full">
                         {/* Tabs Navigation - Styled as a toggle button */}
-                        <div className="flex justify-center mb-8">
-                            <TabsList className="h-42 p-1 bg-[#e2f1e8] rounded-full">
+                        <div className="flex justify-center mb-6 sm:mb-8">
+                            <TabsList className="h-auto sm:h-12 p-0.5 sm:p-1 bg-[#e2f1e8] rounded-full w-full max-w-md">
                                 <TabsTrigger
                                     value="book"
-                                    className="px-6 h-14 rounded-full transition-all data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=inactive]:bg-transparent"
+                                    className="flex-1 sm:flex-none px-3 sm:px-6 h-10 sm:h-14 rounded-full transition-all data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=inactive]:bg-transparent text-sm sm:text-base"
                                 >
-                                    <span className="font-['Lato',Helvetica] font-medium text-black text-lg">
+                                    <span className="font-['Lato',Helvetica] font-medium text-black">
                                         Book a Room
                                     </span>
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="schedule"
-                                    className="px-6 h-10 rounded-full transition-all data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=inactive]:bg-transparent"
+                                    className="flex-1 sm:flex-none px-3 sm:px-6 h-10 sm:h-14 rounded-full transition-all data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=inactive]:bg-transparent text-sm sm:text-base"
                                 >
-                                    <span className="font-['Lato',Helvetica] font-medium text-black text-lg">
+                                    <span className="font-['Lato',Helvetica] font-medium text-black">
                                         Schedule a Visit
                                     </span>
                                 </TabsTrigger>
@@ -137,22 +136,22 @@ export const BookARoom = (): JSX.Element => {
                         </div>
 
                         {/* Tab Content */}
-                        <div className="mt-8">
-                            <TabsContent value="book">
+                        <div className="mt-6 sm:mt-8">
+                            <TabsContent value="book" className="mt-0">
                                 <div className="flex justify-center">
                                     <div className="w-full max-w-[900px]">
-                                        <h2 className="font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-[length:var(--desktop-h2-font-size)] tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] mb-6">
+                                        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">
                                             Booking Form
                                         </h2>
                                         <BookAForm />
                                     </div>
                                 </div>
                             </TabsContent>
-                            <TabsContent value="schedule">
+                            <TabsContent value="schedule" className="mt-0">
                                 <div className="flex justify-center">
                                     <div className="w-full max-w-[900px]">
-                                        <h2 className="font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-[length:var(--desktop-h2-font-size)] tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] mb-6">
-                                            Schedule A Form
+                                        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">
+                                            Schedule A Visit
                                         </h2>
                                         <ScheduleAForm />
                                     </div>
@@ -162,9 +161,15 @@ export const BookARoom = (): JSX.Element => {
                     </Tabs>
                 </div>
 
-                <HeaderSection />
-                <TrustBoostersSection />
-                <BookingFormSection />
+                <div className="w-full">
+                    <HeaderSection />
+                </div>
+                <div className="w-full">
+                    <TrustBoostersSection />
+                </div>
+                <div className="w-full">
+                    <BookingFormSection />
+                </div>
             </div>
         </div>
     );

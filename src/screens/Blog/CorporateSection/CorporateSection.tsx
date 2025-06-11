@@ -28,32 +28,41 @@ export const CorporateSection = (): JSX.Element => {
     ];
 
     return (
-        <section className="flex flex-col w-full items-start gap-[60px] px-20 py-0">
-            <div className="flex flex-col items-center justify-center gap-4 w-full">
-                <h2 className="w-full font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-[length:var(--desktop-h2-font-size)] text-center tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
-                    WHy Vizima?
-                </h2>
+        <section className="w-full py-12 md:py-20 px-4 sm:px-6 lg:px-8 bg-white">
+            <div className="max-w-7xl mx-auto">
+                <div className="text-center max-w-4xl mx-auto mb-12 md:mb-20">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                        Why Vizima?
+                    </h2>
+                    <div className="w-20 h-1 bg-[#064749] mx-auto mb-6"></div>
+                    <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
+                        Vizima offers verified PGs with meals, Wi-Fi, secure booking, and
+                        roommate options—ensuring a safe, comfortable, and hassle-free stay.
+                    </p>
+                </div>
 
-                <p className="max-w-[760px] font-desktop-subtitle font-[number:var(--desktop-subtitle-font-weight)] text-text text-[length:var(--desktop-subtitle-font-size)] text-center tracking-[var(--desktop-subtitle-letter-spacing)] leading-[var(--desktop-subtitle-line-height)] [font-style:var(--desktop-subtitle-font-style)]">
-                    Vizima offers verified PGs with meals, Wi-Fi, secure booking, and
-                    roommate options—ensuring a safe, comfortable, and hassle-free stay.
-                </p>
-            </div>
-
-            <div className="flex items-start gap-5 w-full">
-                {featureCards.map((card, index) => (
-                    <Card key={index} className="flex-1 bg-bg rounded-[30px] border-none">
-                        <CardContent className="flex flex-col items-start gap-4 px-10 py-8">
-                            {card.icon}
-                            <h4 className="self-stretch font-desktop-h4 font-[number:var(--desktop-h4-font-weight)] text-text text-[length:var(--desktop-h4-font-size)] tracking-[var(--desktop-h4-letter-spacing)] leading-[var(--desktop-h4-line-height)] [font-style:var(--desktop-h4-font-style)]">
-                                {card.title}
-                            </h4>
-                            <p className="font-desktop-text-regular font-[number:var(--desktop-text-regular-font-weight)] text-text text-[length:var(--desktop-text-regular-font-size)] tracking-[var(--desktop-text-regular-letter-spacing)] leading-[var(--desktop-text-regular-line-height)] [font-style:var(--desktop-text-regular-font-style)]">
-                                {card.description}
-                            </p>
-                        </CardContent>
-                    </Card>
-                ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                    {featureCards.map((card, index) => (
+                        <Card 
+                            key={index} 
+                            className="h-full bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-100 overflow-hidden"
+                        >
+                            <CardContent className="h-full flex flex-col items-center text-center p-6 md:p-8">
+                                <div className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center text-[#064749] bg-[#064749]/10 rounded-full mb-6">
+                                    {React.cloneElement(card.icon, {
+                                        className: 'w-8 h-8 md:w-10 md:h-10'
+                                    })}
+                                </div>
+                                <h4 className="text-xl font-bold text-gray-900 mb-2">
+                                    {card.title}
+                                </h4>
+                                <p className="text-gray-600">
+                                    {card.description}
+                                </p>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
             </div>
         </section>
     );

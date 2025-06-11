@@ -1,4 +1,3 @@
-import React from "react";
 import { Card, CardContent } from "../../../components/ui/card";
 
 // Define the trust booster data for mapping
@@ -7,19 +6,16 @@ const trustBoosters = [
         icon: "https://c.animaapp.com/mbi5x2be8VZzX7/img/eva-award-fill.svg",
         alt: "Eva award fill",
         text: "100% Verified Properties",
-        width: "246px",
     },
     {
         icon: "https://c.animaapp.com/mbi5x2be8VZzX7/img/material-symbols-bed.svg",
         alt: "Material symbols bed",
         text: "Secure Online Payments",
-        width: "190px",
     },
     {
         icon: "https://c.animaapp.com/mbi5x2be8VZzX7/img/bi-buildings-fill.svg",
         alt: "Bi buildings fill",
         text: "24x7 Support",
-        width: "132px",
     },
     {
         id: 4,
@@ -27,49 +23,52 @@ const trustBoosters = [
         iconSrc: "https://c.animaapp.com/mbi5x2be8VZzX7/img/group-1.png",
         alt: "Group",
         text: "Hassle-free Move-in Guarantee",
-        width: "246px",
     },
 ];
 
 export const HeaderSection = (): JSX.Element => {
     return (
-        <section className="flex mt-20 flex-col w-full items-center gap-[30px] pt-2.5 pb-8 px-0 relative [background:linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.2)_100%),url(https://c.animaapp.com/mbi5x2be8VZzX7/img/adkoghe.png)_50%_50%_/_cover]">
-            <h2 className="w-[847px] mt-[-1.00px] [text-shadow:0px_4px_30.2px_#0000001a] font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-black text-[length:var(--desktop-h2-font-size)] text-center tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
-                Trust Boosters
-            </h2>
+        <section className="w-full py-12 md:py-20 bg-cover bg-center relative" 
+            style={{
+                backgroundImage: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.2) 100%), url(https://c.animaapp.com/mbi5x2be8VZzX7/img/adkoghe.png)'
+            }}>
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-12 text-black drop-shadow-md">
+                    Trust Boosters
+                </h2>
 
-            <div className="flex w-full items-start justify-center gap-[98px] px-20 py-0">
-                {trustBoosters.map((booster, index) => (
-                    <Card
-                        key={index}
-                        className="flex flex-col w-[246px] h-[142px] items-center gap-3 pt-[13px] pb-0 px-0 bg-[#ffffff99] rounded-xl shadow-[0px_4px_29.3px_#00000040] border-none"
-                    >
-                        <CardContent className="flex flex-col items-center p-0">
-                            {booster.customIcon ? (
-                                <div className="relative w-10 h-10">
-                                    <img
-                                        className="absolute w-[34px] h-[38px] top-0 left-0.5"
-                                        alt={booster.alt}
-                                        src={booster.iconSrc}
-                                    />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 px-4 sm:px-0">
+                    {trustBoosters.map((booster, index) => (
+                        <Card
+                            key={index}
+                            className="flex flex-col items-center justify-center p-4 sm:p-6 bg-white/90 hover:bg-white transition-all duration-300 rounded-xl shadow-lg hover:shadow-xl border-none"
+                        >
+                            <CardContent className="flex flex-col items-center p-0 w-full">
+                                <div className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center mb-3 md:mb-4">
+                                    {booster.customIcon ? (
+                                        <img
+                                            className="w-10 h-10 md:w-12 md:h-12"
+                                            alt={booster.alt}
+                                            src={booster.iconSrc}
+                                            loading="lazy"
+                                        />
+                                    ) : (
+                                        <img
+                                            className="w-10 h-10 md:w-12 md:h-12"
+                                            alt={booster.alt}
+                                            src={booster.icon}
+                                            loading="lazy"
+                                        />
+                                    )}
                                 </div>
-                            ) : (
-                                <img
-                                    className="w-10 h-10"
-                                    alt={booster.alt}
-                                    src={booster.icon}
-                                />
-                            )}
 
-                            <div
-                                className="[font-family:'Lato',Helvetica] font-bold text-text text-[22px] text-center tracking-[0] leading-[25px]"
-                                style={{ width: booster.width }}
-                            >
-                                {booster.text}
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))}
+                                <h3 className="text-base sm:text-lg md:text-xl font-bold text-center text-gray-800 leading-tight px-2">
+                                    {booster.text}
+                                </h3>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
             </div>
         </section>
     );

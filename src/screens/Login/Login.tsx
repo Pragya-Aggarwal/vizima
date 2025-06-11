@@ -88,55 +88,55 @@ export const Login = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <Card className="w-full max-w-md">
-                <CardContent className="p-8">
-                    <div className="text-center mb-8">
+            <Card className="w-full max-w-md mx-4">
+                <CardContent className="p-4 sm:p-8">
+                    <div className="text-center mb-6 sm:mb-8">
                         <img
-                            className="mx-auto h-12 w-auto mb-4"
+                            className="mx-auto h-8 sm:h-12 w-auto mb-2 sm:mb-4"
                             src="https://c.animaapp.com/mbi2us3vKS97yu/img/vizima--logo-01--1--1.png"
                             alt="Vizima logo"
                         />
-                        <h2 className="text-3xl font-bold text-gray-900">
+                        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
                             Login to Vizima
                         </h2>
-                        <p className="mt-2 text-gray-600">
+                        <p className="mt-2 text-sm sm:text-base text-gray-600">
                             Enter your mobile number to receive OTP
                         </p>
                     </div>
 
                     {!showOtpInput ? (
-                        <form onSubmit={handleSendOtp} className="space-y-6">
+                        <form onSubmit={handleSendOtp} className="space-y-4 sm:space-y-6">
                             <div>
                                 <Input
                                     type="tel"
                                     placeholder="Enter mobile number"
                                     value={mobileNumber}
                                     onChange={(e) => setMobileNumber(e.target.value)}
-                                    className="bg-white"
+                                    className="bg-white text-base sm:text-lg"
                                     maxLength={10}
                                     required
                                 />
                             </div>
                             {error && (
-                                <p className="text-red-500 text-sm text-center">
+                                <p className="text-red-500 text-xs sm:text-sm text-center">
                                     {error}
                                 </p>
                             )}
                             <Button
                                 type="submit"
-                                className="w-full bg-green hover:bg-green-700 text-white"
+                                className="w-full bg-green hover:bg-green-700 text-white text-sm sm:text-base py-2 sm:py-3"
                                 disabled={isLoading}
                             >
                                 {isLoading ? "Sending OTP..." : "Send OTP"}
                             </Button>
                         </form>
                     ) : (
-                        <form onSubmit={handleVerifyOtp} className="space-y-6">
+                        <form onSubmit={handleVerifyOtp} className="space-y-4 sm:space-y-6">
                             <div>
-                                <p className="text-sm text-gray-500 text-center mb-4">
+                                <p className="text-xs sm:text-sm text-gray-500 text-center mb-4">
                                     Enter the 6-digit OTP sent to {mobileNumber}
                                 </p>
-                                <div className="flex justify-center gap-2">
+                                <div className="flex justify-center gap-1 sm:gap-2">
                                     {otpValues.map((value, index) => (
                                         <Input
                                             key={index}
@@ -145,7 +145,7 @@ export const Login = () => {
                                             value={value}
                                             onChange={(e) => handleOtpChange(index, e.target.value)}
                                             onKeyDown={(e) => handleKeyDown(index, e)}
-                                            className="w-12 h-12 text-center text-xl font-semibold bg-white"
+                                            className="w-8 sm:w-12 h-8 sm:h-12 text-center text-base sm:text-xl font-semibold bg-white p-0"
                                             maxLength={1}
                                             required
                                         />
@@ -157,19 +157,19 @@ export const Login = () => {
                                         setShowOtpInput(false);
                                         setOtpValues(Array(6).fill(""));
                                     }}
-                                    className="mt-4 text-green hover:text-green-700 text-sm font-medium w-full text-center"
+                                    className="mt-4 text-green hover:text-green-700 text-xs sm:text-sm font-medium w-full text-center"
                                 >
                                     Change mobile number
                                 </button>
                             </div>
                             {error && (
-                                <p className="text-red-500 text-sm text-center">
+                                <p className="text-red-500 text-xs sm:text-sm text-center">
                                     {error}
                                 </p>
                             )}
                             <Button
                                 type="submit"
-                                className="w-full bg-green hover:bg-green-700 text-white"
+                                className="w-full bg-green hover:bg-green-700 text-white text-sm sm:text-base py-2 sm:py-3"
                                 disabled={isLoading}
                             >
                                 {isLoading ? "Verifying..." : "Verify OTP"}

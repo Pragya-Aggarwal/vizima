@@ -1,42 +1,45 @@
 import { ShieldIcon, XCircleIcon } from "lucide-react";
-import React from "react";
 
 // Define the data for the policy items to enable mapping
 const policyItems = [
     {
         title: "Cancellation Policy",
-        icon: <XCircleIcon className="w-5 h-5" />,
-        description: "Free Cancellation up to 24hrs\nbefore checkin",
+        icon: <XCircleIcon className="w-6 h-6 md:w-7 md:h-7 text-primary flex-shrink-0 mt-0.5" />,
+        description: "Free Cancellation up to 24hrs before checkin",
     },
     {
-        title: "Health & Safty",
-        icon: <ShieldIcon className="w-5 h-5" />,
-        description: "Cleaner in accordance with our\nCOVID safe cleaning policy",
+        title: "Health & Safety",
+        icon: <ShieldIcon className="w-6 h-6 md:w-7 md:h-7 text-primary flex-shrink-0 mt-0.5" />,
+        description: "Cleaner in accordance with our COVID safe cleaning policy",
     },
 ];
 
 export const BookingFormSection = (): JSX.Element => {
     return (
-        <section className="w-full flex justify-between py-6 px-20">
-            {policyItems.map((item, index) => (
-                <div key={index} className="flex flex-col w-[340px] items-start gap-5">
-                    <h4 className="font-desktop-h4 font-[number:var(--desktop-h4-font-weight)] text-black text-[length:var(--desktop-h4-font-size)] tracking-[var(--desktop-h4-letter-spacing)] leading-[var(--desktop-h4-line-height)] [font-style:var(--desktop-h4-font-style)]">
-                        {item.title}
-                    </h4>
+        <section className="w-full bg-gray-50 py-8 md:py-12">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-6xl mx-auto">
+                    {policyItems.map((item, index) => (
+                        <div 
+                            key={index} 
+                            className="bg-white rounded-xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow duration-300"
+                        >
+                            <h4 className="text-lg md:text-xl font-bold text-gray-900 mb-4 md:mb-6">
+                                {item.title}
+                            </h4>
 
-                    <div className="flex items-start gap-3 w-full">
-                        {item.icon}
-                        <p className="flex-1 font-desktop-subtitle font-[number:var(--desktop-subtitle-font-weight)] text-text text-[length:var(--desktop-subtitle-font-size)] tracking-[var(--desktop-subtitle-letter-spacing)] leading-[var(--desktop-subtitle-line-height)] [font-style:var(--desktop-subtitle-font-style)]">
-                            {item.description.split("\n").map((line, i) => (
-                                <React.Fragment key={i}>
-                                    {line}
-                                    {i < item.description.split("\n").length - 1 && <br />}
-                                </React.Fragment>
-                            ))}
-                        </p>
-                    </div>
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0">
+                                    {item.icon}
+                                </div>
+                                <p className="text-sm md:text-base text-gray-600 leading-relaxed">
+                                    {item.description}
+                                </p>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-            ))}
+            </div>
         </section>
     );
 };

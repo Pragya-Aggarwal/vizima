@@ -38,57 +38,57 @@ export const FeaturesSection = (): JSX.Element => {
     ];
 
     return (
-        <section className="w-full py-16">
-            <div className="relative w-full bg-[#e2f1e8] py-16">
+        <section className="w-full py-12 md:py-20 px-4 sm:px-6 lg:px-8 bg-[#e2f1e8]">
+            <div className="max-w-7xl mx-auto">
                 {/* Section Title */}
-                <div className="flex justify-center mb-12">
-                    <h2 className="font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-[length:var(--desktop-h2-font-size)] text-center tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
+                <div className="text-center mb-12 md:mb-20">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#064749] mb-4">
                         How it Works
                     </h2>
+                    <div className="w-20 h-1 bg-[#064749] mx-auto"></div>
                 </div>
 
                 {/* Timeline with feature cards */}
-                <div className="relative max-w-6xl mx-auto">
-                    {/* Timeline line and dots - centered properly */}
-                    <div className="absolute left-1/2 top-0 bottom-0 transform -translate-x-1/2 flex flex-col items-center justify-between z-0">
-                        {features.map((_, index) => (
-                            <div key={`dot-${index}`} className="flex flex-col items-center">
-                                <div className="w-5 h-5 bg-green rounded-full"></div>
-                                {index < features.length - 1 && (
-                                    <div className="w-px h-[420px] bg-green"></div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
+                <div className="relative">
+                    {/* Timeline line - only shown on medium screens and up */}
+                    <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-[#064749] transform -translate-x-1/2"></div>
 
                     {/* Feature cards */}
-                    <div className="relative z-10">
+                    <div className="space-y-12 md:space-y-0">
                         {features.map((feature, index) => (
-                            <div
+                            <div 
                                 key={feature.id}
-                                className={`flex ${index === 1 ? "justify-end" : "justify-start"} ${index !== 0 ? "mt-24" : ""}`}
+                                className={`relative flex flex-col md:flex-row items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
                             >
-                                <Card
-                                    className={`w-[497px] ${index === 1 ? "mr-0" : "ml-0"} bg-[#ffffff80] rounded-[30px] border-none`}
-                                >
-                                    <CardContent className="p-6">
-                                        <div
-                                            className={`flex flex-col w-full gap-3 items-${feature.position === "right" ? "end" : "start"}`}
-                                        >
-                                            {feature.icon}
-                                            <h3
-                                                className={`font-desktop-h3 font-[number:var(--desktop-h3-font-weight)] text-text text-[length:var(--desktop-h3-font-size)] tracking-[var(--desktop-h3-letter-spacing)] leading-[var(--desktop-h3-line-height)] [font-style:var(--desktop-h3-font-style)] text-${feature.position}`}
-                                            >
-                                                {feature.title}
-                                            </h3>
-                                            <p
-                                                className={`font-desktop-text-regular font-[number:var(--desktop-text-regular-font-weight)] text-text text-[length:var(--desktop-text-regular-font-size)] tracking-[var(--desktop-text-regular-letter-spacing)] leading-[var(--desktop-text-regular-line-height)] [font-style:var(--desktop-text-regular-font-style)] text-${feature.position}`}
-                                            >
-                                                {feature.description}
-                                            </p>
-                                        </div>
-                                    </CardContent>
-                                </Card>
+                                {/* Timeline dot */}
+                                <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 md:left-1/2 w-6 h-6 bg-[#064749] rounded-full z-10"></div>
+                                
+                                {/* Feature card */}
+                                <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:pr-12' : 'md:pl-12'} mb-8 md:mb-0`}>
+                                    <Card className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-none overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                                        <CardContent className="p-6">
+                                            <div className="flex flex-col items-center md:items-start text-center md:text-left">
+                                                <div className="mb-4 p-3 bg-[#064749]/10 rounded-full">
+                                                    {React.cloneElement(feature.icon, { 
+                                                        className: 'w-12 h-12 md:w-16 md:h-16 text-[#064749]' 
+                                                    })}
+                                                </div>
+                                                <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">
+                                                    {feature.title}
+                                                </h3>
+                                                <p className="text-gray-600">
+                                                    {feature.description}
+                                                </p>
+                                                {index < features.length - 1 && (
+                                                    <div className="md:hidden mt-6 w-1 h-16 bg-[#064749] mx-auto"></div>
+                                                )}
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                                
+                                {/* Spacer for alternating layout */}
+                                <div className="hidden md:block md:w-1/2"></div>
                             </div>
                         ))}
                     </div>

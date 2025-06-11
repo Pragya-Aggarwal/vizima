@@ -24,7 +24,7 @@ export const PartnershipSection = (): JSX.Element => {
     const [description, setDescription] = useState("");
 
     // Generate time slots
-    const timeSlots = [];
+    const timeSlots: string[] = [];
     for (let hour = 9; hour <= 17; hour++) {
         for (let minute = 0; minute < 60; minute += 30) {
             const period = hour >= 12 ? "PM" : "AM";
@@ -94,8 +94,8 @@ export const PartnershipSection = (): JSX.Element => {
     ];
 
     return (
-        <section className="flex w-full items-center justify-between gap-8 px-20 py-24 relative [background:linear-gradient(90deg,rgba(0,0,0,0.8)_0%,rgba(0,0,0,0)_100%),url(https://c.animaapp.com/mbhmsf5eMRDRNk/img/bespoke-partnerships.png)_50%_50%_/_cover]">
-            <div className="flex flex-col items-start justify-center gap-[60px] max-w-[522px]">
+        <section className="flex flex-col lg:flex-row w-full items-center lg:items-stretch justify-between gap-6 lg:gap-8 px-4 sm:px-8 lg:px-20 py-12 sm:py-16 lg:py-24 relative [background:linear-gradient(90deg,rgba(0,0,0,0.8)_0%,rgba(0,0,0,0)_100%),url(https://c.animaapp.com/mbhmsf5eMRDRNk/img/bespoke-partnerships.png)_50%_50%_/_cover]">
+            <div className="flex flex-col items-start justify-center gap-8 lg:gap-[60px] max-w-[522px] w-full lg:w-auto">
                 <div className="flex flex-col items-start gap-4 w-full">
                     <h2 className="font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-white text-[length:var(--desktop-h2-font-size)] tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
                         Visit Before You Book
@@ -106,21 +106,21 @@ export const PartnershipSection = (): JSX.Element => {
                     </p>
                 </div>
 
-                <Button className="px-10 py-3 rounded-[40px] bg-green hover:bg-green/90">
+                <Button className="w-full sm:w-auto px-10 py-3 rounded-[40px] bg-green hover:bg-green/90">
                     <span className="font-desktop-subtitle-bold font-[number:var(--desktop-subtitle-bold-font-weight)] text-white text-[length:var(--desktop-subtitle-bold-font-size)] tracking-[var(--desktop-subtitle-bold-letter-spacing)] leading-[var(--desktop-subtitle-bold-line-height)] [font-style:var(--desktop-subtitle-bold-font-style)]">
                         Start booking
                     </span>
                 </Button>
             </div>
 
-            <Card className="w-[443px] bg-[#ffffffcc] rounded-[30px] shadow-cards">
-                <CardContent className="p-5">
-                    <div className="flex flex-col items-center gap-8 w-full">
-                        <div className="flex flex-col items-start gap-6 w-full">
+            <Card className="w-full lg:w-[443px] bg-[#ffffffcc] rounded-[30px] shadow-cards">
+                <CardContent className="p-4 sm:p-5">
+                    <div className="flex flex-col items-center gap-6 sm:gap-8 w-full">
+                        <div className="flex flex-col items-start gap-4 sm:gap-6 w-full">
                             {formFields.map((field) => (
                                 <div
                                     key={field.id}
-                                    className="flex flex-col w-full items-start gap-4 relative"
+                                    className="flex flex-col w-full items-start gap-3 sm:gap-4 relative"
                                 >
                                     <div className="flex items-center gap-2">
                                         {field.icon}
@@ -135,9 +135,9 @@ export const PartnershipSection = (): JSX.Element => {
                                     {field.id === "meetingType" ? (
                                         <Select
                                             value={field.value}
-                                            onValueChange={field.onChange}
+                                            onValueChange={field.onChange as (value: string) => void}
                                         >
-                                            <SelectTrigger className="w-full px-5 py-4 bg-white rounded-xl">
+                                            <SelectTrigger className="w-full px-4 sm:px-5 py-3 sm:py-4 bg-white rounded-xl">
                                                 <SelectValue
                                                     placeholder={field.placeholder}
                                                     className="font-main-text-p1-500 font-[number:var(--main-text-p1-500-font-weight)] text-[#8b8b8b] text-[length:var(--main-text-p1-500-font-size)] tracking-[var(--main-text-p1-500-letter-spacing)] leading-[var(--main-text-p1-500-line-height)] [font-style:var(--main-text-p1-500-font-style)]"
@@ -154,7 +154,7 @@ export const PartnershipSection = (): JSX.Element => {
                                     ) : field.picker ? (
                                         <div className="relative w-full">
                                             <div
-                                                className="w-full px-5 py-4 bg-white rounded-xl font-main-text-p1-500 font-[number:var(--main-text-p1-500-font-weight)] text-[#8b8b8b] text-[length:var(--main-text-p1-500-font-size)] tracking-[var(--main-text-p1-500-letter-spacing)] leading-[var(--main-text-p1-500-line-height)] [font-style:var(--main-text-p1-500-font-style)] cursor-pointer flex items-center justify-between"
+                                                className="w-full px-4 sm:px-5 py-3 sm:py-4 bg-white rounded-xl font-main-text-p1-500 font-[number:var(--main-text-p1-500-font-weight)] text-[#8b8b8b] text-[length:var(--main-text-p1-500-font-size)] tracking-[var(--main-text-p1-500-letter-spacing)] leading-[var(--main-text-p1-500-line-height)] [font-style:var(--main-text-p1-500-font-style)] cursor-pointer flex items-center justify-between"
                                                 onClick={() => {
                                                     if (field.id === "date") {
                                                         setShowDatePicker(!showDatePicker);
@@ -187,7 +187,7 @@ export const PartnershipSection = (): JSX.Element => {
                                                         mode="single"
                                                         selected={selectedDate}
                                                         onSelect={(date) => {
-                                                            field.onChange(date);
+                                                            field.onChange(date as Date & string);
                                                             setShowDatePicker(false);
                                                         }}
                                                         disabled={{ before: new Date() }}
@@ -204,7 +204,7 @@ export const PartnershipSection = (): JSX.Element => {
                                                             key={slot}
                                                             className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
                                                             onClick={() => {
-                                                                field.onChange(slot);
+                                                                field.onChange(slot as Date & string);
                                                                 setShowTimePicker(false);
                                                             }}
                                                         >
@@ -218,16 +218,16 @@ export const PartnershipSection = (): JSX.Element => {
                                         <Input
                                             id={field.id}
                                             value={field.value}
-                                            onChange={(e) => field.onChange(e.target.value)}
+                                            onChange={(e) => field.onChange(e.target.value as Date & string)}
                                             placeholder={field.placeholder}
-                                            className="w-full px-5 py-4 bg-white rounded-xl font-main-text-p1-500 font-[number:var(--main-text-p1-500-font-weight)] text-[#8b8b8b] text-[length:var(--main-text-p1-500-font-size)] tracking-[var(--main-text-p1-500-letter-spacing)] leading-[var(--main-text-p1-500-line-height)] [font-style:var(--main-text-p1-500-font-style)]"
+                                            className="w-full px-4 sm:px-5 py-3 sm:py-4 bg-white rounded-xl font-main-text-p1-500 font-[number:var(--main-text-p1-500-font-weight)] text-[#8b8b8b] text-[length:var(--main-text-p1-500-font-size)] tracking-[var(--main-text-p1-500-letter-spacing)] leading-[var(--main-text-p1-500-line-height)] [font-style:var(--main-text-p1-500-font-style)]"
                                         />
                                     )}
                                 </div>
                             ))}
                         </div>
 
-                        <Button className="px-10 py-3 rounded-[40px] bg-green hover:bg-green/90">
+                        <Button className="w-full sm:w-auto px-10 py-3 rounded-[40px] bg-green hover:bg-green/90">
                             <span className="font-desktop-subtitle-bold font-[number:var(--desktop-subtitle-bold-font-weight)] text-white text-[length:var(--desktop-subtitle-bold-font-size)] tracking-[var(--desktop-subtitle-bold-letter-spacing)] leading-[var(--desktop-subtitle-bold-line-height)] [font-style:var(--desktop-subtitle-bold-font-style)]">
                                 Start booking
                             </span>

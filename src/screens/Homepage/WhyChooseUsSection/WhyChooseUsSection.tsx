@@ -41,8 +41,8 @@ export const WhyChooseUsSection = (): JSX.Element => {
     ];
 
     return (
-        <section className="flex flex-col items-center gap-[60px] px-1 py-0 w-full mt-40">
-            <div className="max-w-[870px] flex flex-col gap-4 text-center">
+        <section className="flex flex-col items-center gap-[60px] px-3 sm:px-4 md:px-5 py-8 sm:py-12 md:py-16 w-full">
+            <div className="max-w-[870px] flex flex-col gap-4 text-center px-4">
                 <h2 className="font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-[length:var(--desktop-h2-font-size)] tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
                     Why Choose Vizima?
                 </h2>
@@ -53,21 +53,21 @@ export const WhyChooseUsSection = (): JSX.Element => {
                 </p>
             </div>
 
-            <div className="flex flex-wrap justify-center gap-[16.5px]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
                 {featureCards.map((card) => (
                     <Card
                         key={card.id}
-                        className="flex flex-col w-[345px] h-[278px] bg-[#e2f1e8] rounded-[30px] border-none shadow-none"
+                        className="flex flex-col w-full sm:w-[345px] h-[278px] bg-[#e2f1e8] rounded-[30px] border-none shadow-none"
                     >
-                        <CardContent className="flex flex-col items-start gap-4 px-10 py-8 h-full">
+                        <CardContent className="flex flex-col items-start gap-4 px-6 sm:px-8 md:px-10 py-6 sm:py-8 h-full">
                             {card.iconType === "img" ? (
                                 <img
-                                    className="w-[60px] h-[60px]"
+                                    className="w-[50px] sm:w-[60px] h-[50px] sm:h-[60px]"
                                     alt={card.iconAlt}
                                     src={card.icon}
                                 />
                             ) : (
-                                <div className="relative w-[60px] h-[60px]">
+                                <div className="relative w-[50px] sm:w-[60px] h-[50px] sm:h-[60px]">
                                     <img
                                         className="absolute"
                                         style={card.iconStyle}

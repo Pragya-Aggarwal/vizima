@@ -53,13 +53,13 @@ export const WhyChooseUsSection = (): JSX.Element => {
                 </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 md:gap-6">
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6 w-full px-4 sm:px-0">
                 {featureCards.map((card) => (
                     <Card
                         key={card.id}
-                        className="flex flex-col w-full h-[240px] sm:h-[278px] bg-[#e2f1e8] rounded-[30px] border-none shadow-none"
+                        className="flex flex-col w-full h-auto min-h-[200px] sm:min-h-[240px] bg-[#e2f1e8] rounded-[30px] border-none shadow-none hover:shadow-md transition-shadow duration-200"
                     >
-                        <CardContent className="flex flex-col items-start gap-4 px-6 sm:px-8 md:px-10 py-6 sm:py-8 h-full">
+                        <CardContent className="flex flex-col items-start gap-3 sm:gap-4 px-4 sm:px-6 md:px-8 py-5 sm:py-6 h-full">
                             {card.iconType === "img" ? (
                                 <img
                                     className="w-[50px] sm:w-[60px] h-[50px] sm:h-[60px]"

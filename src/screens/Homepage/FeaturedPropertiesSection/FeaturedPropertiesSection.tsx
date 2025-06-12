@@ -102,63 +102,65 @@ export const FeaturedPropertiesSection = (): JSX.Element => {
     ];
 
     return (
-        <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-5 w-full">
+        <section className="py-4 sm:py-8 md:py-12 px-2 sm:px-4 w-full">
             <div className="container mx-auto">
-                <h2 className="text-center mb-6 sm:mb-8 md:mb-10 font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-[length:var(--desktop-h2-font-size)] tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
+                <h2 className="text-center mb-4 sm:mb-6 text-2xl sm:text-3xl font-bold text-gray-900">
                     Featured PG/Hostels
                 </h2>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
                     {properties.map((property) => (
                         <Card
                             key={property.id}
-                            className="rounded-[30px] bg-bg overflow-hidden"
+                            className="rounded-xl sm:rounded-2xl bg-white shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden h-full flex flex-col border border-gray-100"
                         >
                             <div className="relative">
-                                <img
-                                    className="w-full h-[200px] sm:h-[250px] md:h-[300px] object-cover"
-                                    alt="Property"
-                                    src={property.image}
-                                />
+                                <div className="relative w-full pt-[70%] sm:pt-[75%] overflow-hidden">
+                                    <img
+                                        className="absolute top-0 left-0 w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                        alt="Property"
+                                        src={property.image}
+                                    />
+                                </div>
                             </div>
 
-                            <CardContent className="p-4 sm:p-5">
-                                <div className="mb-3 sm:mb-4">
-                                    <h3 className="font-desktop-subtitle-bold font-[number:var(--desktop-subtitle-bold-font-weight)] text-text text-[length:var(--desktop-subtitle-bold-font-size)] tracking-[var(--desktop-subtitle-bold-letter-spacing)] leading-[var(--desktop-subtitle-bold-line-height)] [font-style:var(--desktop-subtitle-bold-font-style)]">
+                            <CardContent className="p-3 sm:p-4 flex-grow flex flex-col">
+                                <div className="mb-2 sm:mb-3">
+                                    <h3 className="text-base font-medium text-gray-900 mb-1">
                                         {property.name}
-                                        <br />
-                                        {property.location}
                                     </h3>
-                                </div>
-
-                                <div className="mb-3 sm:mb-4">
-                                    <p className="font-desktop-description font-[number:var(--desktop-description-font-weight)] text-[length:var(--desktop-description-font-size)] tracking-[var(--desktop-description-letter-spacing)] leading-[var(--desktop-description-line-height)] [font-style:var(--desktop-description-font-style)]">
-                                        <span className="text-[#171917]">Starting Price </span>
-                                        <span className="text-[#49735a]">{property.price}</span>
+                                    <p className="text-sm text-gray-600">
+                                        {property.location}
                                     </p>
                                 </div>
 
-                                <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-5 mb-4 sm:mb-6">
-                                    {property.amenities.map((amenity, index) => (
-                                        <div key={index} className="flex items-start gap-2">
-                                            <div className="relative w-5 h-5">
+                                <div className="mt-auto">
+                                    <div className="mb-2 sm:mb-3">
+                                        <p className="text-sm">
+                                            <span className="text-gray-500">Starting at </span>
+                                            <span className="text-green-600 font-semibold">{property.price}</span>
+                                        </p>
+                                    </div>
+
+                                    <div className="flex flex-wrap items-center gap-1.5 mb-3">
+                                        {property.amenities.map((amenity, index) => (
+                                            <div key={index} className="flex items-center gap-1 bg-gray-50 rounded-full px-2 py-1">
                                                 <img
-                                                    className="w-5 h-5"
+                                                    className="w-3 h-3"
                                                     alt={amenity.text}
                                                     src={amenity.icon}
                                                 />
+                                                <span className="text-xs text-gray-600">
+                                                    {amenity.text}
+                                                </span>
                                             </div>
-                                            <span className="font-desktop-description font-[number:var(--desktop-description-font-weight)] text-text text-[length:var(--desktop-description-font-size)] tracking-[var(--desktop-description-letter-spacing)] leading-[var(--desktop-description-line-height)] [font-style:var(--desktop-description-font-style)]">
-                                                {amenity.text}
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
+                                        ))}
+                                    </div>
 
-                                <div className="flex justify-center">
                                     <Button
                                         onClick={handleViewDetails}
-                                        className="bg-[#064749] text-white rounded-[30px] px-4 sm:px-5 py-1 h-7 font-desktop-text-regular font-[number:var(--desktop-text-regular-font-weight)] text-[length:var(--desktop-text-regular-font-size)] tracking-[var(--desktop-text-regular-letter-spacing)] leading-[var(--desktop-text-regular-line-height)] [font-style:var(--desktop-text-regular-font-style)]">
+                                        className="w-full bg-[#064749] hover:bg-[#053435] text-white rounded-lg py-2 text-sm font-medium transition-colors duration-200"
+                                    >
                                         View Details
                                     </Button>
                                 </div>

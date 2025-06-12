@@ -24,7 +24,10 @@ interface ApartmentListing {
 export const ApartmentListingsSection = (): JSX.Element => {
     const navigate = useNavigate();
 
-    const handleViewDetails = () => {
+    const handleViewDetails = (e: React.MouseEvent) => {
+        // Prevent multiple navigations if clicking on nested elements
+        e.preventDefault();
+        e.stopPropagation();
         navigate("/property-details");
     };
 
@@ -114,8 +117,15 @@ export const ApartmentListingsSection = (): JSX.Element => {
                     {apartmentListings.map((apartment) => (
                         <Card
                             key={apartment.id}
-                            className="bg-white overflow-hidden rounded-2xl border-none shadow-sm hover:shadow-md transition-all duration-300"
+                            className="bg-white overflow-hidden rounded-2xl border-none shadow-sm hover:shadow-md transition-all duration-300 group relative"
                         >
+                            {/* Clickable overlay for the entire card */}
+                            <div 
+                                className="absolute inset-0 z-10 cursor-pointer"
+                                onClick={handleViewDetails}
+                                aria-label={`View details for ${apartment.name}`}
+                            />
+                            
                             <div className="flex flex-col lg:flex-row">
                                 {/* Image Section */}
                                 <div className="relative lg:w-[300px] h-[140px] lg:h-[180px] overflow-hidden group">
@@ -127,7 +137,7 @@ export const ApartmentListingsSection = (): JSX.Element => {
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
                                     {/* Tags Overlay */}
-                                    <div className="absolute top-2 left-2 flex items-center gap-2">
+                                    <div className="absolute top-2 left-2 flex items-center gap-2 z-20">
                                         {apartment.isNew && (
                                             <span className="px-2 py-0.5 bg-green-500 text-white text-xs font-semibold rounded-full">
                                                 New
@@ -138,8 +148,15 @@ export const ApartmentListingsSection = (): JSX.Element => {
                                         </span>
                                     </div>
 
-                                    {/* Wishlist Button */}
-                                    <button className="absolute top-2 right-2 p-1.5 bg-green rounded-full hover:bg-white transition-colors">
+                                    {/* Wishlist Button - Positioned above the clickable overlay */}
+                                    <button 
+                                        className="absolute top-2 right-2 p-1.5 bg-green rounded-full hover:bg-white transition-colors z-20"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            // Add wishlist functionality here
+                                        }}
+                                        aria-label="Add to wishlist"
+                                    >
                                         <Heart className="w-4 h-4 text-white" />
                                     </button>
                                 </div>

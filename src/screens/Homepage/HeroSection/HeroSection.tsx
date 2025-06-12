@@ -58,20 +58,20 @@ export const HeroSection = (): JSX.Element => {
                 Choose Your City
             </h2>
 
-            <div className="flex flex-wrap items-end justify-center gap-[65px] w-full">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 w-full max-w-7xl mx-auto px-4 sm:px-6">
                 {displayedCities.map((city, index) => (
-                    <div key={index} className="flex flex-col items-center gap-5">
-                        <h3 className="font-desktop-h4 font-[number:var(--desktop-h4-font-weight)] text-text text-[length:var(--desktop-h4-font-size)] text-center tracking-[var(--desktop-h4-letter-spacing)] leading-[var(--desktop-h4-line-height)] [font-style:var(--desktop-h4-font-style)]">
-                            {city.name}
-                        </h3>
-                        <Card className=" rounded-[40px] ">
+                    <div key={index} className="flex flex-col items-center gap-3 sm:gap-4 w-full">
+                        <Card className="rounded-3xl sm:rounded-[40px] w-full overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
                             <CardContent className="p-0">
                                 <div
-                                    className="w-[216px] h-[216px]  bg-cover bg-center"
+                                    className="w-full aspect-square bg-cover bg-center hover:scale-105 transition-transform duration-300"
                                     style={{ backgroundImage: `url(${city.image})` }}
                                 />
                             </CardContent>
                         </Card>
+                        <h3 className="font-desktop-h4 font-medium text-text text-lg sm:text-xl text-center w-full truncate px-2">
+                            {city.name}
+                        </h3>
                     </div>
                 ))}
             </div>

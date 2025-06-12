@@ -33,19 +33,25 @@ export const BookARoom = (): JSX.Element => {
                         <CardContent className="p-0">
                             <div className="flex flex-col md:flex-row">
                                 {/* Image Gallery Section */}
-                                <div className="flex flex-col w-full md:w-[595px] relative">
-                                    <div className="relative h-[400px] md:h-[600px]">
+                                <div className="w-full md:w-1/2 lg:w-[595px] relative">
+                                    <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
                                         <img
-                                            className="w-full h-full object-cover"
+                                            className="w-full h-full object-cover object-center"
                                             alt="Property main view"
                                             src={propertyData.images[0]}
+                                            loading="lazy"
+                                            onError={(e) => {
+                                                const target = e.target as HTMLImageElement;
+                                                target.onerror = null;
+                                                target.src = '/placeholder-property.jpg';
+                                            }}
                                         />
-                                        <div className="absolute bottom-4 left-4 flex gap-2">
+                                        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 bg-black/30 backdrop-blur-sm px-3 py-1.5 rounded-full">
                                             {propertyData.images.map((_, index) => (
-                                                <div
+                                                <button
                                                     key={index}
-                                                    className={`w-2 h-2 rounded-full ${index === 0 ? "bg-white" : "bg-white/50"
-                                                        }`}
+                                                    className={`w-2.5 h-2.5 rounded-full transition-all ${index === 0 ? "bg-white w-6" : "bg-white/60"}`}
+                                                    aria-label={`View image ${index + 1}`}
                                                 />
                                             ))}
                                         </div>

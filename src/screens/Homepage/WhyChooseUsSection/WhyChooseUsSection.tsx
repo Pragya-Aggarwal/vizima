@@ -53,11 +53,11 @@ export const WhyChooseUsSection = (): JSX.Element => {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 md:gap-6">
                 {featureCards.map((card) => (
                     <Card
                         key={card.id}
-                        className="flex flex-col w-full sm:w-[345px] h-[278px] bg-[#e2f1e8] rounded-[30px] border-none shadow-none"
+                        className="flex flex-col w-full h-[240px] sm:h-[278px] bg-[#e2f1e8] rounded-[30px] border-none shadow-none"
                     >
                         <CardContent className="flex flex-col items-start gap-4 px-6 sm:px-8 md:px-10 py-6 sm:py-8 h-full">
                             {card.iconType === "img" ? (

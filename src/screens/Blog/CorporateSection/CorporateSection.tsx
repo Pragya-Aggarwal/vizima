@@ -41,22 +41,22 @@ export const CorporateSection = (): JSX.Element => {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
                     {featureCards.map((card, index) => (
                         <Card 
                             key={index} 
-                            className="h-full bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-100 overflow-hidden"
+                            className="h-full bg-white rounded-xl sm:rounded-2xl shadow-sm sm:shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden"
                         >
                             <CardContent className="h-full flex flex-col items-center text-center p-6 md:p-8">
-                                <div className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center text-[#064749] bg-[#064749]/10 rounded-full mb-6">
+                                <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 flex items-center justify-center text-[#064749] bg-[#064749]/10 rounded-full mb-4 sm:mb-6">
                                     {React.cloneElement(card.icon, {
                                         className: 'w-8 h-8 md:w-10 md:h-10'
                                     })}
                                 </div>
-                                <h4 className="text-xl font-bold text-gray-900 mb-2">
+                                <h4 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-1 sm:mb-2">
                                     {card.title}
                                 </h4>
-                                <p className="text-gray-600">
+                                <p className="text-sm sm:text-base text-gray-600">
                                     {card.description}
                                 </p>
                             </CardContent>

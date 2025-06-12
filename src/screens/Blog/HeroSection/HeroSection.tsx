@@ -34,17 +34,19 @@ export const HeroSection = (): JSX.Element => {
                     Stats / Social Proof
                 </h2>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                     {statsData.map((stat, index) => (
                         <Card
                             key={index}
-                            className="flex flex-col items-center bg-white/10 hover:bg-white transition-all duration-300 rounded-xl shadow-lg hover:shadow-xl border-none overflow-hidden"
+                            className="flex flex-col items-center bg-white/80 hover:bg-white transition-all duration-300 rounded-lg sm:rounded-xl shadow-md hover:shadow-lg border border-gray-100 overflow-hidden h-full"
                         >
-                            <CardContent className="flex flex-col items-center gap-3 p-6 w-full">
-                                <div className="p-2 bg-[#064749] bg-opacity-50 rounded-full">
-                                    {React.cloneElement(stat.icon, { className: 'w-8 h-8 md:w-10 md:h-10 text-[#064749]' })}
+                            <CardContent className="flex flex-col items-center gap-2 sm:gap-3 p-4 sm:p-6 w-full h-full">
+                                <div className="p-1.5 sm:p-2 bg-[#064749]/10 rounded-full">
+                                    {React.cloneElement(stat.icon, { 
+                                        className: 'w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-[#064749]' 
+                                    })}
                                 </div>
-                                <p className="text-sm sm:text-base md:text-lg font-semibold text-gray-800 text-center leading-tight">
+                                <p className="text-xs sm:text-sm md:text-base font-semibold text-gray-800 text-center leading-tight">
                                     {stat.text}
                                 </p>
                             </CardContent>

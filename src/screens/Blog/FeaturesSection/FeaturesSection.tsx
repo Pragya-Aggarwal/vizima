@@ -54,40 +54,40 @@ export const FeaturesSection = (): JSX.Element => {
                     <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-[#064749] transform -translate-x-1/2"></div>
 
                     {/* Feature cards */}
-                    <div className="space-y-12 md:space-y-0">
+                    <div className="space-y-8 sm:space-y-12 md:space-y-0">
                         {features.map((feature, index) => (
                             <div 
                                 key={feature.id}
-                                className={`relative flex flex-col md:flex-row items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
+                                className={`relative flex flex-col items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
                             >
                                 {/* Timeline dot */}
-                                <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 md:left-1/2 w-6 h-6 bg-[#064749] rounded-full z-10"></div>
+                                <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-5 h-5 bg-[#064749] rounded-full z-10"></div>
                                 
                                 {/* Feature card */}
-                                <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:pr-12' : 'md:pl-12'} mb-8 md:mb-0`}>
-                                    <Card className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-none overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                                        <CardContent className="p-6">
-                                            <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                                                <div className="mb-4 p-3 bg-[#064749]/10 rounded-full">
+                                <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:pr-10' : 'md:pl-10'} mb-4 sm:mb-8 md:mb-16`}>
+                                    <Card className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 overflow-hidden h-full">
+                                        <CardContent className="p-5 sm:p-6">
+                                            <div className="flex flex-col items-center text-center">
+                                                <div className="mb-4 p-2.5 bg-[#064749]/10 rounded-full">
                                                     {React.cloneElement(feature.icon, { 
-                                                        className: 'w-12 h-12 md:w-16 md:h-16 text-[#064749]' 
+                                                        className: 'w-10 h-10 sm:w-14 sm:h-14 text-[#064749]' 
                                                     })}
                                                 </div>
-                                                <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">
+                                                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 mb-2">
                                                     {feature.title}
                                                 </h3>
-                                                <p className="text-gray-600">
+                                                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                                                     {feature.description}
                                                 </p>
                                                 {index < features.length - 1 && (
-                                                    <div className="md:hidden mt-6 w-1 h-16 bg-[#064749] mx-auto"></div>
+                                                    <div className="md:hidden mt-6 w-0.5 h-12 bg-[#064749]/50 mx-auto"></div>
                                                 )}
                                             </div>
                                         </CardContent>
                                     </Card>
                                 </div>
                                 
-                                {/* Spacer for alternating layout */}
+                                {/* Spacer for desktop alternating layout */}
                                 <div className="hidden md:block md:w-1/2"></div>
                             </div>
                         ))}

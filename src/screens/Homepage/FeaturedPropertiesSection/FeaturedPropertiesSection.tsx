@@ -104,7 +104,7 @@ export const FeaturedPropertiesSection = (): JSX.Element => {
     return (
         <section className="py-4 sm:py-8 md:py-12 px-2 sm:px-4 w-full">
             <div className="container mx-auto">
-                <h2 className="text-center mb-4 sm:mb-6 text-2xl sm:text-3xl font-bold text-gray-900">
+            <h2 className="text-2xl sm:text-[length:var(--desktop-h2-font-size)] font-desktop-h2 text-center font-[number:var(--desktop-h2-font-weight)] text-text tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
                     Featured PG/Hostels
                 </h2>
 

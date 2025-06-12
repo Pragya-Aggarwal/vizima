@@ -54,7 +54,7 @@ export const HeroSection = (): JSX.Element => {
 
     return (
         <section className="flex flex-col items-center gap-8 sm:gap-12 md:gap-16 px-4 sm:px-6 md:px-8 lg:px-20 py-10 sm:py-12 md:py-16 w-full">
-            <h2 className="font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-[length:var(--desktop-h2-font-size)] tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
+            <h2 className="text-2xl sm:text-[length:var(--desktop-h2-font-size)] font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
                 Choose Your City
             </h2>
 

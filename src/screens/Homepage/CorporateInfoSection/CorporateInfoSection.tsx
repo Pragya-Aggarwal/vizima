@@ -30,7 +30,7 @@ export const CorporateInfoSection = (): JSX.Element => {
     return (
         <section className="flex flex-col w-full items-start gap-8 sm:gap-10 lg:gap-[60px] py-12 sm:py-20 lg:py-[140px] px-4 sm:px-8 lg:px-20">
             <div className="flex flex-col items-center justify-center w-full gap-4">
-                <h2 className="w-full font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-[length:var(--desktop-h2-font-size)] text-center tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
+                <h2 className="w-full text-xl sm:text-[length:var(--desktop-h2-font-size)] font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-center tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
                     Bulk Accommodation Solutions
                 </h2>
 

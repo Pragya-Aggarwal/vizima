@@ -43,7 +43,7 @@ export const WhyChooseUsSection = (): JSX.Element => {
     return (
         <section className="flex flex-col items-center gap-[60px] px-3 sm:px-4 md:px-5 py-8 sm:py-12 md:py-16 w-full">
             <div className="max-w-[870px] flex flex-col gap-4 text-center px-4">
-                <h2 className="font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-[length:var(--desktop-h2-font-size)] tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
+            <h2 className="text-2xl sm:text-[length:var(--desktop-h2-font-size)] font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
                     Why Choose Vizima?
                 </h2>
 

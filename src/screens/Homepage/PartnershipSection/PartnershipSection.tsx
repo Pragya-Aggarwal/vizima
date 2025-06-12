@@ -97,7 +97,7 @@ export const PartnershipSection = (): JSX.Element => {
         <section className="flex flex-col lg:flex-row w-full items-center lg:items-stretch justify-between gap-6 lg:gap-8 px-4 sm:px-8 lg:px-20 py-12 sm:py-16 lg:py-24 relative [background:linear-gradient(90deg,rgba(0,0,0,0.8)_0%,rgba(0,0,0,0)_100%),url(https://c.animaapp.com/mbhmsf5eMRDRNk/img/bespoke-partnerships.png)_50%_50%_/_cover]">
             <div className="flex flex-col items-start justify-center gap-8 lg:gap-[60px] max-w-[522px] w-full lg:w-auto">
                 <div className="flex flex-col items-start gap-4 w-full">
-                    <h2 className="font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-white text-[length:var(--desktop-h2-font-size)] tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
+                <h2 className="text-2xl sm:text-[length:var(--desktop-h2-font-size)] font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-white tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
                         Visit Before You Book
                     </h2>
 

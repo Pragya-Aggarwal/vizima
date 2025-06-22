@@ -61,14 +61,30 @@ export const HeroSection = (): JSX.Element => {
             <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6 w-full max-w-7xl mx-auto">
                 {displayedCities.map((city, index) => (
                     <div key={index} className="flex flex-col items-center gap-3 sm:gap-4 w-full">
-                        <Card className="rounded-4xl w-full overflow-hidden shadow-sm sm:shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                            <CardContent className="p-0">
-                                <div
-                                    className="w-full aspect-square bg-cover bg-center hover:scale-105 transition-transform duration-300"
-                                    style={{ backgroundImage: `url(${city.image})` }}
-                                />
-                            </CardContent>
-                        </Card>
+                        <div className="w-full group" style={{ aspectRatio: '1/1' }}>
+                        <div
+    className="relative w-full h-full group"
+    style={{
+        aspectRatio: '1/1',
+        borderRadius: '1.5rem',
+        overflow: 'hidden',
+        backgroundColor: 'transparent', // Ensures background doesn't show
+        boxShadow: 'none' // Remove all shadows causing the white glow
+    }}
+>
+    <img
+        src={city.image}
+        alt={city.name}
+        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+        style={{
+            display: 'block',
+            borderRadius: '0', // Don't round the image, let the container clip it
+        }}
+    />
+</div>
+
+
+                        </div>
                         <h3 className="font-desktop-h4 font-medium text-text text-base sm:text-lg md:text-xl text-center w-full truncate px-1 sm:px-2">
                             {city.name}
                         </h3>

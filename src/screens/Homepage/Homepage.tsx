@@ -41,7 +41,7 @@ export const Homepage = (): JSX.Element => {
                 </div>
 
                 {/* Main Content */}
-                <div className="mt-20 sm:mt-32 md:mt-40 lg:mt-44">
+                <div className="mt-10 sm:mt-20 md:mt-28 lg:mt-24">
                     <WhyChooseUsSection />
                     <HeroSection />
                     <FeaturedPropertiesSection />

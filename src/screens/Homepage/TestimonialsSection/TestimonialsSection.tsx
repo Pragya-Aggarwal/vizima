@@ -6,6 +6,7 @@ import {
     AvatarImage,
 } from "../../../components/ui/avatar";
 import { Card, CardContent } from "../../../components/ui/card";
+import { Star } from "lucide-react";
 import {
     Carousel,
     CarouselContent,
@@ -51,7 +52,7 @@ export const TestimonialsSection = (): JSX.Element => {
     ];
 
     return (
-        <section className="w-full py-16 max-w-[1400px] mx-auto px-4">
+        <section className="w-full max-w-[1400px] mx-auto px-4">
             <div className="container mx-auto">
                 <div className="flex flex-col items-center gap-4 mb-12">
                 <h2 className="text-2xl sm:text-[length:var(--desktop-h2-font-size)] font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-center tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
@@ -94,11 +95,9 @@ export const TestimonialsSection = (): JSX.Element => {
                                             </div>
                                             <div className="flex ml-auto">
                                                 {[...Array(testimonial.stars)].map((_, i) => (
-                                                    <img
+                                                    <Star
                                                         key={i}
-                                                        className="w-5 h-5"
-                                                        alt="Star"
-                                                        src="https://c.animaapp.com/mbhqlborYGJdod/img/star-1.svg"
+                                                        className="w-5 h-5 fill-yellow-400 text-yellow-400"
                                                     />
                                                 ))}
                                             </div>

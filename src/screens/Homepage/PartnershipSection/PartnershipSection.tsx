@@ -175,11 +175,7 @@ export const PartnershipSection = (): JSX.Element => {
                     </p>
                 </div>
 
-                <Button className="w-full sm:w-auto px-10 py-3 rounded-[40px] bg-green hover:bg-green/90">
-                    <span className="font-desktop-subtitle-bold font-[number:var(--desktop-subtitle-bold-font-weight)] text-white text-[length:var(--desktop-subtitle-bold-font-size)] tracking-[var(--desktop-subtitle-bold-letter-spacing)] leading-[var(--desktop-subtitle-bold-line-height)] [font-style:var(--desktop-subtitle-bold-font-style)]">
-                        Start booking
-                    </span>
-                </Button>
+               
             </div>
 
             <Card className="w-full lg:w-[443px] bg-[#ffffffcc] rounded-[30px] shadow-cards">

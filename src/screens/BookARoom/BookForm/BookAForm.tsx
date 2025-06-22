@@ -1,10 +1,7 @@
-import {
-    ChevronDownIcon,
-    ChevronLeftIcon,
-    ChevronRightIcon,
-} from "lucide-react";
-import React, { useState } from "react";
+import { ChevronDownIcon } from "lucide-react";
+import { useState, FormEvent } from "react";
 import { Button } from "../../../components/ui/button";
+import { bookingService } from "../../../api/services/bookingService";
 import { Card, CardContent } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import {
@@ -14,18 +11,28 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../../../components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@radix-ui/react-radio-group";
+
+interface ContactInfo {
+    phone: string;
+    email: string;
+}
 
 interface FormData {
-    fullName: string;
-    mobileNumber: string;
-    email: string;
-    gender: string;
+    property: string;
+    checkIn: string;
+    checkOut: string;
+    guests: number;
+    specialRequests: string;
+    paymentMethod: string;
     doubleSharing: string;
     preferredProperty: string;
     selectedDateTime: string;
     couponCode: string;
-    paymentMethod: string;
+    contactInfo: ContactInfo;
+    fullName: string;
+    mobileNumber: string;
+    email: string;
+    gender: string;
 }
 
 interface FormErrors {
@@ -50,20 +57,48 @@ interface FormField {
 export const BookAForm = (): JSX.Element => {
     // Form state
     const [formData, setFormData] = useState<FormData>({
+        property: "64f8b2c1d4e5f6a7b8c9d0e2",
+        checkIn: new Date().toISOString().split('T')[0], // Today's date as default
+        checkOut: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Tomorrow's date as default
+        guests: 1,
+        specialRequests: "",
+        paymentMethod: "credit_card",
+        doubleSharing: "",
+        preferredProperty: "",
+        selectedDateTime: "",
+        couponCode: "",
+        contactInfo: {
+            phone: "",
+            email: "",
+        },
         fullName: "",
         mobileNumber: "",
         email: "",
-        gender: "male",
-        doubleSharing: "Comfort Stay PG",
-        preferredProperty: "Comfort Stay PG",
-        selectedDateTime: "",
-        couponCode: "",
-        paymentMethod: "upi"
+        gender: ""
     });
 
     // Error state
     const [errors, setErrors] = useState<FormErrors>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Update FormData interface to include all fields
+    interface FormData {
+        property: string;
+        checkIn: string;
+        checkOut: string;
+        guests: number;
+        specialRequests: string;
+        paymentMethod: string;
+        doubleSharing: string;
+        preferredProperty: string;
+        selectedDateTime: string;
+        couponCode: string;
+        contactInfo: ContactInfo;
+        fullName: string;
+        mobileNumber: string;
+        email: string;
+        gender: string;
+    }
 
     // Form field data
     const formFields: FormField[] = [
@@ -76,8 +111,8 @@ export const BookAForm = (): JSX.Element => {
         {
             id: "mobileNumber",
             label: "Mobile Number",
-            placeholder: "+91- XXXXX XXXXX",
-            validation: (value: string) => !/^\+91-\s?\d{5}\s?\d{5}$/.test(value) ? "Please enter a valid Indian mobile number" : undefined
+            placeholder: "XXXXXXXXXX",
+            validation: (value: string) => !/^\d{10}$/.test(value) ? "Please enter a valid mobile number" : undefined
         },
         {
             id: "email",
@@ -118,64 +153,106 @@ export const BookAForm = (): JSX.Element => {
         },
     ];
 
-    // Handle input changes
-    const handleInputChange = (field: keyof FormData, value: string) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
-        if (errors[field]) {
-            setErrors(prev => {
-                const newErrors = { ...prev };
-                delete newErrors[field];
-                return newErrors;
-            });
-        }
-    };
-
-    // Form submission
-    const handleSubmit = async (e: React.FormEvent) => {
+    // Handle form submission
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
-
-        // Validate all fields
+        
+        // Validate form
         const newErrors: FormErrors = {};
+        let isValid = true;
+
         formFields.forEach(field => {
-            const error = field.validation(formData[field.id]);
+            const error = field.validation(formData[field.id as keyof typeof formData] as string);
             if (error) {
-                newErrors[field.id] = error;
+                newErrors[field.id as keyof FormErrors] = error;
+                isValid = false;
             }
         });
 
-        if (!formData.selectedDateTime) {
-            newErrors.selectedDateTime = "Please select a date and time";
-        }
-
-        if (Object.keys(newErrors).length > 0) {
+        if (!isValid) {
             setErrors(newErrors);
-            setIsSubmitting(false);
             return;
         }
 
+        setIsSubmitting(true);
+
         try {
-            // TODO: Replace with your actual API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            // Handle successful submission
-            alert("Booking submitted successfully!");
+            // Prepare booking data
+            const bookingData = {
+                roomId: formData.property,
+                checkInDate: formData.checkIn,
+                checkOutDate: formData.checkOut,
+                guestName: formData.fullName,
+                guestEmail: formData.email,
+                guestPhone: formData.mobileNumber,
+                specialRequests: formData.specialRequests,
+                paymentMethod: formData.paymentMethod,
+                guests: formData.guests
+            };
+
+            console.log('Submitting booking:', bookingData);
+            
+            // Make the API call
+            const response = await bookingService.createBooking(bookingData);
+            
+            // Handle successful booking
+            console.log('Booking successful:', response);
+            alert('Booking successful!');
+            
             // Reset form
             setFormData({
+                property: "64f8b2c1d4e5f6a7b8c9d0e2",
+                checkIn: new Date().toISOString().split('T')[0],
+                checkOut: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+                guests: 1,
+                specialRequests: "",
+                paymentMethod: "credit_card",
+                doubleSharing: "",
+                preferredProperty: "",
+                selectedDateTime: "",
+                couponCode: "",
+                contactInfo: {
+                    phone: "",
+                    email: "",
+                },
                 fullName: "",
                 mobileNumber: "",
                 email: "",
-                gender: "male",
-                doubleSharing: "Comfort Stay PG",
-                preferredProperty: "Comfort Stay PG",
-                selectedDateTime: "",
-                couponCode: "",
-                paymentMethod: "upi"
+                gender: ""
             });
             setErrors({});
         } catch (error) {
+            console.error('Booking submission failed:', error);
             alert("Failed to submit booking. Please try again.");
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    // Handle input changes
+    const handleInputChange = (fieldPath: string, value: string) => {
+        setFormData(prev => {
+            const newData = { ...prev };
+            const keys = fieldPath.split('.');
+            let current: any = newData;
+            
+            for (let i = 0; i < keys.length - 1; i++) {
+                const key = keys[i];
+                if (!current[key]) current[key] = {};
+                current = current[key];
+            }
+            
+            current[keys[keys.length - 1]] = value;
+            return newData;
+        });
+
+        // Clear error for this field if it exists
+        if ((errors as any)[fieldPath]) {
+            setErrors(prev => {
+                const newErrors = { ...prev };
+                delete (newErrors as any)[fieldPath];
+                return newErrors;
+            });
         }
     };
 
@@ -183,7 +260,7 @@ export const BookAForm = (): JSX.Element => {
         <div className="flex items-center justify-center p-4 w-full">
             <form onSubmit={handleSubmit} className="w-full max-w-[1000px]">
                 <Card className="w-full bg-[#e2f1e8] rounded-xl border border-solid border-[#c3d0d7]">
-                    <CardContent className="p-[34px]">
+                    <CardContent className="p-2.5 md:p-[34px]">
                         {/* Text input fields */}
                         {formFields.map((field) => (
                             <div key={field.id} className="mb-5">
@@ -196,7 +273,7 @@ export const BookAForm = (): JSX.Element => {
                                         : "border-[#c3d0d7]"
                                         } pl-[26px] font-desktop-subtitle text-text`}
                                     placeholder={field.placeholder}
-                                    value={formData[field.id]}
+                                    value={formData[field.id]}  // if moved to contactInfo
                                     onChange={(e) => handleInputChange(field.id, e.target.value)}
                                     disabled={isSubmitting}
                                 />
@@ -280,13 +357,13 @@ export const BookAForm = (): JSX.Element => {
                             )}
                         </div>
 
-                        {/* Payment Section */}
-                        <div className="space-y-10">
+                        
+                        {/* <div className="space-y-10">
                             <h3 className="font-desktop-h3 text-text text-center">
                                 Confirm your booking by paying a small token amount
                             </h3>
 
-                            {/* Payment details */}
+                           
                             <div className="space-y-6">
                                 {paymentDetails.map((item, index) => (
                                     <div key={index} className="flex justify-between items-center">
@@ -298,8 +375,6 @@ export const BookAForm = (): JSX.Element => {
                                         </span>
                                     </div>
                                 ))}
-
-                                {/* Coupon code section */}
                                 <div className="space-y-2">
                                     <Input
                                         className="bg-white rounded-xl border border-solid border-[#c3d0d7] h-[52px] px-6 py-3"
@@ -310,7 +385,7 @@ export const BookAForm = (): JSX.Element => {
                                     />
                                 </div>
 
-                                {/* Total amount */}
+                               
                                 <div className="flex justify-between items-center pt-4">
                                     <span className="font-desktop-subtitle-bold text-text">
                                         Total Payable Amount
@@ -321,7 +396,7 @@ export const BookAForm = (): JSX.Element => {
                                 </div>
                             </div>
 
-                            {/* Payment methods */}
+                            
                             <Card className="bg-white rounded-xl border border-solid border-[#c3d0d7]">
                                 <CardContent className="p-7">
                                     <h4 className="font-desktop-subtitle-bold text-text mb-4">
@@ -363,7 +438,6 @@ export const BookAForm = (): JSX.Element => {
                                 </CardContent>
                             </Card>
 
-                            {/* Trust features */}
                             <div className="flex justify-between">
                                 {trustFeatures.map((feature, index) => (
                                     <div key={index} className="flex flex-col items-center w-[134px]">
@@ -377,7 +451,7 @@ export const BookAForm = (): JSX.Element => {
                                         </span>
                                     </div>
                                 ))}
-                            </div>
+                            </div> */}
 
                             {/* Submit Button */}
                             <Button
@@ -387,7 +461,7 @@ export const BookAForm = (): JSX.Element => {
                             >
                                 {isSubmitting ? "Processing..." : "Book Now"}
                             </Button>
-                        </div>
+                        {/* </div> */}
                     </CardContent>
                 </Card>
             </form>

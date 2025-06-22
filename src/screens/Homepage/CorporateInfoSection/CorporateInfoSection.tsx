@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, CardContent } from "../../../components/ui/card";
+import { useNavigate } from 'react-router-dom';
 
 // Data for the cards to enable mapping
 const accommodationCards = [
@@ -27,6 +28,15 @@ const accommodationCards = [
 ];
 
 export const CorporateInfoSection = (): JSX.Element => {
+    const navigate = useNavigate();
+
+    const handleCardClick = (type: string) => {
+        // Convert type to lowercase and replace spaces with hyphens for the URL
+        const queryParam = type.toLowerCase().replace(/\s+/g, '-');
+        navigate(`/product?type=${queryParam}`);
+    };
+    
+
     return (
         <section className="flex flex-col w-full items-start gap-8 sm:gap-10 lg:gap-[60px] py-12 sm:py-20 lg:py-[140px] px-4 sm:px-8 lg:px-20">
             <div className="flex flex-col items-center justify-center w-full gap-4">
@@ -45,7 +55,8 @@ export const CorporateInfoSection = (): JSX.Element => {
                 {accommodationCards.map((card, index) => (
                     <Card
                         key={index}
-                        className="group relative rounded-[30px] p-0 overflow-hidden border-0 w-full h-[180px] sm:h-[200px] transition-all duration-500 ease-in-out transform hover:scale-[1.02] hover:shadow-xl"
+                        onClick={() => handleCardClick(card.title.split(' ')[1].toLowerCase())}
+                        className="group relative rounded-[30px] p-0 overflow-hidden border-0 w-full h-[180px] sm:h-[200px] transition-all duration-500 ease-in-out transform hover:scale-[1.02] hover:shadow-xl cursor-pointer"
                     >
                         {/* Background image with zoom effect on hover */}
                         <div 

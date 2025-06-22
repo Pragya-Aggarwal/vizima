@@ -35,7 +35,7 @@ export const TrustBoostersSection = (): JSX.Element => {
     ];
 
     return (
-        <section className="w-full bg-white py-12 md:py-16 lg:py-20">
+        <section className="w-full bg-white py-5 md:py-10 lg:py-10">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="max-w-4xl mx-auto text-center mb-10 md:mb-14 lg:mb-16">
                     <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">

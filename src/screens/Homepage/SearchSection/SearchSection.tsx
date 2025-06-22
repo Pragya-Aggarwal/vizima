@@ -1,5 +1,6 @@
-import { MapPinIcon, SearchIcon, UsersIcon } from "lucide-react";
+import { MapPinIcon, SearchIcon, UsersIcon, Loader2 } from "lucide-react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
 import { Separator } from "../../../components/ui/separator";
 import {
@@ -10,13 +11,63 @@ import {
     SelectItem,
 } from "../../../components/ui/select";
 import { Input } from "../../../components/ui/input";
+import { toast } from "../../../components/ui/use-toast";
+import { hostelService } from "../../../api/services/hostelService";
 
-export const SearchSection = (): JSX.Element => {
+interface SearchSectionProps {
+    onSearchResults?: (results: any[]) => void;
+    onSearchStart?: () => void;
+}
+
+export const SearchSection = ({ onSearchResults, onSearchStart }: SearchSectionProps): JSX.Element => {
     const [city, setCity] = useState("");
     const [gender, setGender] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const handleSearch = () => {
-        console.log("Search with:", { city, gender });
+    const handleSearch = async () => {
+        if (!city.trim() && !gender) {
+            toast({
+                title: "Please enter a city or select a gender",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+            onSearchStart?.();
+            
+            const response = await hostelService.searchHostels({
+                city: city.trim(),
+                gender: gender || undefined,
+            });
+
+            if (response.data && response.data.data) {
+                onSearchResults?.(response.data.data);
+                navigate('/search', { 
+                    state: { 
+                        results: response.data.data,
+                        searchParams: { city, gender }
+                    } 
+                });
+            }
+        } catch (error) {
+            console.error("Search failed:", error);
+            toast({
+                title: "Error",
+                description: "Failed to search for hostels. Please try again.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
     };
 
     return (
@@ -29,8 +80,10 @@ export const SearchSection = (): JSX.Element => {
                         <Input
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
+                            onKeyDown={handleKeyDown}
                             placeholder="Search your PG or hostel location..."
                             className="flex-1 h-6 border-0 focus:border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-sm font-medium placeholder:text-gray-400 text-gray-800 bg-transparent shadow-none"
+                            disabled={isLoading}
                         />
                     </div>
 
@@ -40,7 +93,7 @@ export const SearchSection = (): JSX.Element => {
                     {/* Gender dropdown with fixed focus */}
                     <div className="flex items-center w-full sm:w-auto gap-2 rounded-lg px-2 sm:px-3 py-1">
                         <UsersIcon className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                        <Select value={gender} onValueChange={setGender}>
+                        <Select value={gender} onValueChange={setGender} disabled={isLoading}>
                             <SelectTrigger className="w-full sm:w-[140px] md:w-[180px] lg:w-[200px] h-6 px-2 text-sm font-medium border-0 focus:ring-0 focus:ring-offset-0 focus:bg-white bg-transparent shadow-none">
                                 <SelectValue placeholder="Select Gender" />
                             </SelectTrigger>
@@ -55,10 +108,20 @@ export const SearchSection = (): JSX.Element => {
                     {/* Search button */}
                     <Button
                         onClick={handleSearch}
+                        disabled={isLoading}
                         className="flex items-center gap-1 w-full sm:w-auto px-3 sm:px-4 py-1.5 rounded-lg bg-green hover:bg-green-dark text-white text-sm font-medium transition-colors duration-200 shadow-sm hover:shadow-md"
                     >
-                        <SearchIcon className="w-4 h-4" />
-                        <span>Search</span>
+                        {isLoading ? (
+                            <>
+                                <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                                <span>Searching...</span>
+                            </>
+                        ) : (
+                            <>
+                                <SearchIcon className="w-4 h-4" />
+                                <span>Search</span>
+                            </>
+                        )}
                     </Button>
                 </div>
             </div>

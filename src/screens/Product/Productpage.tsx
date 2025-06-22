@@ -1,5 +1,5 @@
 import { MinusIcon, PlusIcon, MapIcon, ListIcon } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ApartmentListingsSection } from "./ApartmentListingsSection/ApartmentListingsSection";
 import { FAQSection } from "./FAQSection/FAQSection";
 import { PageTitleSection } from "./PageTitleSection";
@@ -7,9 +7,31 @@ import { SearchBarSection } from "./SearchBarSection/SearchBarSection";
 import { FiltersAndSortingSection } from "./FiltersAndSortingSection";
 import { LocationMapSection } from "./LocationMapSection";
 import { Button } from "../../components/ui/button";
+import { accommodationService, Accommodation } from '../../api/services/accommodationService';
 
 export const ProductPage = (): JSX.Element => {
     const [showMap, setShowMap] = useState(false);
+    const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchAccommodations = async () => {
+            try {
+                setLoading(true);
+                const data = await accommodationService.getAccommodations();
+                setAccommodations(data);
+                setError(null);
+            } catch (err) {
+                console.error('Error fetching accommodations:', err);
+                setError('Failed to load accommodations. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAccommodations();
+    }, []);
 
     const toggleView = () => {
         setShowMap(!showMap);
@@ -55,7 +77,11 @@ export const ProductPage = (): JSX.Element => {
                     <div className="flex flex-col lg:flex-row gap-6">
                         {/* Left column - Apartment listings */}
                         <div className={`flex-1 min-w-0 ${showMap ? 'hidden lg:block' : 'block'}`}>
-                            <ApartmentListingsSection />
+                            <ApartmentListingsSection 
+                                accommodations={accommodations}
+                                loading={loading}
+                                error={error}
+                            />
                         </div>
 
                         {/* Right column - Map */}

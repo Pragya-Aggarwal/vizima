@@ -46,7 +46,7 @@ export const NavigationMenuSection = (): JSX.Element => {
     const menuItems = [
         { label: "Home", href: "/" },
         { label: "Find PG/Hostel", href: "/product" },
-        { label: "Book a Visit", href: "/book" },
+        // { label: "Book a Visit", href: "/book" },
         { label: "AboutUs", href: "/aboutUs" },
         { label: "Contact Us", href: "/contact" },
     ];

@@ -19,37 +19,43 @@ interface SearchSectionProps {
     onSearchStart?: () => void;
 }
 
-export const SearchSection = ({ onSearchResults, onSearchStart }: SearchSectionProps): JSX.Element => {
+export const SearchSection = ({ onSearchStart }: SearchSectionProps): JSX.Element => {
     const [city, setCity] = useState("");
     const [gender, setGender] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSearch = async () => {
-        if (!city.trim() && !gender) {
-            toast({
-                title: "Please enter a city or select a gender",
-                variant: "destructive",
-            });
-            return;
-        }
-
         try {
             setIsLoading(true);
             onSearchStart?.();
             
-            const response = await hostelService.searchHostels({
-                city: city.trim(),
-                gender: gender || undefined,
+            // Prepare search params object with only provided values
+            const searchParams: { city?: string; gender?: string } = {};
+            if (city.trim()) searchParams.city = city.trim();
+            if (gender) searchParams.gender = gender;
+            
+            // Call API with search params (or empty object if no params)
+            const response = await hostelService.searchHostels(searchParams);
+            
+            // Navigate to product page with search parameters
+            const queryParams = new URLSearchParams();
+            if (searchParams.city) queryParams.set('city', searchParams.city);
+            if (searchParams.gender) queryParams.set('gender', searchParams.gender);
+            
+            navigate(`/product?${queryParams.toString()}`, { 
+                state: { 
+                    searchParams: { city, gender },
+                    initialResults: response.data?.data || []
+                } 
             });
-
-            if (response.data && response.data.data) {
-                onSearchResults?.(response.data.data);
-                navigate('/search', { 
-                    state: { 
-                        results: response.data.data,
-                        searchParams: { city, gender }
-                    } 
+            
+            // Show message if no results but only if there were search criteria
+            if (response.data?.data?.length === 0 && (searchParams.city || searchParams.gender)) {
+                toast({
+                    title: "No results found",
+                    description: "Please try different search criteria.",
+                    variant: "destructive",
                 });
             }
         } catch (error) {

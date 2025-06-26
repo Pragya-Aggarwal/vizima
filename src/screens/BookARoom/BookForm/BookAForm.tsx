@@ -54,10 +54,14 @@ interface FormField {
     validation: (value: string) => string | undefined;
 }
 
-export const BookAForm = (): JSX.Element => {
+interface BookAFormProps {
+    propertyId?: string;
+}
+
+export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
     // Form state
     const [formData, setFormData] = useState<FormData>({
-        property: "64f8b2c1d4e5f6a7b8c9d0e2",
+        property: propertyId || "64f8b2c1d4e5f6a7b8c9d0e2",
         checkIn: new Date().toISOString().split('T')[0], // Today's date as default
         checkOut: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Tomorrow's date as default
         guests: 1,
@@ -80,25 +84,6 @@ export const BookAForm = (): JSX.Element => {
     // Error state
     const [errors, setErrors] = useState<FormErrors>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-    // Update FormData interface to include all fields
-    interface FormData {
-        property: string;
-        checkIn: string;
-        checkOut: string;
-        guests: number;
-        specialRequests: string;
-        paymentMethod: string;
-        doubleSharing: string;
-        preferredProperty: string;
-        selectedDateTime: string;
-        couponCode: string;
-        contactInfo: ContactInfo;
-        fullName: string;
-        mobileNumber: string;
-        email: string;
-        gender: string;
-    }
 
     // Form field data
     const formFields: FormField[] = [
@@ -156,7 +141,7 @@ export const BookAForm = (): JSX.Element => {
     // Handle form submission
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        
+
         // Validate form
         const newErrors: FormErrors = {};
         let isValid = true;
@@ -191,17 +176,17 @@ export const BookAForm = (): JSX.Element => {
             };
 
             console.log('Submitting booking:', bookingData);
-            
+
             // Make the API call
             const response = await bookingService.createBooking(bookingData);
-            
+
             // Handle successful booking
             console.log('Booking successful:', response);
             alert('Booking successful!');
-            
+
             // Reset form
             setFormData({
-                property: "64f8b2c1d4e5f6a7b8c9d0e2",
+                property: propertyId || "64f8b2c1d4e5f6a7b8c9d0e2",
                 checkIn: new Date().toISOString().split('T')[0],
                 checkOut: new Date(Date.now() + 86400000).toISOString().split('T')[0],
                 guests: 1,
@@ -235,13 +220,13 @@ export const BookAForm = (): JSX.Element => {
             const newData = { ...prev };
             const keys = fieldPath.split('.');
             let current: any = newData;
-            
+
             for (let i = 0; i < keys.length - 1; i++) {
                 const key = keys[i];
                 if (!current[key]) current[key] = {};
                 current = current[key];
             }
-            
+
             current[keys[keys.length - 1]] = value;
             return newData;
         });
@@ -357,7 +342,7 @@ export const BookAForm = (): JSX.Element => {
                             )}
                         </div>
 
-                        
+
                         {/* <div className="space-y-10">
                             <h3 className="font-desktop-h3 text-text text-center">
                                 Confirm your booking by paying a small token amount
@@ -453,14 +438,14 @@ export const BookAForm = (): JSX.Element => {
                                 ))}
                             </div> */}
 
-                            {/* Submit Button */}
-                            <Button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="w-full h-[52px] bg-green hover:bg-green/90 text-white rounded-[40px] font-desktop-subtitle-bold"
-                            >
-                                {isSubmitting ? "Processing..." : "Book Now"}
-                            </Button>
+                        {/* Submit Button */}
+                        <Button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="w-full h-[52px] bg-green hover:bg-green/90 text-white rounded-[40px] font-desktop-subtitle-bold"
+                        >
+                            {isSubmitting ? "Processing..." : "Book Now"}
+                        </Button>
                         {/* </div> */}
                     </CardContent>
                 </Card>

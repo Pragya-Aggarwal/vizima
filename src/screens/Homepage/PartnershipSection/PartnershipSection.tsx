@@ -14,7 +14,7 @@ import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { format } from "date-fns";
 import { useToast } from "../../../components/ui/use-toast";
-import { visitService } from "../../../api/services/visitService";
+import { homeService } from "../../../api/services/homeService";
 
 interface FormFieldBase {
     id: string;
@@ -132,7 +132,7 @@ export const PartnershipSection = (): JSX.Element => {
             // Format date as YYYY-MM-DD
             const formattedDate = format(selectedDate, 'yyyy-MM-dd');
             
-            await visitService.bookVisit({
+            await homeService.bookVisit({
                 date: formattedDate,
                 timeSlot: time,
                 mode: meetingType,

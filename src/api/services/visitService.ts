@@ -1,20 +1,22 @@
 import { apiService } from '../apiService';
 
-export interface VisitBookingParams {
-  date: string;
-  propertyId: string;
-  timeSlot: string;
+export interface ScheduleVisitParams {
+  fullName: string;
+  phoneNumber: string;
+  email: string;
   mode: string;
-  description?: string;
+  gender: string;
+  sharing: string;
+  propertyId: string;
 }
 
 export const visitService = {
-  bookVisit: async (data: VisitBookingParams) => {
+  scheduleVisit: async (data: ScheduleVisitParams) => {
     try {
-      const response = await apiService.post('/home/visit-booking', data);
+      const response = await apiService.post('/schedule/schedule-visit', data);
       return response.data;
     } catch (error) {
-      console.error('Error booking visit:', error);
+      console.error('Error scheduling visit:', error);
       throw error;
     }
   }

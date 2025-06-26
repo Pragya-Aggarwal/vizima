@@ -4,59 +4,113 @@ import { ScheduleAForm } from "./ScheduleAForm/ScheduleAForm";
 import { HeaderSection } from "./HeaderSection/HeaderSection";
 import { TrustBoostersSection } from "./TrustBoostersSection/TrustBoostersSection";
 import { BookingFormSection } from "./BookingFormSection/BookingFormSection";
-import { Home, Calendar, MapPin, Phone, Mail, Star, Shield, Check, Zap, Lock, CreditCard, Wifi, Users, Droplets, Utensils } from "lucide-react";
+import { Home, Calendar, MapPin, Phone, Mail, Star, Shield, Check, Zap, Wifi } from "lucide-react";
 import { Card } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
-
-const amenities = [
-    { icon: <Wifi className="w-4 h-4" />, text: 'Free High-Speed WiFi' },
-    { icon: <Users className="w-4 h-4" />, text: '24/7 Security' },
-    { icon: <Droplets className="w-4 h-4" />, text: 'Air Conditioning' },
-    { icon: <Utensils className="w-4 h-4" />, text: 'Kitchenette' },
-];
-
-
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { accommodationService } from '../../api/services/accommodationService';
+import { home } from "../../assets";
+import { ExtendedAccommodation, transformToExtended } from "../../lib/types";
 
 export const BookARoom = (): JSX.Element => {
+    const { id } = useParams<{ id: string }>();
+    const [property, setProperty] = useState<ExtendedAccommodation | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchProperty = async () => {
+            if (!id) {
+                setError("No property ID provided");
+                setLoading(false);
+                return;
+            }
+
+            try {
+                setLoading(true);
+                const data = await accommodationService.getAccommodations();
+                const foundProperty = data.find(p => p.id === id);
+
+                if (!foundProperty) {
+                    throw new Error("Property not found");
+                }
+
+                setProperty(transformToExtended(foundProperty));
+                setError(null);
+            } catch (err) {
+                console.error('Error fetching property details:', err);
+                setError('Failed to load property details. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProperty();
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex items-center justify-center min-h-screen text-red-500">
+                {error}
+            </div>
+        );
+    }
+
+    if (!property) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                Property not found.
+            </div>
+        );
+    }
+
+    const ratingAverage = typeof property.rating === 'object' ? property.rating.average : property.rating;
+    const reviewCount = typeof property.rating === 'object' ? property.rating.count : property.reviews;
+
+    const propertyPrice = property.price || property.rent || 0;
+    const serviceFee = 1500;
+    const totalPrice = Number(propertyPrice) + serviceFee;
+
+
     return (
         <div className="min-h-screen bg-white">
-           
-
-            {/* Hero Section */}
             <div className="bg-gradient-to-b from-white to-gray-50 mt-12">
                 <div className="container mx-auto px-4 py-12">
                     <div className="max-w-6xl mx-auto">
                         <div className="flex flex-col md:flex-row gap-8">
-                            {/* Property Info */}
                             <div className="md:w-2/3 space-y-6">
                                 <div>
                                     <Badge className="bg-green text-green hover:bg-green mb-3">
                                         <Star className="w-3.5 h-3.5 mr-1.5 fill-yellow-400 text-yellow-400" />
-                                        Top Rated Property • 4.8 (124 reviews)
+                                        Top Rated Property • {ratingAverage?.toFixed(1) || 'N/A'} ({reviewCount || 0} reviews)
                                     </Badge>
                                     <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
-                                        Luxury Serviced Apartments in Bandra West
+                                        {property.name}
                                     </h1>
                                     <div className="flex items-center text-gray-600 mt-2">
                                         <MapPin className="w-4 h-4 mr-1.5 text-gray-400 flex-shrink-0" />
-                                        <span>Prime location in Mumbai, 5 min walk from Bandra Station</span>
+                                        <span>{property.location}</span>
                                     </div>
                                 </div>
-
-                                {/* Amenities */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    {amenities.map((item, index) => (
+                                    {property.amenities?.map((item, index) => (
                                         <div key={index} className="flex items-center gap-2 text-gray-700">
                                             <div className="text-green">
-                                                {item.icon}
+                                                <item.icon className="w-4 h-4" />
                                             </div>
-                                            <span className="text-sm">{item.text}</span>
+                                            <span className="text-sm">{item.label}</span>
                                         </div>
                                     ))}
                                 </div>
-
-                                {/* Highlights */}
                                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
                                     <h3 className="font-medium text-blue-800 mb-2">Why book with us?</h3>
                                     <ul className="space-y-1.5 text-sm text-blue-700">
@@ -75,12 +129,10 @@ export const BookARoom = (): JSX.Element => {
                                     </ul>
                                 </div>
                             </div>
-
-                            {/* Image Gallery */}
                             <div className="md:w-1/3 bg-gray-100 rounded-xl overflow-hidden h-64 md:h-auto">
-                                <img 
-                                    src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
-                                    alt="Luxury Apartment" 
+                                <img
+                                    src={(property.images && property.images[0]) || property.image || home}
+                                    alt={property.name}
                                     className="w-full h-full object-cover"
                                 />
                             </div>
@@ -88,12 +140,9 @@ export const BookARoom = (): JSX.Element => {
                     </div>
                 </div>
             </div>
-
-            {/* Main Content */}
             <div className="container mx-auto px-3 sm:px-4 py-8 sm:py-12">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-                        {/* Left Column - Form */}
                         <div className="lg:col-span-8">
                             <Card className="overflow-hidden border border-gray-200 shadow-sm">
                                 <div className="bg-gray-50 border-b border-gray-100 px-4 sm:px-6 py-3 sm:py-4">
@@ -102,14 +151,14 @@ export const BookARoom = (): JSX.Element => {
                                 </div>
                                 <Tabs defaultValue="book" className="w-full">
                                     <TabsList className="w-full h-14 sm:h-16 bg-white border-b rounded-none flex">
-                                        <TabsTrigger 
-                                            value="book" 
+                                        <TabsTrigger
+                                            value="book"
                                             className="flex-1 h-full rounded-none border-b-2 border-transparent data-[state=active]:border-green data-[state=active]:bg-transparent data-[state=active]:text-green data-[state=active]:font-semibold data-[state=active]:shadow-none text-sm sm:text-base font-medium text-gray-600 hover:text-gray-900 transition-colors px-2 sm:px-4"
                                         >
                                             Book a Room
                                         </TabsTrigger>
-                                        <TabsTrigger 
-                                            value="schedule" 
+                                        <TabsTrigger
+                                            value="schedule"
                                             className="flex-1 h-full rounded-none border-b-2 border-transparent data-[state=active]:border-green data-[state=active]:bg-transparent data-[state=active]:text-green data-[state=active]:font-semibold data-[state=active]:shadow-none text-sm sm:text-base font-medium text-gray-600 hover:text-gray-900 transition-colors px-2 sm:px-4"
                                         >
                                             Schedule Visit
@@ -127,7 +176,7 @@ export const BookARoom = (): JSX.Element => {
                                                 </p>
                                             </div>
                                             <div className="-mx-2 sm:mx-0">
-                                                <BookAForm />
+                                                <BookAForm propertyId={id} />
                                             </div>
                                         </TabsContent>
                                         <TabsContent value="schedule" className="mt-0">
@@ -140,15 +189,13 @@ export const BookARoom = (): JSX.Element => {
                                                 </p>
                                             </div>
                                             <div className="-mx-2 sm:mx-0">
-                                                <ScheduleAForm />
+                                                <ScheduleAForm propertyId={id} />
                                             </div>
                                         </TabsContent>
                                     </div>
                                 </Tabs>
                             </Card>
                         </div>
-
-                        {/* Right Column - Property Info */}
                         <div className="lg:col-span-4 space-y-4 sm:space-y-6 sticky top-6">
                             <Card className="border border-gray-200 shadow-sm overflow-hidden">
                                 <div className="p-4 sm:p-6">
@@ -161,14 +208,14 @@ export const BookARoom = (): JSX.Element => {
                                             <Home className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                                         </div>
                                     </div>
-                                    
+
                                     <div className="space-y-5">
                                         <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
                                             <div className="bg-white p-2 rounded-lg shadow-sm">
                                                 <Home className="w-5 h-5 text-green" />
                                             </div>
                                             <div className="flex-1">
-                                                <h4 className="font-medium text-gray-900">Deluxe Room</h4>
+                                                <h4 className="font-medium text-gray-900">{property.name}</h4>
                                                 <p className="text-sm text-gray-500 mt-0.5">1 Bed, 1 Bath, 32 sq.m</p>
                                                 <div className="mt-2 flex flex-wrap gap-2">
                                                     <span className="inline-flex items-center gap-1.5 bg-green text-white text-xs px-2.5 py-1 rounded-full">
@@ -195,16 +242,16 @@ export const BookARoom = (): JSX.Element => {
                                             </div>
                                             <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                                                 <span className="text-sm font-medium text-gray-700">Monthly Rate</span>
-                                                <span className="text-base font-semibold text-gray-900">₹15,000</span>
+                                                <span className="text-base font-semibold text-gray-900">₹{propertyPrice}</span>
                                             </div>
                                             <div className="flex items-center justify-between">
                                                 <span className="text-sm text-gray-500">Service Fee</span>
-                                                <span className="text-sm text-gray-700">₹1,500</span>
+                                                <span className="text-sm text-gray-700">₹{serviceFee}</span>
                                             </div>
                                             <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                                                 <span className="text-base font-semibold text-gray-900">Total</span>
                                                 <div className="text-right">
-                                                    <div className="text-lg font-bold text-gray-900">₹16,500</div>
+                                                    <div className="text-lg font-bold text-gray-900">₹{totalPrice}</div>
                                                     <div className="text-xs text-gray-500">Including all taxes</div>
                                                 </div>
                                             </div>
@@ -223,7 +270,6 @@ export const BookARoom = (): JSX.Element => {
                                     </div>
                                 </div>
                             </Card>
-
                             <Card className="border border-gray-200 shadow-sm">
                                 <div className="p-6">
                                     <div className="flex items-start gap-3 mb-5">
@@ -235,10 +281,10 @@ export const BookARoom = (): JSX.Element => {
                                             <p className="text-sm text-gray-500 mt-1">Our team is available 24/7 to assist you</p>
                                         </div>
                                     </div>
-                                    
+
                                     <div className="space-y-3">
-                                        <a 
-                                            href="tel:+919876543210" 
+                                        <a
+                                            href="tel:+919876543210"
                                             className="flex items-center gap-3 px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors group"
                                         >
                                             <div className="bg-white p-2 rounded-lg shadow-sm group-hover:shadow transition-shadow">
@@ -249,8 +295,8 @@ export const BookARoom = (): JSX.Element => {
                                                 <div className="text-sm text-blue-600">+91 98765 43210</div>
                                             </div>
                                         </a>
-                                        <a 
-                                            href="mailto:bookings@example.com" 
+                                        <a
+                                            href="mailto:bookings@example.com"
                                             className="flex items-center gap-3 px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors group"
                                         >
                                             <div className="bg-white p-2 rounded-lg shadow-sm group-hover:shadow transition-shadow">
@@ -262,7 +308,7 @@ export const BookARoom = (): JSX.Element => {
                                             </div>
                                         </a>
                                     </div>
-                                    
+
                                     <div className="mt-6 pt-6 border-t border-gray-100">
                                         <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
                                             <Shield className="w-5 h-5 text-green-600 flex-shrink-0" />
@@ -277,27 +323,21 @@ export const BookARoom = (): JSX.Element => {
                     </div>
                 </div>
             </div>
-
             <div className="bg-white pt-16 border-t border-gray-100">
                 <div className="container mx-auto px-4">
                     <HeaderSection />
                 </div>
             </div>
-
-            {/* Additional Sections */}
             <div className="bg-white pt-16">
                 <div className="container mx-auto px-4">
                     <TrustBoostersSection />
                 </div>
             </div>
-
             <div className="bg-gray-50">
                 <div className="container mx-auto px-4">
                     <BookingFormSection />
                 </div>
             </div>
-
-           
         </div>
     );
 };

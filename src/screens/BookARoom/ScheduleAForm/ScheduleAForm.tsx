@@ -110,11 +110,7 @@
 // };
 
 
-import {
-    ChevronDownIcon,
-    ChevronLeftIcon,
-    ChevronRightIcon,
-} from "lucide-react";
+import { ChevronDownIcon } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
@@ -126,7 +122,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../../../components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@radix-ui/react-radio-group";
+import { visitService } from "../../../api/services/visitService";
+import { toast } from "sonner";
 
 interface FormData {
     fullName: string;
@@ -136,8 +133,7 @@ interface FormData {
     doubleSharing: string;
     preferredProperty: string;
     selectedDateTime: string;
-    couponCode: string;
-    paymentMethod: string;
+    visitType: 'physical' | 'virtual';
 }
 
 interface FormErrors {
@@ -148,8 +144,7 @@ interface FormErrors {
     doubleSharing?: string;
     preferredProperty?: string;
     selectedDateTime?: string;
-    couponCode?: string;
-    paymentMethod?: string;
+    visitType?: string;
 }
 
 interface FormField {
@@ -159,7 +154,11 @@ interface FormField {
     validation: (value: string) => string | undefined;
 }
 
-export const ScheduleAForm = (): JSX.Element => {
+interface ScheduleAFormProps {
+    propertyId?: string;
+}
+
+export const ScheduleAForm = ({ propertyId }: ScheduleAFormProps): JSX.Element => {
     // Form state
     const [formData, setFormData] = useState<FormData>({
         fullName: "",
@@ -169,11 +168,9 @@ export const ScheduleAForm = (): JSX.Element => {
         doubleSharing: "Comfort Stay PG",
         preferredProperty: "Comfort Stay PG",
         selectedDateTime: "",
-        couponCode: "",
-        paymentMethod: "upi",
-        visitType: "",
+        visitType: "physical",
     });
-
+    console.log(propertyId);
     // Error state
     const [errors, setErrors] = useState<FormErrors>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -190,7 +187,7 @@ export const ScheduleAForm = (): JSX.Element => {
             id: "mobileNumber",
             label: "Mobile Number",
             placeholder: "+91- XXXXX XXXXX",
-            validation: (value: string) => !/^\+91-\s?\d{5}\s?\d{5}$/.test(value) ? "Please enter a valid Indian mobile number" : undefined
+            validation: (value: string) => !/^\d{10}$/.test(value) ? "Please enter a valid Indian mobile number" : undefined
         },
         {
             id: "email",
@@ -200,39 +197,10 @@ export const ScheduleAForm = (): JSX.Element => {
         },
     ];
 
-    // Payment details data
-    const paymentDetails = [
-        { label: "Room Rent", amount: "Rs. 12,000" },
-        { label: "Security Deposit", amount: "Rs. 6,000" },
-        { label: "GST", amount: "XYZ" },
-    ];
-
-    // Payment methods data
-    const paymentMethods = [
-        { id: "upi", label: "UPI" },
-        { id: "card", label: "Credit/Debit Card" },
-        { id: "netbanking", label: "Net Banking" },
-        { id: "wallets", label: "Wallets" },
-    ];
-
-    // Trust features data
-    const trustFeatures = [
-        {
-            icon: "https://c.animaapp.com/mbi5x2be8VZzX7/img/mdi-recurring-payment.svg",
-            label: "Secure Payment",
-        },
-        {
-            icon: "https://c.animaapp.com/mbi5x2be8VZzX7/img/bi-buildings-fill.svg",
-            label: "24x7 Support",
-        },
-        {
-            icon: "https://c.animaapp.com/mbi5x2be8VZzX7/img/bitcoin-icons-verify-filled.svg",
-            label: "Fully Verified",
-        },
-    ];
+    // Removed unused variables
 
     // Handle input changes
-    const handleInputChange = (field: keyof FormData, value: string) => {
+    const handleInputChange = (field: Exclude<keyof FormData, 'description'>, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
         if (errors[field]) {
             setErrors(prev => {
@@ -261,17 +229,45 @@ export const ScheduleAForm = (): JSX.Element => {
             newErrors.selectedDateTime = "Please select a date and time";
         }
 
+        if (!formData.visitType) {
+            newErrors.visitType = "Please select visit type";
+        }
+
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             setIsSubmitting(false);
             return;
         }
 
+
         try {
-            // TODO: Replace with your actual API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Format the date and time for the API in ISO 8601 format with timezone
+            const dateTime = new Date(formData.selectedDateTime);
+            // Ensure we're using the correct timezone offset
+            const timezoneOffset = dateTime.getTimezoneOffset() * 60000; // in milliseconds
+            const localISOTime = new Date(dateTime.getTime() - timezoneOffset).toISOString();
+
+            // Format: "2023-12-25T14:30:00Z"
+            const formattedDateTime = localISOTime.slice(0, 19) + 'Z';
+
+            // Prepare the visit data
+            const visitData = {
+                fullName: formData.fullName,
+                phoneNumber: formData.mobileNumber,
+                email: formData.email,
+                gender: formData.gender,
+                date: formattedDateTime,
+                mode: formData.visitType,
+                sharing: "double",
+                propertyId: propertyId || "507f191e810c19729de860ea",
+            };
+
+            // Call the visit service
+            await visitService.scheduleVisit(visitData);
+
             // Handle successful submission
-            alert("Booking submitted successfully!");
+            toast.success("Visit scheduled successfully!");
+
             // Reset form
             setFormData({
                 fullName: "",
@@ -279,15 +275,14 @@ export const ScheduleAForm = (): JSX.Element => {
                 email: "",
                 gender: "male",
                 doubleSharing: "Comfort Stay PG",
-                preferredProperty: "Comfort Stay PG",
                 selectedDateTime: "",
-                couponCode: "",
-                paymentMethod: "upi",
-                visitType: "",
+                visitType: "physical",
+                preferredProperty: "",
             });
             setErrors({});
         } catch (error) {
-            alert("Failed to submit booking. Please try again.");
+            console.error('Error scheduling visit:', error);
+            toast.error("Failed to schedule visit. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -328,7 +323,7 @@ export const ScheduleAForm = (): JSX.Element => {
                             </div>
                             <Select
                                 value={formData.visitType}
-                                onValueChange={(value) => handleInputChange("visitType", value)}
+                                onValueChange={(value: 'physical' | 'virtual') => handleInputChange("visitType", value)}
                                 disabled={isSubmitting}
                             >
                                 <SelectTrigger className="h-[52px] bg-white rounded-xl border border-solid border-[#c3d0d7] pl-[26px] font-desktop-subtitle text-text">
@@ -339,6 +334,11 @@ export const ScheduleAForm = (): JSX.Element => {
                                     <SelectItem value="virtual">Virtual</SelectItem>
                                 </SelectContent>
                             </Select>
+                            {errors.visitType && (
+                                <p className="text-red-500 text-sm mt-1 ml-2.5">
+                                    {errors.visitType}
+                                </p>
+                            )}
                         </div>
 
                         {/* Gender dropdown */}
@@ -405,6 +405,7 @@ export const ScheduleAForm = (): JSX.Element => {
                                 value={formData.selectedDateTime}
                                 onChange={(e) => handleInputChange("selectedDateTime", e.target.value)}
                                 disabled={isSubmitting}
+                                min={new Date().toISOString().slice(0, 16)}
                             />
                             {errors.selectedDateTime && (
                                 <p className="text-red-500 text-sm mt-1 ml-2.5">

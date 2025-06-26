@@ -1,55 +1,204 @@
-import { ChevronDownIcon, FilterIcon, SlidersHorizontal } from "lucide-react";
-import React, { useState } from "react";
+import { ChevronDownIcon, SlidersHorizontal, X } from "lucide-react";
+import React, { useState, useEffect } from "react";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
-    SelectValue,
 } from "../../../components/ui/select";
 import { Button } from "../../../components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../../../components/ui/sheet";
 import { cn } from "../../../lib/utils";
+import type { Accommodation } from "../../../api/services/accommodationService";
 import "./FiltersAndSortingSection.css";
 
-export const FiltersAndSortingSection = (): JSX.Element => {
+type FilterField = 'location' | 'propertyType' | 'sharingType' | 'gender';
+
+type FilterOption = {
+  name: string;
+  width: string;
+  options: string[];
+  value: string;
+  field: FilterField;
+};
+
+type ActiveFilter = {
+  name: string;
+  value: string;
+  field: FilterField;
+};
+
+interface FiltersAndSortingSectionProps {
+  onFilterChange: (filters: Record<string, string>) => void;
+  accommodations: Accommodation[];
+}
+
+export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> = ({
+  onFilterChange,
+  accommodations
+}) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [activeFilters, setActiveFilters] = useState(0);
+    const [activeFilters, setActiveFilters] = useState<ActiveFilter[]>([]);
+    const [filterOptions, setFilterOptions] = useState<FilterOption[]>([
+        { 
+          name: "Location", 
+          width: "w-[194px]", 
+          options: [], 
+          value: 'all',
+          field: 'location'
+        },
+        { 
+          name: "Property Type", 
+          width: "w-[265px]", 
+          options: [], 
+          value: 'all',
+          field: 'propertyType'
+        },
+        { 
+          name: "Sharing Type", 
+          width: "w-[250px]", 
+          options: [], 
+          value: 'all',
+          field: 'sharingType'
+        },
+        { 
+          name: "Gender", 
+          width: "w-[180px]", 
+          options: [], 
+          value: 'all',
+          field: 'gender'
+        },
+    ]);
 
-    // Filter options data
-    const filterOptions = [
-        { name: "Location", width: "w-[194px]" },
-        { name: "Property Type", width: "w-[138px]" },
-        { name: "Sharing Type", width: "w-36" },
-        { name: "Budget", width: "w-[118px]" },
-        { name: "Amenities", width: "w-[124px]" },
-    ];
+    // Extract unique filter options from accommodations
+    useEffect(() => {
+      if (!accommodations || accommodations.length === 0) return;
 
-    const renderFilters = (isMobile = false) => (
-        <div className={cn(
-            "flex gap-3",
-            isMobile ? "flex-col" : "flex-row items-center overflow-x-auto hide-scrollbar"
-        )}>
-            {filterOptions.map((filter, index) => (
-                <Select key={index}>
-                    <SelectTrigger
-                        className={cn(
-                            "h-10 rounded-[40px] border border-solid border-[#00000080] px-4",
-                            isMobile ? "w-full" : filter.width
-                        )}
-                    >
-                        <SelectValue
-                            placeholder={filter.name}
-                            className="font-medium text-sm text-black"
-                        />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="option1">Option 1</SelectItem>
-                        <SelectItem value="option2">Option 2</SelectItem>
-                        <SelectItem value="option3">Option 3</SelectItem>
-                    </SelectContent>
-                </Select>
-            ))}
+      const locations = Array.from(new Set(
+        accommodations
+          .map(acc => acc.city)
+          .filter((city): city is string => Boolean(city))
+      ));
+
+      const propertyTypes = Array.from(new Set(
+        accommodations
+          .map(acc => acc.type)
+          .filter((type): type is string => Boolean(type))
+      ));
+
+      const sharingTypes = Array.from(new Set(
+        accommodations
+          .flatMap(acc => acc.sharingType || [])
+          .filter((type): type is string => Boolean(type))
+      ));
+
+      const genders = Array.from(new Set(
+        accommodations
+          .map(acc => acc.gender)
+          .filter((gender): gender is string => Boolean(gender))
+      ));
+
+      setFilterOptions(prev => [
+        { ...prev[0], options: locations },
+        { ...prev[1], options: propertyTypes },
+        { ...prev[2], options: sharingTypes },
+        { ...prev[3], options: genders }
+      ]);
+    }, [accommodations]);
+
+    const handleFilterChange = (field: FilterField, value: string) => {
+      setActiveFilters(prev => {
+        const newFilters = [...prev];
+        const existingFilterIndex = newFilters.findIndex(f => f.field === field);
+        
+        if (value === 'all') {
+          // Remove filter if 'all' is selected
+          if (existingFilterIndex >= 0) {
+            newFilters.splice(existingFilterIndex, 1);
+          }
+        } else {
+          // Add or update filter
+          const newFilter: ActiveFilter = { 
+            field, 
+            value, 
+            name: filterOptions.find(f => f.field === field)?.name || field 
+          };
+          
+          if (existingFilterIndex >= 0) {
+            newFilters[existingFilterIndex] = newFilter;
+          } else {
+            newFilters.push(newFilter);
+          }
+        }
+        
+        // Update parent component with current filters
+        const filtersObj = newFilters.reduce<Record<string, string>>((acc, filter) => ({
+          ...acc,
+          [filter.field]: filter.value
+        }), {});
+        
+        onFilterChange(filtersObj);
+        return newFilters;
+      });
+
+      setActiveFilters(newFilters);
+      
+      // Convert to simple object for parent component
+      const filtersObj = newFilters.reduce((acc, filter) => ({
+        ...acc,
+        [filter.field]: filter.value
+      }), {});
+      
+      onFilterChange(filtersObj);
+    };
+
+    const removeFilter = (index: number) => {
+      setActiveFilters(prev => {
+        const newFilters = [...prev];
+        const [removedFilter] = newFilters.splice(index, 1);
+        
+        // Update parent component with current filters
+        const filtersObj = newFilters.reduce<Record<string, string>>((acc, filter) => ({
+          ...acc,
+          [filter.field]: filter.value
+        }), {});
+        
+        onFilterChange(filtersObj);
+        return newFilters;
+      });
+    };
+
+    const clearAllFilters = () => {
+      setActiveFilters([]);
+      onFilterChange({});
+    };
+
+    const renderFilterSelect = (filter: FilterOption, isMobile = false) => (
+        <div key={filter.field} className={cn("flex items-center gap-2", filter.width)}>
+            <Select 
+                value={activeFilters.find(f => f.field === filter.field)?.value || 'all'}
+                onValueChange={(value) => handleFilterChange(filter.field, value)}
+            >
+                <SelectTrigger className={cn(
+                    "h-10 rounded-[40px] border border-solid border-[#00000080] px-4",
+                    isMobile ? "w-full" : ""
+                )}>
+                    <div className="flex items-center justify-between w-full">
+                        <span className="text-sm font-medium">
+                            {filter.name}: {activeFilters.find(f => f.field === filter.field)?.value || `All ${filter.name}s`}
+                        </span>
+                        <ChevronDownIcon className="h-4 w-4 ml-2 text-gray-400" />
+                    </div>
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All {filter.name}s</SelectItem>
+                    {filter.options.map((option, idx) => (
+                        <SelectItem key={idx} value={option}>
+                            {option}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
         </div>
     );
 
@@ -61,7 +210,6 @@ export const FiltersAndSortingSection = (): JSX.Element => {
             <span className="text-sm font-medium text-text whitespace-nowrap">
                 Sort by:
             </span>
-
             <Select defaultValue="availability">
                 <SelectTrigger className={cn(
                     "border-none shadow-none h-auto",
@@ -71,7 +219,6 @@ export const FiltersAndSortingSection = (): JSX.Element => {
                         <span className="text-sm font-medium text-[#49735a] whitespace-nowrap">
                             Availability
                         </span>
-                        <ChevronDownIcon className="h-4 w-4 text-[#49735a]" />
                     </div>
                 </SelectTrigger>
                 <SelectContent>
@@ -96,28 +243,30 @@ export const FiltersAndSortingSection = (): JSX.Element => {
                         >
                             <SlidersHorizontal className="w-4 h-4" />
                             <span>Filters</span>
-                            {activeFilters > 0 && (
-                                <span className="ml-1 flex items-center justify-center w-5 h-5 rounded-full bg-green text-white text-xs">
-                                    {activeFilters}
+                            {activeFilters.length > 0 && (
+                                <span className="ml-1 flex items-center justify-center w-5 h-5 rounded-full bg-green-500 text-white text-xs">
+                                    {activeFilters.length}
                                 </span>
                             )}
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="bottom" className="h-[80vh]">
+                    <SheetContent side="bottom" className="h-[80vh] overflow-y-auto">
                         <SheetHeader className="mb-6">
                             <div className="flex items-center justify-between">
                                 <SheetTitle>Filters</SheetTitle>
                                 <Button
                                     variant="link"
                                     className="text-sm text-gray-500"
-                                    onClick={() => setActiveFilters(0)}
+                                    onClick={clearAllFilters}
                                 >
                                     Clear all
                                 </Button>
                             </div>
                         </SheetHeader>
                         <div className="space-y-6">
-                            {renderFilters(true)}
+                            <div className="grid gap-4">
+                                {filterOptions.map(filter => renderFilterSelect(filter, true))}
+                            </div>
                             <div className="pt-4 border-t">
                                 {renderSortSection(true)}
                             </div>
@@ -128,19 +277,25 @@ export const FiltersAndSortingSection = (): JSX.Element => {
             </div>
 
             {/* Active filters chips */}
-            {activeFilters > 0 && (
+            {activeFilters.length > 0 && (
                 <div className="flex gap-2 overflow-x-auto hide-scrollbar px-4 py-2 bg-gray-50">
-                    {[...Array(activeFilters)].map((_, i) => (
+                    {activeFilters.map((filter, i) => (
                         <div key={i} className="flex items-center gap-1 px-3 py-1 bg-white rounded-full border border-gray-200 text-sm">
-                            <span>Filter {i + 1}</span>
+                            <span>{filter.name}: {filter.value}</span>
                             <button
                                 className="text-gray-400 hover:text-gray-600"
-                                onClick={() => setActiveFilters(prev => prev - 1)}
+                                onClick={() => removeFilter(i)}
                             >
-                                ×
+                                <X className="h-3 w-3" />
                             </button>
                         </div>
                     ))}
+                    <button 
+                        className="text-sm text-blue-500 whitespace-nowrap"
+                        onClick={clearAllFilters}
+                    >
+                        Clear all
+                    </button>
                 </div>
             )}
         </div>
@@ -148,9 +303,35 @@ export const FiltersAndSortingSection = (): JSX.Element => {
 
     // Desktop View
     const renderDesktopView = () => (
-        <div className="hidden lg:flex items-center justify-between px-12 py-4">
-            {renderFilters()}
-            {renderSortSection()}
+        <div className="hidden lg:flex flex-col gap-4 px-12 py-4">
+            <div className="flex items-center gap-4">
+                {filterOptions.map(filter => renderFilterSelect(filter))}
+                {renderSortSection()}
+            </div>
+            
+            {/* Active filters */}
+            {activeFilters.length > 0 && (
+                <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-sm text-gray-500">Filters:</span>
+                    {activeFilters.map((filter, i) => (
+                        <div key={i} className="flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full text-sm">
+                            <span>{filter.name}: {filter.value}</span>
+                            <button
+                                className="text-gray-400 hover:text-gray-600"
+                                onClick={() => removeFilter(i)}
+                            >
+                                <X className="h-3 w-3" />
+                            </button>
+                        </div>
+                    ))}
+                    <button 
+                        className="text-sm text-blue-500"
+                        onClick={clearAllFilters}
+                    >
+                        Clear all
+                    </button>
+                </div>
+            )}
         </div>
     );
 

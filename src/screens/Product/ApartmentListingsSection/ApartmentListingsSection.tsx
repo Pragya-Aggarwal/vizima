@@ -7,55 +7,56 @@ import { Card } from "../../../components/ui/card";
 
 // Dummy data to show when no accommodations are available
 const DUMMY_ACCOMMODATIONS: Accommodation[] = [
-  {
-    id: 'dummy-1',
-    name: 'Luxury Apartment',
-    location: 'Mumbai, India',
-    image: "https://c.animaapp.com/mbi2us3vKS97yu/img/rectangle-222.png",
-    amenities: {
-      bedroom: 2,
-      bath: 2,
-      wifi: true
-    },
-    tags: ['Luxury', 'Fully Furnished'],
-    rent: '25000',
-    rating: 4.5,
-    reviews: 124,
-    isNew: true
+
+{
+  id: "dummy-2",
+  location: "123 Elm Street, Queens, NY 11373",
+  rating: {
+    average: 0,
+    count: 0
   },
-  {
-    id: 'dummy-2',
-    name: 'Cozy Studio',
-    location: 'Bangalore, India',
-    image: "https://c.animaapp.com/mbi2us3vKS97yu/img/rectangle-222.png",
-    amenities: {
-      bedroom: 1,
-      bath: 1,
-      wifi: true
-    },
-    tags: ['Studio', 'Fully Furnished'],
-    rent: '18000',
-    rating: 4.2,
-    reviews: 89,
-    isNew: false
-  },
-  {
-    id: 'dummy-3',
-    name: 'Modern Shared Apartment',
-    location: 'Delhi, India',
-    image: "https://c.animaapp.com/mbi2us3vKS97yu/img/rectangle-222.png",
-    amenities: {
-      bedroom: 3,
-      bath: 2,
-      wifi: true
-    },
-    tags: ['Shared', 'Fully Furnished'],
-    rent: '15000',
-    rating: 4.0,
-    reviews: 156,
-    isNew: true
-  }
-];
+  reviews: 0,
+  tags: ["student", "affordable", "queens"],
+  title: "Affordable Hostel for Students in Queens",
+  description: "Budget accommodation for students with all basic amenities",
+  type: "hostel",
+  gender: "female",
+  bulkAccommodation: true,
+  bulkAccommodationType: [
+      "students"
+  ],
+  sharingType: [
+      "triple"
+  ],
+  price: "8000",
+  amenities: [
+      "wifi",
+      "furnished",
+      "laundry"
+  ],
+  images: [
+      "https://res.cloudinary.com/da4ucrpxo/image/upload/v1750841978/ptzrg6ushzsujep1dat5_vzntdc.jpg",
+      "https://res.cloudinary.com/da4ucrpxo/image/upload/v1750841978/ptzrg6ushzsujep1dat5_vzntdc.jpg"
+  ],
+  bedrooms: 6,
+  bathrooms: 3,
+  area: 1800,
+  isAvailable: true,
+  isFeatured: false,
+  owner: "6857de29ab367925f5fcdc4d",
+  views: 0,
+  rules: [
+      "No parties",
+      "No loud music"
+  ],
+    nearbyPlaces: [],
+  visitBookings: [],
+  scheduleVisits: [],
+  createdAt: "2025-06-25T19:31:31.698Z",
+  updatedAt: "2025-06-25T19:31:31.698Z",
+  __v: 0,
+}
+]
 
 interface ApartmentListingsSectionProps {
   accommodations?: Accommodation[];
@@ -71,17 +72,17 @@ interface AccommodationCardProps {
 
 const AccommodationCard = ({ apartment, onViewDetails }: AccommodationCardProps) => {
   const navigate = useNavigate();
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     // onViewDetails(apartment.id);
-    navigate("/property-details");
+    navigate(`/property-details/${id}`);
   };
 console.log(apartment);
   return (
 
-    <section className="py-6 bg-gray-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 gap-4">
+    <section className="py-3 sm:py-6 bg-gray-50">
+            <div className="max-w-7xl mx-auto px-2 sm:px-4">
+                <div className="grid grid-cols-1 gap-3 sm:gap-4">
                         <Card       
                             key={apartment.id}
                             className="bg-white overflow-hidden rounded-2xl border-none shadow-sm hover:shadow-md transition-all duration-300 group relative"
@@ -89,17 +90,17 @@ console.log(apartment);
                             {/* Clickable overlay for the entire card */}
                             <div 
                                 className="absolute inset-0 z-10 cursor-pointer"
-                                onClick={handleClick}
-                                aria-label={`View details for ${apartment.name}`}
+                                onClick={(e) => handleClick(e, apartment.id)}
+                                aria-label={`View details for ${apartment.title}`}
                             />
                             
                             <div className="flex flex-col lg:flex-row">
                                 {/* Image Section */}
-                                <div className="relative lg:w-[300px] h-[140px] lg:h-[180px] overflow-hidden group">
+                                <div className="relative w-full lg:w-[300px] h-[140px] sm:h-[160px] lg:h-[180px] overflow-hidden group">
                                     <img
                                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                        alt={`${apartment.name} property`}
-                                        src={apartment.image}
+                                        alt={`${apartment.title} property`}
+                                        src={apartment.images[0]}
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
@@ -129,7 +130,7 @@ console.log(apartment);
                                 </div>
 
                                 {/* Content Section */}
-                                <div className="flex-1 p-4">
+                                <div className="flex-1 p-3 sm:p-4">
                                     <div className="flex flex-col h-full">
                                         {/* Header */}
                                         <div className="mb-3">
@@ -138,7 +139,7 @@ console.log(apartment);
                                                 <span className="text-xs font-medium">{apartment.location}</span>
                                             </div>
                                             <h3 className="text-lg font-bold text-gray-900 mb-1">
-                                                {apartment.name}
+                                                {apartment.title}
                                             </h3>
                                             <div className="flex items-center gap-2">
                                                 <div className="flex items-center gap-1 px-2 py-0.5 bg-yellow-50 rounded-lg">
@@ -162,21 +163,21 @@ console.log(apartment);
                                             <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
                                                 <Users className="w-4 h-4 text-gray-600" />
                                                 <div>
-                                                    <p className="text-xs font-medium text-gray-900">{apartment.amenities.bedroom}</p>
-                                                    <p className="text-[10px] text-gray-500">Double Sharing</p>
+                                                    <p className="text-xs font-medium text-gray-900">{apartment.bedrooms}</p>
+                                                    <p className="text-[10px] text-gray-500">{apartment.sharingType} Sharing</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
                                                 <Bath className="w-4 h-4 text-gray-600" />
                                                 <div>
-                                                    <p className="text-xs font-medium text-gray-900">{apartment.amenities.bath}</p>
+                                                    <p className="text-xs font-medium text-gray-900">{apartment.bathrooms}</p>
                                                     <p className="text-[10px] text-gray-500">Attached</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
                                                 <Wifi className="w-4 h-4 text-gray-600" />
                                                 <div>
-                                                    <p className="text-xs font-medium text-gray-900">{apartment.amenities.wifi}</p>
+                                                    <p className="text-xs font-medium text-gray-900">{apartment.amenities?.includes("wifi") ? "Yes" : "No"}</p>
                                                     <p className="text-[10px] text-gray-500">High Speed</p>
                                                 </div>
                                             </div>
@@ -194,13 +195,13 @@ console.log(apartment);
                                             <div>
                                                 <p className="text-xs text-gray-500">Starting from</p>
                                                 <div className="flex items-baseline gap-1">
-                                                    <span className="text-xl font-bold text-gray-900">₹{apartment.rent}</span>
+                                                    <span className="text-xl font-bold text-gray-900">₹{apartment.price}</span>
                                                     <span className="text-sm text-gray-600">/month</span>
                                                 </div>
                                             </div>
                                             <Button
-                                                onClick={handleClick}
-                                                className="bg-green hover:bg-green text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                                                onClick={(e) => handleClick(e, apartment.id)}
+                                                className="bg-green hover:bg-green text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap"
                                             >
                                                 View Details
                                             </Button>
@@ -261,8 +262,7 @@ export const ApartmentListingsSection = ({
   // Default onViewDetails handler if not provided
   const handleViewDetails = useMemo(() => 
     onViewDetails || ((id: string) => {
-        navigate("/property-details");
-    //   navigate(`/property-details/${id}`);
+      navigate(`/property-details/${id}`);
     }), 
     [navigate, onViewDetails]
   );
@@ -276,7 +276,7 @@ export const ApartmentListingsSection = ({
       const searchTerm = type.replace(/-/g, ' ');
       
       return accommodations.filter(acc => {
-        const nameMatch = acc.name?.toLowerCase().includes(searchTerm) || false;
+        const nameMatch = acc.title?.toLowerCase().includes(searchTerm) || false;
         const tagMatch = (acc.tags || []).some(tag => 
           tag?.toLowerCase().includes(searchTerm)
         );
@@ -396,13 +396,7 @@ export const ApartmentListingsSection = ({
             />
           ))}
         </div>
-        <div className="text-center mt-6">
-                    <Button className="bg-white border-2 border-green text-green hover:bg-green hover:text-white px-6 py-2 rounded-lg text-sm font-semibold transition-colors" onClick={() => navigate('/property-details')}>
-                        Show More Properties
-                    </Button>
-                </div>
-       
-      </div>
+        </div>
     </section>
   );
 };

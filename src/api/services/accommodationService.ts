@@ -7,19 +7,36 @@ export interface Rating {
 
 export interface Accommodation {
   id: string;
-  name: string;
+  title: string;
   location: string;
-  image: string;
-  amenities: {
-    bedroom: number;
-    bath: number;
-    wifi: boolean;
-  };
+  type:string;
+  bulkAccommodation?:boolean;
+  bulkAccommodationType?:string[];
+  sharingType?:string[];
+  city?: string;
+  gender?: string;
+  images: string[];
+  amenities: string[];
+  bedrooms: number;
+  bathrooms: number;
+  rules: string[];
   tags: string[];
-  rent: string;
+  price: string;
+  description: string;
+  isAvailable: boolean;
   rating: number | Rating;
   reviews: number;
   isNew?: boolean;
+  nearbyPlaces: string[],
+  visitBookings: string[],
+  scheduleVisits: string[],
+  area: number,
+    owner:string,
+    views:number,
+    isFeatured:boolean, 
+    createdAt:string,
+    updatedAt:string,
+    __v:number
 }
 
 export const accommodationService = {
@@ -28,19 +45,32 @@ export const accommodationService = {
       const response = await axios.get('https://vizima-backend.onrender.com/api/home/bulk-accommodation');
       return response.data.data.map((item: any) => ({
         id: item._id,
-        name: item.title,
-        location: item.address?.city || 'N/A',
-        image: item.images?.[0] || '',
-        amenities: {
-          bedroom: item?.bedrooms || 1,
-          bath: item?.bathrooms || 1,
-          wifi: item?.amenities?.includes('wifi') || false,
-        },
+        title: item.title,
+        location: item.location?.address || 'N/A',
+        type:item.type,
+        bulkAccommodation:item.bulkAccommodation,
+        bulkAccommodationType:item.bulkAccommodationType,
+        sharingType:item.sharingType,
+        city:item.city,
+        gender:item.gender,
+        images:item.images,
+        amenities:item.amenities,
+        bedrooms:item.bedrooms,
+        bathrooms:item.bathrooms,
+        rules:item.rules,
         tags: item.rules || [],
-        rent: item.pricing?.monthlyRent?.toString() || '0',
         rating: item.rating?.average || 0,
         reviews: item.reviewCount || 0,
-        isAvailable: item.isAvailable || false
+        isAvailable: item.isAvailable || false,
+        price: item.price,
+        description: item.description || 'No description available',
+        area: item.area,
+        owner:item.owner,
+        views:item.views,
+        isFeatured:item.isFeatured,
+        createdAt:item.createdAt,
+        updatedAt:item.updatedAt,
+        __v:item.__v,
       }));
     } catch (error) {
       console.error('Error fetching accommodations:', error);

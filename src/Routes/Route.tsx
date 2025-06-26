@@ -23,9 +23,9 @@ const App = () => {
                     <Routes>
                         <Route path="/" element={<Homepage />} />
                         <Route path="/product" element={<ProductPage />} />
-                        <Route path="/book" element={<BookARoom />} />
+                        <Route path="/book/:id" element={<BookARoom />} />
                         <Route path="/aboutUs" element={<Blog />} />
-                        <Route path="/property-details" element={<PropertyDetails />} />
+                        <Route path="/property-details/:id" element={<PropertyDetails />} />
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/booking" element={<BookingsPage />} />
@@ -35,7 +35,7 @@ const App = () => {
                     </Routes>
                 </main>
                 <BulkAccommodationSection />
-                
+
                 {/* WhatsApp Floating Button */}
                 <WhatsAppButton />
 

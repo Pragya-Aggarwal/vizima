@@ -1,5 +1,6 @@
 import { MinusIcon, PlusIcon, MapIcon, ListIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { ApartmentListingsSection } from "./ApartmentListingsSection/ApartmentListingsSection";
 import { FAQSection } from "./FAQSection/FAQSection";
 import { PageTitleSection } from "./PageTitleSection";
@@ -11,16 +12,64 @@ import { accommodationService, Accommodation } from '../../api/services/accommod
 
 export const ProductPage = (): JSX.Element => {
     const [showMap, setShowMap] = useState(false);
-    const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
+    const [filteredAccommodations, setFilteredAccommodations] = useState<Accommodation[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const location = useLocation();
+    const [searchParams] = useSearchParams();
+    const city = searchParams.get('city')?.toLowerCase();
+    const gender = searchParams.get('gender')?.toLowerCase();
+
+    // Filter accommodations based on search parameters and active filters
+    const filterAccommodations = (data: Accommodation[], filters: Record<string, string> = {}) => {
+        return data.filter(acc => {
+            // Apply URL search params filters
+            const matchesCity = !city || acc.city?.toLowerCase().includes(city);
+            const matchesGender = !gender || acc.gender?.toLowerCase() === gender;
+            
+            // Apply component filters
+            const matchesLocation = !filters.location || acc.city === filters.location;
+            const matchesPropertyType = !filters.propertyType || acc.type === filters.propertyType;
+            const matchesSharingType = !filters.sharingType || 
+                (acc.sharingType && acc.sharingType.includes(filters.sharingType));
+            const matchesGenderFilter = !filters.gender || acc.gender === filters.gender;
+            
+            return (
+                matchesCity && 
+                matchesGender && 
+                matchesLocation &&
+                matchesPropertyType &&
+                matchesSharingType &&
+                matchesGenderFilter
+            );
+        });
+    };
+
+    // Handle filter changes from FiltersAndSortingSection
+    const handleFilterChange = (filters: Record<string, string>) => {
+        setFilteredAccommodations(prev => {
+            const allAccommodations = location.state?.initialResults || prev;
+            return filterAccommodations(allAccommodations, filters);
+        });
+    };
 
     useEffect(() => {
-        const fetchAccommodations = async () => {
+        const fetchData = async () => {
             try {
                 setLoading(true);
-                const data = await accommodationService.getAccommodations();
-                setAccommodations(data);
+                let data: Accommodation[] = [];
+                
+                // Check if we have initial results from the search
+                if (location.state?.initialResults) {
+                    data = location.state.initialResults;
+                } else {
+                    // Otherwise, fetch all accommodations
+                    data = await accommodationService.getAccommodations();
+                }
+                
+                // Filter the data based on search params
+                const filteredData = filterAccommodations(data);
+                setFilteredAccommodations(filteredData);
                 setError(null);
             } catch (err) {
                 console.error('Error fetching accommodations:', err);
@@ -30,8 +79,8 @@ export const ProductPage = (): JSX.Element => {
             }
         };
 
-        fetchAccommodations();
-    }, []);
+        fetchData();
+    }, [location.state, city, gender]);
 
     const toggleView = () => {
         setShowMap(!showMap);
@@ -48,7 +97,10 @@ export const ProductPage = (): JSX.Element => {
                 {/* Filters and Sorting Section */}
                 <div className="sticky top-0 z-30 bg-white border-b border-gray-100">
                     <div className="max-w-[1440px] mx-auto">
-                        <FiltersAndSortingSection />
+                        <FiltersAndSortingSection 
+                            onFilterChange={handleFilterChange}
+                            accommodations={filteredAccommodations}
+                        />
                     </div>
                 </div>
 
@@ -73,12 +125,12 @@ export const ProductPage = (): JSX.Element => {
                 </div>
 
                 {/* Main content area with listings and map */}
-                <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 mt-6">
-                    <div className="flex flex-col lg:flex-row gap-6">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-2 md:px-8 lg:px-12 mt-6">
+                    <div className="flex flex-col lg:flex-row gap-6 sm:gap-2">
                         {/* Left column - Apartment listings */}
                         <div className={`flex-1 min-w-0 ${showMap ? 'hidden lg:block' : 'block'}`}>
                             <ApartmentListingsSection 
-                                accommodations={accommodations}
+                                accommodations={filteredAccommodations}
                                 loading={loading}
                                 error={error}
                             />

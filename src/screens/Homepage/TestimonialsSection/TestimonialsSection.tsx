@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
     Avatar,
     AvatarFallback,
@@ -14,42 +14,57 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "../../../components/ui/carousel";
+import { testimonialService, Testimonial } from '../../../api/services/testimonialService';
 
 export const TestimonialsSection = (): JSX.Element => {
-    const testimonials = [
-        {
-            id: 1,
-            name: "Annie",
-            city: "Noida",
-            text: "Nascetur urna, fusce consectetur massa nulla viverra aenean semper. Dignissim nibh sed condimentum eget ac suspendisse eget amet integer. Mattis etiam",
-            stars: 5,
-            image: "https://c.animaapp.com/mbhqlborYGJdod/img/ellipse-7-3.png",
-        },
-        {
-            id: 2,
-            name: "Annie",
-            city: "Noida",
-            text: "Nascetur urna, fusce consectetur massa nulla viverra aenean semper. Dignissim nibh sed condimentum eget ac suspendisse eget amet integer. Mattis etiam",
-            stars: 4,
-            image: "https://c.animaapp.com/mbhqlborYGJdod/img/ellipse-7-3.png",
-        },
-        {
-            id: 3,
-            name: "Annie",
-            city: "Noida",
-            text: "Nascetur urna, fusce consectetur massa nulla viverra aenean semper. Dignissim nibh sed condimentum eget ac suspendisse eget amet integer. Mattis etiam",
-            stars: 5,
-            image: "https://c.animaapp.com/mbhqlborYGJdod/img/ellipse-7-3.png",
-        },
-        {
-            id: 4,
-            name: "Annie",
-            city: "Noida",
-            text: "Nascetur urna, fusce consectetur massa nulla viverra aenean semper. Dignissim nibh sed condimentum eget ac suspendisse eget amet integer. Mattis etiam",
-            stars: 5,
-            image: "https://c.animaapp.com/mbhqlborYGJdod/img/ellipse-7-3.png",
-        },
-    ];
+    const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchTestimonials = async () => {
+            try {
+                const data = await testimonialService.getTestimonials();
+                setTestimonials(data);
+            } catch (error) {
+                console.error('Failed to fetch testimonials:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchTestimonials();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <section className="w-full max-w-[1400px] mx-auto px-4 py-12">
+                <div className="container mx-auto">
+                    <div className="flex flex-col items-center gap-4 mb-12">
+                        <h2 className="text-2xl sm:text-[length:var(--desktop-h2-font-size)] font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-center tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
+                            What our partners think
+                        </h2>
+                        <p className="font-desktop-subtitle font-[number:var(--desktop-subtitle-font-weight)] text-text text-[length:var(--desktop-subtitle-font-size)] text-center tracking-[var(--desktop-subtitle-letter-spacing)] leading-[var(--desktop-subtitle-line-height)] [font-style:var(--desktop-subtitle-font-style)]">
+                            Loading testimonials...
+                        </p>
+                    </div>
+                </div>
+            </section>
+        );
+    }
+
+    if (testimonials.length === 0) {
+        return (
+            <section className="w-full max-w-[1400px] mx-auto px-4 py-12">
+                <div className="container mx-auto">
+                    <div className="flex flex-col items-center gap-4 mb-12">
+                        <h2 className="text-2xl sm:text-[length:var(--desktop-h2-font-size)] font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text text-center tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
+                            No Testimonials Available
+                        </h2>
+                    </div>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section className="w-full max-w-[1400px] mx-auto px-4">
@@ -78,7 +93,7 @@ export const TestimonialsSection = (): JSX.Element => {
                                         <div className="flex items-start gap-4">
                                             <Avatar className="w-[62px] h-[62px]">
                                                 <AvatarImage
-                                                    src={testimonial.image}
+                                                    src={testimonial.picture}
                                                     alt={testimonial.name}
                                                 />
                                                 <AvatarFallback>
@@ -90,20 +105,20 @@ export const TestimonialsSection = (): JSX.Element => {
                                                     {testimonial.name}
                                                 </h4>
                                                 <p className="font-desktop-text-regular font-[number:var(--desktop-text-regular-font-weight)] text-text text-[length:var(--desktop-text-regular-font-size)] tracking-[var(--desktop-text-regular-letter-spacing)] leading-[var(--desktop-text-regular-line-height)] [font-style:var(--desktop-text-regular-font-style)]">
-                                                    City: {testimonial.city}
+                                                    {testimonial.city}
                                                 </p>
                                             </div>
                                             <div className="flex ml-auto">
-                                                {[...Array(testimonial.stars)].map((_, i) => (
+                                                {[...Array(5)].map((_, i) => (
                                                     <Star
                                                         key={i}
-                                                        className="w-5 h-5 fill-yellow-400 text-yellow-400"
+                                                        className={`w-5 h-5 ${i < (testimonial.rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
                                                     />
                                                 ))}
                                             </div>
                                         </div>
                                         <p className="mt-4 font-desktop-subtitle font-[number:var(--desktop-subtitle-font-weight)] text-text text-[length:var(--desktop-subtitle-font-size)] tracking-[var(--desktop-subtitle-letter-spacing)] leading-[var(--desktop-subtitle-line-height)] [font-style:var(--desktop-subtitle-font-style)]">
-                                            {testimonial.text}
+                                            {testimonial.comment}
                                         </p>
                                     </CardContent>
                                 </Card>

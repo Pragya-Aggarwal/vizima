@@ -18,7 +18,7 @@ export const BookingFormSection = (): JSX.Element => {
     return (
         <section className="w-full bg-gray-50 py-8 md:py-12">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mx-auto">
                     {policyItems.map((item, index) => (
                         <div 
                             key={index} 

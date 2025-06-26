@@ -13,12 +13,12 @@ const PropertyCard = ({ property, onViewDetails }: PropertyCardProps) => (
   <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
     <div className="relative h-48 bg-gray-100">
       <img
-        src={property.image || 'https://via.placeholder.com/300x200?text=No+Image'}
-        alt={property.name}
+        src={property.images[0] || ''}
+        alt={property.title}
         className="w-full h-full object-cover"
         onError={(e) => {
           const target = e.target as HTMLImageElement;
-          target.src = 'https://via.placeholder.com/300x200?text=No+Image';
+          target.src = '';
         }}
       />
       <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded-full text-xs font-medium">
@@ -26,7 +26,7 @@ const PropertyCard = ({ property, onViewDetails }: PropertyCardProps) => (
       </div>
     </div>
     <CardContent className="p-4">
-      <h3 className="text-lg font-semibold mb-1 line-clamp-1">{property.name}</h3>
+      <h3 className="text-lg font-semibold mb-1 line-clamp-1">{property.title}</h3>
       <p className="text-sm text-gray-600 mb-3">{property.location}</p>
 
       <div className="flex items-center justify-between mt-4">

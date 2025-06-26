@@ -1,56 +1,85 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../../../components/ui/button";
-import { Card, CardContent } from "../../../components/ui/card";
+import { cityService, City } from "../../../api/services/cityService";
+import { Skeleton } from "../../../components/ui/skeleton"
 
 export const HeroSection = (): JSX.Element => {
     const [showAllCities, setShowAllCities] = useState(false);
+    const [cities, setCities] = useState<City[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    // Full city data
-    const allCities = [
-        {
-            name: "Delhi NCR",
-            image: "https://c.animaapp.com/mbhqlborYGJdod/img/unsplash-kzogdvyb-hm.svg",
-        },
-        {
-            name: "Mumbai",
-            image: "https://c.animaapp.com/mbhqlborYGJdod/img/unsplash-trpi4zxpaqu.svg",
-        },
-        {
-            name: "Bangalore",
-            image: "https://c.animaapp.com/mbhqlborYGJdod/img/unsplash--7aftbn2jo4.svg",
-        },
-        {
-            name: "Pune",
-            image: "https://c.animaapp.com/mbhqlborYGJdod/img/unsplash-u3gtiojlmpg.svg",
-        },
-        {
-            name: "Hyderabad",
-            image: "https://c.animaapp.com/mbhqlborYGJdod/img/unsplash-19szvauj7ka.svg",
-        },
-        {
-            name: "Chennai",
-            image: "https://c.animaapp.com/mbhqlborYGJdod/img/chennai-placeholder.svg",
-        },
-        {
-            name: "Kolkata",
-            image: "https://c.animaapp.com/mbhqlborYGJdod/img/kolkata-placeholder.svg",
-        },
-        {
-            name: "Ahmedabad",
-            image: "https://c.animaapp.com/mbhqlborYGJdod/img/ahmedabad-placeholder.svg",
-        },
-        {
-            name: "Jaipur",
-            image: "https://c.animaapp.com/mbhqlborYGJdod/img/jaipur-placeholder.svg",
-        },
-        {
-            name: "Lucknow",
-            image: "https://c.animaapp.com/mbhqlborYGJdod/img/lucknow-placeholder.svg",
-        },
-    ];
+    useEffect(() => {
+        const fetchCities = async () => {
+            try {
+                setIsLoading(true);
+                const data = await cityService.getCities();
+                const transformedCities = cityService.transformCities(data);
+                setCities(transformedCities);
+            } catch (err) {
+                console.error('Failed to fetch cities:', err);
+                setError('Failed to load cities. Please try again later.');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchCities();
+    }, []);
 
     // Determine which cities to display
-    const displayedCities = showAllCities ? allCities : allCities.slice(0, 5);
+    const displayedCities = showAllCities ? cities : cities.slice(0, 5);
+
+    // Loading state
+    if (isLoading) {
+        return (
+            <section className="flex flex-col items-center gap-8 sm:gap-12 md:gap-16 px-4 sm:px-6 md:px-8 lg:px-20 py-10 sm:py-12 md:py-16 w-full">
+                <h2 className="text-2xl sm:text-[length:var(--desktop-h2-font-size)] font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
+                    Choose Your City
+                </h2>
+                <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6 w-full max-w-7xl mx-auto">
+                    {[...Array(5)].map((_, index) => (
+                        <div key={index} className="flex flex-col items-center gap-3 sm:gap-4 w-full">
+                            <Skeleton className="w-full aspect-square rounded-2xl" />
+                            <Skeleton className="h-4 w-24" />
+                        </div>
+                    ))}
+                </div>
+            </section>
+        );
+    }
+
+    // Error state
+    if (error) {
+        return (
+            <section className="flex flex-col items-center gap-8 sm:gap-12 md:gap-16 px-4 sm:px-6 md:px-8 lg:px-20 py-10 sm:py-12 md:py-16 w-full">
+                <h2 className="text-2xl sm:text-[length:var(--desktop-h2-font-size)] font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
+                    Choose Your City
+                </h2>
+                <div className="text-center">
+                    <p className="text-red-500 mb-4">{error}</p>
+                    <Button 
+                        onClick={() => window.location.reload()}
+                        className="bg-green-600 hover:bg-green-700"
+                    >
+                        Retry
+                    </Button>
+                </div>
+            </section>
+        );
+    }
+
+    // Empty state
+    if (cities.length === 0) {
+        return (
+            <section className="flex flex-col items-center gap-8 sm:gap-12 md:gap-16 px-4 sm:px-6 md:px-8 lg:px-20 py-10 sm:py-12 md:py-16 w-full">
+                <h2 className="text-2xl sm:text-[length:var(--desktop-h2-font-size)] font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
+                    No Cities Available
+                </h2>
+                <p className="text-gray-500">Check back later for available cities.</p>
+            </section>
+        );
+    }
 
     return (
         <section className="flex flex-col items-center gap-8 sm:gap-12 md:gap-16 px-4 sm:px-6 md:px-8 lg:px-20 py-10 sm:py-12 md:py-16 w-full">

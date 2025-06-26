@@ -74,6 +74,7 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
     useEffect(() => {
       if (!accommodations || accommodations.length === 0) return;
 
+      // Get unique values for each filter type
       const locations = Array.from(new Set(
         accommodations
           .map(acc => acc.city)
@@ -98,13 +99,39 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
           .filter((gender): gender is string => Boolean(gender))
       ));
 
-      setFilterOptions(prev => [
-        { ...prev[0], options: locations },
-        { ...prev[1], options: propertyTypes },
-        { ...prev[2], options: sharingTypes },
-        { ...prev[3], options: genders }
+      console.log('Setting filter options:', { locations, propertyTypes, sharingTypes, genders });
+
+      setFilterOptions([
+        { 
+          name: "Location", 
+          width: "w-[194px]", 
+          options: locations, 
+          value: activeFilters.find(f => f.field === 'location')?.value || 'all',
+          field: 'location' 
+        },
+        { 
+          name: "Property Type", 
+          width: "w-[265px]", 
+          options: propertyTypes, 
+          value: activeFilters.find(f => f.field === 'propertyType')?.value || 'all',
+          field: 'propertyType' 
+        },
+        { 
+          name: "Sharing Type", 
+          width: "w-[250px]", 
+          options: sharingTypes, 
+          value: activeFilters.find(f => f.field === 'sharingType')?.value || 'all',
+          field: 'sharingType' 
+        },
+        { 
+          name: "Gender", 
+          width: "w-[180px]", 
+          options: genders, 
+          value: activeFilters.find(f => f.field === 'gender')?.value || 'all',
+          field: 'gender' 
+        }
       ]);
-    }, [accommodations]);
+    }, [accommodations, activeFilters]);
 
     const handleFilterChange = (field: FilterField, value: string) => {
       setActiveFilters(prev => {
@@ -112,44 +139,32 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
         const existingFilterIndex = newFilters.findIndex(f => f.field === field);
         
         if (value === 'all') {
-          // Remove filter if 'all' is selected
-          if (existingFilterIndex >= 0) {
+          // Remove the filter if 'all' is selected
+          if (existingFilterIndex !== -1) {
             newFilters.splice(existingFilterIndex, 1);
           }
         } else {
-          // Add or update filter
-          const newFilter: ActiveFilter = { 
-            field, 
-            value, 
-            name: filterOptions.find(f => f.field === field)?.name || field 
-          };
+          // Update or add the filter
+          const filterOption = filterOptions.find(f => f.field === field);
+          const filterName = filterOption?.name || field;
           
-          if (existingFilterIndex >= 0) {
-            newFilters[existingFilterIndex] = newFilter;
+          if (existingFilterIndex !== -1) {
+            newFilters[existingFilterIndex] = { name: filterName, value, field };
           } else {
-            newFilters.push(newFilter);
+            newFilters.push({ name: filterName, value, field });
           }
         }
         
-        // Update parent component with current filters
-        const filtersObj = newFilters.reduce<Record<string, string>>((acc, filter) => ({
+        // Convert to simple object for parent component
+        const filtersObj = newFilters.reduce((acc: Record<string, string>, filter: ActiveFilter) => ({
           ...acc,
           [filter.field]: filter.value
         }), {});
         
+        console.log('Filter changed:', { field, value, filtersObj, newFilters });
         onFilterChange(filtersObj);
         return newFilters;
       });
-
-      setActiveFilters(newFilters);
-      
-      // Convert to simple object for parent component
-      const filtersObj = newFilters.reduce((acc, filter) => ({
-        ...acc,
-        [filter.field]: filter.value
-      }), {});
-      
-      onFilterChange(filtersObj);
     };
 
     const removeFilter = (index: number) => {

@@ -1,61 +1,104 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
 } from "../../../components/ui/accordion";
+import { faqService, FAQItem } from "../../../api/services/faqService";
+import { Skeleton } from "../../../components/ui/skeleton";
 
-export const FAQSection = (): JSX.Element => {
-    // FAQ data for mapping
-    const faqItems = [
-        {
-            question: "Are meals included in the rent?",
-            answer:
-                "Yes, most PGs offer food packages — some include breakfast, lunch, and dinner.",
-            defaultOpen: true,
-        },
-        {
-            question: "Can I book a PG without visiting?",
-            answer: "Yes, you can request a video tour or book directly if verified.",
-            defaultOpen: true,
-        },
-        {
-            question: "What's the minimum stay period?",
-            answer:
-                "Most PGs require a minimum stay of 3-6 months, but this varies by property.",
-            defaultOpen: false,
-        },
-        {
-            question: "Are there girls-only or boys-only PGs?",
-            answer:
-                "Yes, many PGs are gender-specific, offering separate accommodations for men and women.",
-            defaultOpen: false,
-        },
-        {
-            question: "Do PGs offer attached bathrooms?",
-            answer:
-                "Many premium PGs offer rooms with attached bathrooms, while others have shared facilities.",
-            defaultOpen: false,
-        },
-    ];
+interface FAQSectionProps {
+    maxItems?: number;
+    defaultOpenCount?: number;
+}
 
-    // Get the value string for defaultOpen items
-    const defaultOpenValues = faqItems
-        .map((item, index) => (item.defaultOpen ? `item-${index}` : null))
-        .filter(Boolean)
-        .join(" ");
+export const FAQSection: React.FC<FAQSectionProps> = ({ 
+    maxItems,
+    defaultOpenCount = 2 
+}) => {
+    const [faqs, setFaqs] = useState<FAQItem[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchFAQs = async () => {
+            try {
+                setIsLoading(true);
+                let data = await faqService.getFAQs();
+                
+                // Apply maxItems if provided
+                if (maxItems) {
+                    data = data.slice(0, maxItems);
+                }
+                
+                setFaqs(data);
+            } catch (err) {
+                console.error('Failed to fetch FAQs:', err);
+                setError('Failed to load FAQs. Please try again later.');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchFAQs();
+    }, []);
+console.log(faqs);
+    // Loading state
+    if (isLoading) {
+        return (
+            <div className="w-full space-y-4">
+                {[...Array(5)].map((_, index) => (
+                    <div key={index} className="space-y-2">
+                        <Skeleton className="h-6 w-3/4" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-5/6" />
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+
+    // Error state
+    if (error) {
+        return (
+            <div className="text-center py-8">
+                <p className="text-red-500 mb-4">{error}</p>
+                <button
+                    onClick={() => window.location.reload()}
+                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                >
+                    Retry
+                </button>
+            </div>
+        );
+    }
+
+    // Empty state
+    if (faqs.length === 0) {
+        return (
+            <div className="text-center py-8">
+                <p className="text-gray-500">No FAQs available at the moment.</p>
+            </div>
+        );
+    }
+
+    // Default open FAQs based on defaultOpenCount
+    const defaultOpenValues = faqs
+        .slice(0, defaultOpenCount)
+        .map((_, index) => `item-${index}`);
 
     return (
         <section className="flex flex-col w-full max-w-[1280px] items-start gap-[20px] mx-auto my-6">
             <Accordion
                 type="multiple"
-                defaultValue={defaultOpenValues ? defaultOpenValues.split(" ") : []}
+                defaultValue={defaultOpenValues}
                 className="w-full"
             >
-                {faqItems.map((item, index) => (
+                {faqs.map((item, index) => (
                     <AccordionItem
-                        key={`item-${index}`}
+                        key={item.id}
                         value={`item-${index}`}
                         className="border-b py-5"
                     >
@@ -65,9 +108,10 @@ export const FAQSection = (): JSX.Element => {
                             </h4>
                         </AccordionTrigger>
                         <AccordionContent>
-                            <p className="font-desktop-text-regular font-[number:var(--desktop-text-regular-font-weight)] text-text text-[length:var(--desktop-text-regular-font-size)] tracking-[var(--desktop-text-regular-letter-spacing)] leading-[var(--desktop-text-regular-line-height)] [font-style:var(--desktop-text-regular-font-style)]">
-                                {item.answer}
-                            </p>
+                            <div 
+                                className="font-desktop-text-regular font-[number:var(--desktop-text-regular-font-weight)] text-text text-[length:var(--desktop-text-regular-font-size)] tracking-[var(--desktop-text-regular-letter-spacing)] leading-[var(--desktop-text-regular-line-height)] [font-style:var(--desktop-text-regular-font-style)]"
+                                dangerouslySetInnerHTML={{ __html: item.answer }}
+                            />
                         </AccordionContent>
                     </AccordionItem>
                 ))}

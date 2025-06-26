@@ -12,7 +12,7 @@ interface ToastOptions {
 export function toast({ title, description, variant = 'default', duration = 3000 }: ToastOptions) {
   // In a real implementation, you might want to use a toast library like react-hot-toast or sonner
   // This is a simplified version that logs to the console
-  console.log(`[${variant.toUpperCase()}] ${title}`, description || '');
+
   
   // In a real implementation, you would dispatch a custom event or use a state management library
   // to show the toast in your UI

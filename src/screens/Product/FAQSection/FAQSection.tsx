@@ -43,7 +43,6 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
 
         fetchFAQs();
     }, []);
-console.log(faqs);
     // Loading state
     if (isLoading) {
         return (
@@ -98,7 +97,7 @@ console.log(faqs);
             >
                 {faqs.map((item, index) => (
                     <AccordionItem
-                        key={item.id}
+                        key={index}
                         value={`item-${index}`}
                         className="border-b py-5"
                     >

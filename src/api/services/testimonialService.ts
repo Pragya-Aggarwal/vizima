@@ -20,11 +20,10 @@ export const testimonialService = {
   getTestimonials: async (): Promise<Testimonial[]> => {
     try {
       const response = await apiService.get<{ data: Testimonial[] }>('/testimonials');
-      // Filter to only return active testimonials
-      return response?.data?.data || [];
+      return response.data.data || [];
     } catch (error) {
       console.error('Error fetching testimonials:', error);
-      return [];
+      throw error;
     }
   },
 };

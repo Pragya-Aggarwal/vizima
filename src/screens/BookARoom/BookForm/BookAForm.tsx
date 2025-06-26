@@ -175,13 +175,11 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                 guests: formData.guests
             };
 
-            console.log('Submitting booking:', bookingData);
 
             // Make the API call
             const response = await bookingService.createBooking(bookingData);
 
             // Handle successful booking
-            console.log('Booking successful:', response);
             alert('Booking successful!');
 
             // Reset form

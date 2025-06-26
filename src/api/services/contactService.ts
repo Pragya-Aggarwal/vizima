@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { apiService } from '../apiService';
 
 export interface ContactMessageParams {
   fullName: string;
@@ -8,9 +8,9 @@ export interface ContactMessageParams {
 }
 
 export const contactService = {
-  async sendMessage(params: ContactMessageParams): Promise<void> {
+  async sendMessage(params: ContactMessageParams): Promise<any> {
     try {
-      const response = await axios.post('https://vizima-backend.onrender.com/api/contact/message', params);
+      const response = await apiService.post('/contact/message', params);
       return response.data;
     } catch (error) {
       console.error('Error sending contact message:', error);

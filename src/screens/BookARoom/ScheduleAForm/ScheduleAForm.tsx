@@ -170,7 +170,6 @@ export const ScheduleAForm = ({ propertyId }: ScheduleAFormProps): JSX.Element =
         selectedDateTime: "",
         visitType: "physical",
     });
-    console.log(propertyId);
     // Error state
     const [errors, setErrors] = useState<FormErrors>({});
     const [isSubmitting, setIsSubmitting] = useState(false);

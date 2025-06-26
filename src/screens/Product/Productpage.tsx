@@ -1,5 +1,5 @@
 import { MinusIcon, PlusIcon, MapIcon, ListIcon } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { ApartmentListingsSection } from "./ApartmentListingsSection/ApartmentListingsSection";
 import { FAQSection } from "./FAQSection/FAQSection";
@@ -20,19 +20,33 @@ export const ProductPage = (): JSX.Element => {
     const city = searchParams.get('city')?.toLowerCase();
     const gender = searchParams.get('gender')?.toLowerCase();
 
-    // Filter accommodations based on search parameters and active filters
-    const filterAccommodations = (data: Accommodation[], filters: Record<string, string> = {}) => {
+    // State to store all accommodations and filters
+    const [allAccommodations, setAllAccommodations] = useState<Accommodation[]>([]);
+    const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
+    const [sortBy, setSortBy] = useState<string>('availability');
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+
+    // Filter accommodations based on active filters and search params
+    const filterAccommodations = useCallback((data: Accommodation[]) => {
+        if (!data || data.length === 0) return [];
+
         return data.filter(acc => {
             // Apply URL search params filters
-            const matchesCity = !city || acc.city?.toLowerCase().includes(city);
-            const matchesGender = !gender || acc.gender?.toLowerCase() === gender;
+            const matchesCity = !city || (acc.city && acc.city.toLowerCase().includes(city.toLowerCase()));
+            const matchesGender = !gender || (acc.gender && acc.gender.toLowerCase() === gender.toLowerCase());
             
             // Apply component filters
-            const matchesLocation = !filters.location || acc.city === filters.location;
-            const matchesPropertyType = !filters.propertyType || acc.type === filters.propertyType;
-            const matchesSharingType = !filters.sharingType || 
-                (acc.sharingType && acc.sharingType.includes(filters.sharingType));
-            const matchesGenderFilter = !filters.gender || acc.gender === filters.gender;
+            const matchesLocation = !activeFilters.location || 
+                                 (acc.city && acc.city.toLowerCase().includes(activeFilters.location.toLowerCase()));
+            const matchesPropertyType = !activeFilters.propertyType || 
+                                     (acc.type && acc.type.toLowerCase() === activeFilters.propertyType.toLowerCase());
+            const matchesSharingType = !activeFilters.sharingType || 
+                                    (acc.sharingType && 
+                                     acc.sharingType.some((type: string) => 
+                                         type.toLowerCase() === activeFilters.sharingType?.toLowerCase()
+                                     ));
+            const matchesGenderFilter = !activeFilters.gender || 
+                                     (acc.gender && acc.gender.toLowerCase() === activeFilters.gender.toLowerCase());
             
             return (
                 matchesCity && 
@@ -43,33 +57,109 @@ export const ProductPage = (): JSX.Element => {
                 matchesGenderFilter
             );
         });
-    };
+    }, [city, gender, activeFilters]);
 
-    // Handle filter changes from FiltersAndSortingSection
-    const handleFilterChange = (filters: Record<string, string>) => {
-        setFilteredAccommodations(prev => {
-            const allAccommodations = location.state?.initialResults || prev;
-            return filterAccommodations(allAccommodations, filters);
+    // Sort accommodations
+    const sortAccommodations = useCallback((data: Accommodation[]) => {
+        
+        return [...data].sort((a, b) => {
+            let comparison = 0;
+            
+            switch (sortBy) {
+                case 'price':
+                    comparison = (a.price || 0) - (b.price || 0);
+                    break;
+                case 'rating':
+                    // For rating, we want to sort high to low by default
+                    comparison = (b.rating?.average || 0) - (a.rating?.average || 0);
+                    // Only reverse if sortOrder is 'asc' (which would be unusual for ratings)
+                    if (sortOrder === 'asc') comparison = -comparison;
+                    return comparison;
+                case 'availability':
+                default:
+                    // Sort by availability (assuming there's an isAvailable property)
+                    comparison = (a.isAvailable === b.isAvailable) ? 0 : a.isAvailable ? -1 : 1;
+                    break;
+            }
+            
+            return sortOrder === 'asc' ? comparison : -comparison;
         });
+    }, [sortBy, sortOrder]);
+
+    // Handle clearing all filters
+    const handleClearAll = () => {
+        // Reset filtered accommodations to show all
+        setFilteredAccommodations([...allAccommodations]);
+        // Clear active filters
+        setActiveFilters({});
     };
 
+    // Handle filter changes from the FiltersAndSortingSection
+    const handleFilterChange = (filters: Record<string, string>) => {
+        setActiveFilters(filters);
+        
+        // If no filters, show all accommodations
+        if (Object.keys(filters).length === 0) {
+            setFilteredAccommodations([...allAccommodations]);
+            return;
+        }
+        
+        // Filter accommodations based on active filters
+        let result = [...allAccommodations];
+        
+        // Apply each active filter
+        Object.entries(filters).forEach(([key, value]) => {
+            if (value && value !== 'all') {
+                result = result.filter(acc => {
+                    // Handle different filter types
+                    const accValue = acc[key as keyof typeof acc];
+                    if (Array.isArray(accValue)) {
+                        return accValue.includes(value);
+                    }
+                    return String(accValue).toLowerCase() === value.toLowerCase();
+                });
+            }
+        });
+        
+        setFilteredAccommodations(result);
+    };
+
+    // Handle sort changes from the FiltersAndSortingSection
+    const handleSortChange = (sortOption: string) => {
+        
+        
+        // Handle special cases for price-desc
+        if (sortOption === 'price-desc') {
+            setSortBy('price');
+            setSortOrder('desc');
+            return;
+        }
+        
+        // For all other cases, check if we're toggling the same sort option
+        if (sortOption === sortBy) {
+            // Toggle sort order if clicking the same sort option
+            setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+        } else {
+            // Set new sort option with default ascending order
+            setSortBy(sortOption);
+            setSortOrder('asc');
+        }
+    };
+
+    // Fetch data on initial load
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
                 let data: Accommodation[] = [];
                 
-                // Check if we have initial results from the search
                 if (location.state?.initialResults) {
                     data = location.state.initialResults;
                 } else {
-                    // Otherwise, fetch all accommodations
                     data = await accommodationService.getAccommodations();
                 }
                 
-                // Filter the data based on search params
-                const filteredData = filterAccommodations(data);
-                setFilteredAccommodations(filteredData);
+                setAllAccommodations(data);
                 setError(null);
             } catch (err) {
                 console.error('Error fetching accommodations:', err);
@@ -80,7 +170,24 @@ export const ProductPage = (): JSX.Element => {
         };
 
         fetchData();
-    }, [location.state, city, gender]);
+    }, [location.state]);
+
+    // Apply filters and sorting whenever dependencies change
+    useEffect(() => {
+        if (allAccommodations.length > 0) {
+            let result = [...allAccommodations];
+            
+            // Apply filters
+            if (Object.keys(activeFilters).length > 0 || city || gender) {
+                result = filterAccommodations(result);
+            }
+            
+            // Apply sorting
+            result = sortAccommodations(result);
+            
+            setFilteredAccommodations(result);
+        }
+    }, [allAccommodations, activeFilters, city, gender, filterAccommodations, sortAccommodations]);
 
     const toggleView = () => {
         setShowMap(!showMap);
@@ -99,7 +206,9 @@ export const ProductPage = (): JSX.Element => {
                     <div className="max-w-[1440px] mx-auto">
                         <FiltersAndSortingSection 
                             onFilterChange={handleFilterChange}
-                            accommodations={filteredAccommodations}
+                            onSortChange={handleSortChange}
+                            onClearAll={handleClearAll}
+                            accommodations={allAccommodations}
                         />
                     </div>
                 </div>

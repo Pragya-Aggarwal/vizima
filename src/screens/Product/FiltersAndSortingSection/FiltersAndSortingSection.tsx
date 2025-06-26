@@ -30,14 +30,19 @@ type ActiveFilter = {
 
 interface FiltersAndSortingSectionProps {
   onFilterChange: (filters: Record<string, string>) => void;
+  onSortChange?: (sortBy: string) => void;
+  onClearAll: () => void;
   accommodations: Accommodation[];
 }
 
 export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> = ({
   onFilterChange,
+  onSortChange,
+  onClearAll,
   accommodations
 }) => {
     const [isOpen, setIsOpen] = useState(false);
+    
     const [activeFilters, setActiveFilters] = useState<ActiveFilter[]>([]);
     const [filterOptions, setFilterOptions] = useState<FilterOption[]>([
         { 
@@ -77,8 +82,8 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
       // Get unique values for each filter type
       const locations = Array.from(new Set(
         accommodations
-          .map(acc => acc.city)
-          .filter((city): city is string => Boolean(city))
+          .map(acc => acc.location)
+          .filter((location): location is string => Boolean(location))
       ));
 
       const propertyTypes = Array.from(new Set(
@@ -98,8 +103,6 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
           .map(acc => acc.gender)
           .filter((gender): gender is string => Boolean(gender))
       ));
-
-      console.log('Setting filter options:', { locations, propertyTypes, sharingTypes, genders });
 
       setFilterOptions([
         { 
@@ -161,7 +164,6 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
           [filter.field]: filter.value
         }), {});
         
-        console.log('Filter changed:', { field, value, filtersObj, newFilters });
         onFilterChange(filtersObj);
         return newFilters;
       });
@@ -183,9 +185,25 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
       });
     };
 
-    const clearAllFilters = () => {
+    const handleClearAll = () => {
+      // Reset active filters
       setActiveFilters([]);
-      onFilterChange({});
+      
+      // Reset filter options to their default state
+      setFilterOptions(prevOptions => 
+        prevOptions.map(option => ({
+          ...option,
+          value: 'all'
+        }))
+      );
+      
+      // Reset sort to default
+      if (onSortChange) {
+        onSortChange('availability');
+      }
+      
+      // Call parent's clear all handler
+      onClearAll();
     };
 
     const renderFilterSelect = (filter: FilterOption, isMobile = false) => (
@@ -217,6 +235,17 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
         </div>
     );
 
+    const [sortBy, setSortBy] = useState('availability');
+
+    const handleSortChange = (value: string) => {
+        setSortBy(value);
+        if (onSortChange) {
+            onSortChange(value);
+        } else {
+            console.warn('onSortChange prop is not provided');
+        }
+    };
+
     const renderSortSection = (isMobile = false) => (
         <div className={cn(
             "flex items-center gap-2",
@@ -225,21 +254,25 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
             <span className="text-sm font-medium text-text whitespace-nowrap">
                 Sort by:
             </span>
-            <Select defaultValue="availability">
+            <Select 
+                value={sortBy}
+                onValueChange={handleSortChange}
+            >
                 <SelectTrigger className={cn(
                     "border-none shadow-none h-auto",
                     isMobile ? "px-0" : "p-0"
                 )}>
                     <div className="flex items-center gap-2">
                         <span className="text-sm font-medium text-[#49735a] whitespace-nowrap">
-                            Availability
+                            {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
                         </span>
                     </div>
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="availability">Availability</SelectItem>
-                    <SelectItem value="price">Price</SelectItem>
-                    <SelectItem value="rating">Rating</SelectItem>
+                    <SelectItem value="price">Price (Low to High)</SelectItem>
+                    <SelectItem value="price-desc">Price (High to Low)</SelectItem>
+                    <SelectItem value="rating">Rating (High to Low)</SelectItem>
                 </SelectContent>
             </Select>
         </div>
@@ -272,7 +305,7 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
                                 <Button
                                     variant="link"
                                     className="text-sm text-gray-500"
-                                    onClick={clearAllFilters}
+                                    onClick={handleClearAll}
                                 >
                                     Clear all
                                 </Button>
@@ -307,7 +340,7 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
                     ))}
                     <button 
                         className="text-sm text-blue-500 whitespace-nowrap"
-                        onClick={clearAllFilters}
+                        onClick={handleClearAll}
                     >
                         Clear all
                     </button>
@@ -341,7 +374,7 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
                     ))}
                     <button 
                         className="text-sm text-blue-500"
-                        onClick={clearAllFilters}
+                        onClick={handleClearAll}
                     >
                         Clear all
                     </button>

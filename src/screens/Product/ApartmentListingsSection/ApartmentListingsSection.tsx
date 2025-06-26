@@ -2,61 +2,8 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Button } from "../../../components/ui/button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { accommodationService, Accommodation, Rating } from "../../../api/services/accommodationService";
-import { Star, MapPin, Wifi, BedDouble, Bath, Heart, Home, Users, UtensilsCrossed } from "lucide-react";
+import { Star, MapPin, Wifi, Bath, Heart, Home, Users } from "lucide-react";
 import { Card } from "../../../components/ui/card";
-
-// Dummy data to show when no accommodations are available
-const DUMMY_ACCOMMODATIONS: Accommodation[] = [
-
-{
-  id: "dummy-2",
-  location: "123 Elm Street, Queens, NY 11373",
-  rating: {
-    average: 0,
-    count: 0
-  },
-  reviews: 0,
-  tags: ["student", "affordable", "queens"],
-  title: "Affordable Hostel for Students in Queens",
-  description: "Budget accommodation for students with all basic amenities",
-  type: "hostel",
-  gender: "female",
-  bulkAccommodation: true,
-  bulkAccommodationType: [
-      "students"
-  ],
-  sharingType: [
-      "triple"
-  ],
-  price: "8000",
-  amenities: [
-      "wifi",
-      "furnished",
-      "laundry"
-  ],
-  images: [
-      "https://res.cloudinary.com/da4ucrpxo/image/upload/v1750841978/ptzrg6ushzsujep1dat5_vzntdc.jpg",
-      "https://res.cloudinary.com/da4ucrpxo/image/upload/v1750841978/ptzrg6ushzsujep1dat5_vzntdc.jpg"
-  ],
-  bedrooms: 6,
-  bathrooms: 3,
-  area: 1800,
-  isAvailable: true,
-  isFeatured: false,
-  owner: "6857de29ab367925f5fcdc4d",
-  views: 0,
-  rules: [
-      "No parties",
-      "No loud music"
-  ],
-    nearbyPlaces: [],
-  visitBookings: [],
-  scheduleVisits: [],
-  createdAt: "2025-06-25T19:31:31.698Z",
-  updatedAt: "2025-06-25T19:31:31.698Z",
-  __v: 0,
-}
-]
 
 interface ApartmentListingsSectionProps {
   accommodations?: Accommodation[];
@@ -106,11 +53,6 @@ console.log(apartment);
 
                                     {/* Tags Overlay */}
                                     <div className="absolute top-2 left-2 flex items-center gap-2 z-20">
-                                        {apartment.isNew && (
-                                            <span className="px-2 py-0.5 bg-green-500 text-white text-xs font-semibold rounded-full">
-                                                New
-                                            </span>
-                                        )}
                                         <span className="px-2 py-0.5 bg-blue-500 text-white text-xs font-semibold rounded-full">
                                             Featured
                                         </span>
@@ -147,7 +89,7 @@ console.log(apartment);
                                                     <span className="text-xs font-semibold text-gray-900">
                                                         {typeof apartment.rating === 'object' 
                                                           ? (apartment.rating as Rating).average?.toFixed(1) 
-                                                          : (apartment.rating || 0).toFixed(1)}
+                                                          : (apartment.rating || 0)}
                                                     </span>
                                                 </div>
                                                 <span className="text-xs text-gray-500">
@@ -181,13 +123,7 @@ console.log(apartment);
                                                     <p className="text-[10px] text-gray-500">High Speed</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                                                <UtensilsCrossed className="w-4 h-4 text-gray-600" />
-                                                <div>
-                                                    <p className="text-xs font-medium text-gray-900">Food</p>
-                                                    <p className="text-[10px] text-gray-500">3 Times</p>
-                                                </div>
-                                            </div>
+                                            
                                         </div>
 
                                         {/* Footer */}
@@ -219,45 +155,62 @@ console.log(apartment);
   );
 };
 
-// Move the component logic to a custom hook to manage state
-const useAccommodations = (initialAccommodations?: Accommodation[]) => {
-  const [loading, setLoading] = useState(!initialAccommodations?.length);
-  const [accommodations, setAccommodations] = useState<Accommodation[]>(initialAccommodations || []);
+// Custom hook to manage accommodations state
+const useAccommodations = (propAccommodations?: Accommodation[]) => {
+  // Always maintain state for accommodations
+  const [loading, setLoading] = useState(true);
+  const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // If accommodations are provided via props, use them directly
+    if (Array.isArray(propAccommodations) && propAccommodations.length > 0) {
+      setLoading(false);
+      setAccommodations(propAccommodations);
+      setError(null);
+      return;
+    }
+
+    // Otherwise, fetch accommodations from the API
     const fetchData = async () => {
-      if (initialAccommodations?.length) return;
-      
       try {
         setLoading(true);
         const data = await accommodationService.getAccommodations();
         setAccommodations(data);
-        console.log(data,"data");
+        setError(null);
       } catch (err) {
         console.error('Failed to fetch accommodations:', err);
-        setError('Failed to load accommodations. Showing sample listings.');
-        setAccommodations(DUMMY_ACCOMMODATIONS);
+        setError('Failed to load accommodations. Please try again later.');
+        setAccommodations([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [initialAccommodations]);
+  }, [propAccommodations]);
 
   return { loading, accommodations, error, setAccommodations };
 };
 
 export const ApartmentListingsSection = ({ 
   accommodations: propAccommodations, 
+  loading: propLoading = false,
+  error: propError = null,
   onViewDetails 
 }: ApartmentListingsSectionProps) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   
-  // Use the custom hook to manage accommodations state
-  const { loading, accommodations, error } = useAccommodations(propAccommodations);
+  // Always call the hook, but let it know if we have props
+  const { loading: hookLoading, accommodations: hookAccommodations, error: hookError } = 
+    useAccommodations(propAccommodations);
+  
+  // Use props if available, otherwise use hook state
+  const hasPropAccommodations = Array.isArray(propAccommodations) && propAccommodations.length > 0;
+  const loading = hasPropAccommodations ? propLoading : hookLoading;
+  const error = hasPropAccommodations ? propError : hookError;
+  const accommodations = hasPropAccommodations ? propAccommodations : (hookAccommodations || []);
   
   // Default onViewDetails handler if not provided
   const handleViewDetails = useMemo(() => 
@@ -271,22 +224,39 @@ export const ApartmentListingsSection = ({
   const filteredAccommodations = useMemo(() => {
     try {
       const type = searchParams.get('type')?.toLowerCase() || '';
-      if (!type) return accommodations;
       
-      const searchTerm = type.replace(/-/g, ' ');
+      // If no search type or no accommodations, return empty array
+      if (!type || !accommodations || !Array.isArray(accommodations)) {
+        return [];
+      }
+      
+      const searchTerm = type.replace(/-/g, ' ').trim();
+      if (!searchTerm) return [];
       
       return accommodations.filter(acc => {
+        if (!acc) return false;
+        
+        // Search in title and location
         const nameMatch = acc.title?.toLowerCase().includes(searchTerm) || false;
-        const tagMatch = (acc.tags || []).some(tag => 
-          tag?.toLowerCase().includes(searchTerm)
-        );
         const locationMatch = acc.location?.toLowerCase().includes(searchTerm) || false;
         
-        return nameMatch || tagMatch || locationMatch;
-      });
+        // Search in bulk accommodation types if available
+        const bulkTypeMatch = Array.isArray(acc.bulkAccommodationType) && 
+          acc.bulkAccommodationType.some(type => 
+            type?.toLowerCase().includes(searchTerm)
+          ) || false;
+        
+        // Search in sharing types if available
+        const sharingTypeMatch = Array.isArray(acc.sharingType) && 
+          acc.sharingType.some(type => 
+            type?.toLowerCase().includes(searchTerm)
+          ) || false;
+        
+        return nameMatch || locationMatch || bulkTypeMatch || sharingTypeMatch;
+      }) || [];
     } catch (error) {
       console.error('Error filtering accommodations:', error);
-      return accommodations;
+      return [];
     }
   }, [accommodations, searchParams]);
 
@@ -299,22 +269,26 @@ export const ApartmentListingsSection = ({
     );
   }
   
+  // Ensure we have valid accommodations array
+  const safeAccommodations = accommodations || [];
+  const safeFilteredAccommodations = filteredAccommodations || [];
+  
   // Determine which accommodations to display
-  const displayAccommodations = filteredAccommodations.length > 0 
-    ? filteredAccommodations 
-    : accommodations.length > 0 
-      ? accommodations 
-      : DUMMY_ACCOMMODATIONS;
+  const displayAccommodations = safeFilteredAccommodations.length > 0 
+    ? safeFilteredAccommodations 
+    : safeAccommodations.length > 0 
+      ? safeAccommodations 
+      : [];
       
   // Check if we should show the "no results" message
-  const showNoResultsMessage = searchParams.get('type') && filteredAccommodations.length === 0;
+  const showNoResultsMessage = searchParams.get('type') && safeFilteredAccommodations.length === 0;
   
   // Check if we're showing dummy data
   const showDummyMessage = !searchParams.get('type') && 
-    accommodations.length > 0 && 
-    accommodations[0]?.id?.startsWith('dummy-');
+    safeAccommodations.length > 0 && 
+    safeAccommodations[0]?.id?.startsWith('dummy-');
 
-  if (error && accommodations.length === 0) {
+  if (error && safeAccommodations.length === 0) {
     return (
       <div className="text-center p-8">
         <p className="text-red-500 mb-4">Error: {error}</p>
@@ -323,15 +297,7 @@ export const ApartmentListingsSection = ({
           <h3 className="text-xl font-semibold text-gray-700 mb-2">Showing Sample Listings</h3>
           <p className="text-gray-500 mb-6">We're having trouble loading the latest properties. Here are some sample listings.</p>
         </div>
-        <div >
-          {DUMMY_ACCOMMODATIONS.map((apartment) => (
-            <AccommodationCard 
-              key={apartment.id}
-              apartment={apartment}
-              onViewDetails={handleViewDetails}
-            />
-          ))}
-        </div>
+        
         <Button 
           onClick={() => window.location.reload()}
           className="mt-8 bg-green-600 hover:bg-green-700"
@@ -378,10 +344,10 @@ export const ApartmentListingsSection = ({
         )}
 
         {/* Search results count */}
-        {searchParams.get('type') && filteredAccommodations.length > 0 && (
+        {searchParams.get('type') && safeFilteredAccommodations.length > 0 && (
           <div className="mb-6">
             <p className="text-gray-600">
-              Showing {filteredAccommodations.length} {filteredAccommodations.length === 1 ? 'result' : 'results'} for "{searchParams.get('type')?.replace(/-/g, ' ')}"
+              Showing {safeFilteredAccommodations.length} {safeFilteredAccommodations.length === 1 ? 'result' : 'results'} for "{searchParams.get('type')?.replace(/-/g, ' ')}"
             </p>
           </div>
         )}

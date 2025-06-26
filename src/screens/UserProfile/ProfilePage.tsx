@@ -57,7 +57,6 @@ export const ProfilePage = () => {
   const handleSave = () => {
     setFormData({ ...tempData });
     setIsEditing(false);
-    console.log('Saving profile:', { ...tempData, profileImage: profileImage ? 'Image uploaded' : 'No image' });
   };
 
   const handleCancel = () => {

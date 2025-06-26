@@ -94,7 +94,7 @@ export const BookARoom = (): JSX.Element => {
                                         Top Rated Property • {ratingAverage?.toFixed(1) || 'N/A'} ({reviewCount || 0} reviews)
                                     </Badge>
                                     <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
-                                        {property.name}
+                                        {property.title}
                                     </h1>
                                     <div className="flex items-center text-gray-600 mt-2">
                                         <MapPin className="w-4 h-4 mr-1.5 text-gray-400 flex-shrink-0" />
@@ -132,7 +132,7 @@ export const BookARoom = (): JSX.Element => {
                             <div className="md:w-1/3 bg-gray-100 rounded-xl overflow-hidden h-64 md:h-auto">
                                 <img
                                     src={(property.images && property.images[0]) || property.image || home}
-                                    alt={property.name}
+                                    alt={property.title}
                                     className="w-full h-full object-cover"
                                 />
                             </div>
@@ -215,7 +215,7 @@ export const BookARoom = (): JSX.Element => {
                                                 <Home className="w-5 h-5 text-green" />
                                             </div>
                                             <div className="flex-1">
-                                                <h4 className="font-medium text-gray-900">{property.name}</h4>
+                                                <h4 className="font-medium text-gray-900">{property.title}</h4>
                                                 <p className="text-sm text-gray-500 mt-0.5">1 Bed, 1 Bath, 32 sq.m</p>
                                                 <div className="mt-2 flex flex-wrap gap-2">
                                                     <span className="inline-flex items-center gap-1.5 bg-green text-white text-xs px-2.5 py-1 rounded-full">

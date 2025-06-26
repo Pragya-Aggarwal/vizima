@@ -58,7 +58,6 @@ export const DocumentsPage = () => {
   const handleUpload = () => {
     if (!selectedFile) return;
     // Handle file upload logic here
-    console.log('Uploading:', selectedFile, 'as', documentType);
     setShowUploadModal(false);
     setSelectedFile(null);
   };

@@ -14,8 +14,8 @@ export const cityService = {
    */
   getCities: async (): Promise<City[]> => {
     try {
-      const response = await apiService.get<City[]>('/cities');
-      return response.data;
+      const response = await apiService.get<{ data: City[] }>('/cities');
+      return response.data.data || [];
     } catch (error) {
       console.error('Error fetching cities:', error);
       throw error;

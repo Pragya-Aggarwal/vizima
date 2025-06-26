@@ -1,4 +1,4 @@
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Clock, Command, Phone, Sparkles, User } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
@@ -10,49 +10,53 @@ import {
     SelectContent,
     SelectItem,
 } from "../../../components/ui/select";
-import { DayPicker } from "react-day-picker";
-import "react-day-picker/dist/style.css";
 import { format } from "date-fns";
 import { useToast } from "../../../components/ui/use-toast";
 import { homeService } from "../../../api/services/homeService";
+import TimePicker from 'react-time-picker';
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
+import 'react-time-picker/dist/TimePicker.css';
+import 'react-clock/dist/Clock.css';
 
 interface FormFieldBase {
     id: string;
     label: string;
     placeholder: string;
-    value: string | Date | undefined;
+    value: string | Date | undefined | null;
     icon: React.ReactNode;
-    picker?: boolean;
+    picker?: boolean | 'time';
     options?: string[];
     onChange: (value: any) => void;
 }
 
-type FormField = FormFieldBase & (
-    | { picker: true; value: Date | undefined; onChange: (value: Date | undefined) => void }
-    | { picker?: false; value: string; onChange: (value: string) => void }
-);
+type FormField = 
+    | (FormFieldBase & { picker: true; value: Date | undefined; onChange: (value: Date | undefined) => void })
+    | (FormFieldBase & { picker: 'time'; value: string | null; onChange: (value: string | null) => void })
+    | (FormFieldBase & { picker?: false; value: string; onChange: (value: string) => void });
 
 export const PartnershipSection = (): JSX.Element => {
     const { toast } = useToast();
     // State for form fields
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-    const [time, setTime] = useState("");
+    const [time, setTime] = useState<string | null>(null);
     const [meetingType, setMeetingType] = useState("");
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [description, setDescription] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-    // Generate time slots
-    const timeSlots: string[] = [];
-    for (let hour = 9; hour <= 17; hour++) {
-        for (let minute = 0; minute < 60; minute += 30) {
-            const period = hour >= 12 ? "PM" : "AM";
-            const displayHour = hour % 12 || 12;
-            const formattedMinute = minute.toString().padStart(2, "0");
-            timeSlots.push(`${displayHour}:${formattedMinute} ${period}`);
-        }
-    }
+    const [name, setName] = useState("");
+    const [phone, setPhone] = useState("");
+    
+    // Format time for display
+    const formatTimeDisplay = (timeStr: string | null) => {
+        if (!timeStr) return 'Select time';
+        const [hours, minutes] = timeStr.split(':');
+        const hour = parseInt(hours);
+        const period = hour >= 12 ? 'PM' : 'AM';
+        const displayHour = hour % 12 || 12;
+        return `${displayHour}:${minutes} ${period}`;
+    };
 
     // Form field configuration
     const formFields: FormField[] = [
@@ -63,24 +67,34 @@ export const PartnershipSection = (): JSX.Element => {
             value: selectedDate,
             onChange: (date: Date | undefined) => setSelectedDate(date),
             icon: <CalendarIcon className="w-6 h-6" />,
-            picker: true,
+            picker: true
         },
         {
             id: "time",
             label: "Time slot",
             placeholder: "Select time",
             value: time,
-            onChange: (value: string) => setTime(value),
-            icon: (
-                <div className="relative w-6 h-6">
-                    <img
-                        className="absolute w-[18px] h-5 top-0.5 left-[3px]"
-                        alt="ClockIcon icon"
-                        src="https://c.animaapp.com/mbhmsf5eMRDRNk/img/group-2.png"
-                    />
-                </div>
-            ),
-            picker: false,
+            onChange: (value: string | null) => setTime(value),
+            icon: <Clock className="w-6 h-6" />,
+            picker: 'time'
+        },
+        {
+            id: "name",
+            label: "Name",
+            placeholder: "Name",
+            value: name,
+            onChange: (value: string) => setName(value),
+            icon: <User className="w-6 h-6" />,
+            picker: false
+        },
+        {
+            id: "phone",
+            label: "Phone",
+            placeholder: "Phone",
+            value: phone,
+            onChange: (value: string) => setPhone(value),
+            icon: <Phone className="w-6 h-6" />,
+            picker: false
         },
         {
             id: "meetingType",
@@ -90,13 +104,9 @@ export const PartnershipSection = (): JSX.Element => {
             value: meetingType,
             onChange: (value: string) => setMeetingType(value),
             icon: (
-                <img
-                    className="w-6 h-6"
-                    alt="Meeting type icon"
-                    src="https://c.animaapp.com/mbhmsf5eMRDRNk/img/simple-icons-gotomeeting.svg"
-                />
+                <Command className="w-6 h-6" />
             ),
-            picker: false,
+            picker: false
         },
         {
             id: "description",
@@ -105,14 +115,10 @@ export const PartnershipSection = (): JSX.Element => {
             value: description,
             onChange: (value: string) => setDescription(value),
             icon: (
-                <img
-                    className="w-6 h-6"
-                    alt="Description icon"
-                    src="https://c.animaapp.com/mbhmsf5eMRDRNk/img/simple-icons-gotomeeting.svg"
-                />
+                <Sparkles className="w-6 h-6" />
             ),
-            picker: false,
-        },
+            picker: false
+        }
     ];
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -129,16 +135,29 @@ export const PartnershipSection = (): JSX.Element => {
 
         try {
             setIsSubmitting(true);
-            // Format date as YYYY-MM-DD
-            const formattedDate = format(selectedDate, 'yyyy-MM-dd');
-            
-            await homeService.bookVisit({
-                date: formattedDate,
-                timeSlot: time,
-                mode: meetingType,
-                description: description || undefined,
-                propertyId: "",
-            });
+            // Format time to include AM/PM if not already present
+            let formattedTime = time || '';
+            if (time) {
+                // If time is in 24-hour format (e.g., '12:00'), convert to 12-hour format with AM/PM
+                if (time.match(/^\d{1,2}:\d{2}$/)) {
+                    const [hours, minutes] = time.split(':');
+                    const hoursNum = parseInt(hours, 10);
+                    const period = hoursNum >= 12 ? 'PM' : 'AM';
+                    const hours12 = hoursNum % 12 || 12; // Convert 0 to 12 for 12 AM
+                    formattedTime = `${hours12}:${minutes} ${period}`;
+                }
+            }
+
+            const requestData = {
+                date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '',
+                timeSlot: formattedTime,
+                mode: meetingType.toLowerCase(),
+                description: description || '',
+                name: name,
+                phone: phone
+            };
+
+            const response = await homeService.bookVisit(requestData);
 
             toast({
                 title: "Success!",
@@ -150,6 +169,8 @@ export const PartnershipSection = (): JSX.Element => {
             setTime("");
             setMeetingType("");
             setDescription("");
+            setName("");
+            setPhone("");
             
         } catch (error) {
             console.error('Booking failed:', error);
@@ -193,7 +214,24 @@ export const PartnershipSection = (): JSX.Element => {
                                     )}
                                 </div>
 
-                                {field.id === "meetingType" ? (
+                                {field.picker === 'time' ? (
+                                    <div className="w-full">
+                                        <div className="w-full [&_.react-time-picker]:w-full">
+                                            <TimePicker
+                                                onChange={(value) => setTime(value)}
+                                                value={time}
+                                                disableClock={true}
+                                                clearIcon={null}
+                                                className="w-full [&>div]:w-full [&>div]:border [&>div]:rounded-xl [&>div]:border-input [&>div]:bg-background [&>div]:px-4 [&>div]:py-3 [&>div]:text-sm [&>div]:ring-offset-background [&>div]:focus-visible:outline-none [&>div]:focus-visible:ring-2 [&>div]:focus-visible:ring-ring [&>div]:focus-visible:ring-offset-2 [&>div]:disabled:cursor-not-allowed [&>div]:disabled:opacity-50"
+                                                format="h:mm a"
+                                                hourPlaceholder="HH"
+                                                minutePlaceholder="MM"
+                                                amPmAriaLabel="Select AM/PM"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                ) : field.id === "meetingType" ? (
                                     <Select
                                         value={field.value as string}
                                         onValueChange={field.onChange}
@@ -234,44 +272,47 @@ export const PartnershipSection = (): JSX.Element => {
                                                 fill="currentColor"
                                             >
                                                 <path
+                                                    d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14.5a6.5 6.5 0 110-13 6.5 6.5 0 010 13z"
                                                     fillRule="evenodd"
-                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clipRule="evenodd"
+                                                />
+                                                <path
+                                                    d="M10 5a1 1 0 011 1v3.5h2a1 1 0 110 2h-3a1 1 0 01-1-1V6a1 1 0 011-1z"
+                                                    fillRule="evenodd"
                                                     clipRule="evenodd"
                                                 />
                                             </svg>
                                         </div>
-
                                         {field.id === "date" && showDatePicker && (
-                                            <div className="absolute top-full left-0 mt-2 w-full bg-white rounded-lg shadow-lg z-10 p-4 border border-gray-200">
+                                            <div className="absolute z-10 mt-1 bg-white border border-gray-200 rounded-md shadow-lg">
                                                 <DayPicker
                                                     mode="single"
-                                                    selected={field.id === 'date' ? field.value : undefined}
+                                                    selected={field.value as Date | undefined}
                                                     onSelect={(date) => {
-                                                        if (date) {
-                                                            field.onChange(date);
-                                                            setShowDatePicker(false);
-                                                        }
+                                                        field.onChange(date);
+                                                        setShowDatePicker(false);
                                                     }}
-                                                    disabled={{ before: new Date() }}
-                                                    className="p-3"
                                                 />
                                             </div>
                                         )}
-
                                         {field.id === "time" && showTimePicker && (
-                                            <div className="absolute top-full left-0 mt-2 w-full bg-white rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto border border-gray-200">
-                                                {timeSlots.map((slot) => (
-                                                    <div
-                                                        key={slot}
-                                                        className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
-                                                        onClick={() => {
-                                                            field.onChange(slot);
+                                            <div className="absolute z-10 mt-1 bg-white border border-gray-200 rounded-md shadow-lg">
+                                                <div className="p-2">
+                                                    <TimePicker
+                                                        onChange={(value) => {
+                                                            field.onChange(value as string | null);
                                                             setShowTimePicker(false);
                                                         }}
-                                                    >
-                                                        {slot}
-                                                    </div>
-                                                ))}
+                                                        value={field.value as string | null}
+                                                        disableClock={true}
+                                                        clearIcon={null}
+                                                        className="border-0"
+                                                        format="h:mm a"
+                                                        hourPlaceholder="HH"
+                                                        minutePlaceholder="MM"
+                                                        amPmAriaLabel="Select AM/PM"
+                                                    />
+                                                </div>
                                             </div>
                                         )}
                                     </div>

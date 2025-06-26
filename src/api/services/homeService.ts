@@ -5,13 +5,14 @@ export interface HomeVisitBookingParams {
   timeSlot: string;
   mode: string;
   description?: string;
-  propertyId: string;
+  name: string;
+  phone: string;
 }
 
 export const homeService = {
   bookVisit: async (data: HomeVisitBookingParams) => {
     try {
-      const response = await apiService.post('/home/visit-booking', data);
+      const response = await apiService.post('/visit-bookings', data);
       return response.data;
     } catch (error) {
       console.error('Error booking home visit:', error);

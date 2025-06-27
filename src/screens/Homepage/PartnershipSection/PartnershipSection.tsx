@@ -99,7 +99,7 @@ export const PartnershipSection = (): JSX.Element => {
         {
             id: "meetingType",
             label: "Physical / Virtual",
-            placeholder: "Physical",
+            placeholder: "select",
             options: ["Physical", "Virtual"],
             value: meetingType,
             onChange: (value: string) => setMeetingType(value),
@@ -254,6 +254,7 @@ export const PartnershipSection = (): JSX.Element => {
                                             <SelectValue placeholder={field.placeholder} />
                                         </SelectTrigger>
                                         <SelectContent>
+                                            <SelectItem value="select" >Select</SelectItem>
                                             {field.options?.map((option) => (
                                                 <SelectItem key={option} value={option}>
                                                     {option}

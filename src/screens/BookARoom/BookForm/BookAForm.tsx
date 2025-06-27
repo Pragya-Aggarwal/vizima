@@ -286,12 +286,12 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                             <Select
                                 value={formData.gender}
                                 onValueChange={(value) => handleInputChange("gender", value)}
-                                disabled={isSubmitting}
                             >
                                 <SelectTrigger className="h-[52px] bg-white rounded-xl border border-solid border-[#c3d0d7] pl-[26px] font-desktop-subtitle text-text">
                                     <SelectValue placeholder="Select gender" />
                                 </SelectTrigger>
                                 <SelectContent>
+                                    <SelectItem value="select" disabled>Select</SelectItem>
                                     <SelectItem value="male">Male</SelectItem>
                                     <SelectItem value="female">Female</SelectItem>
                                     <SelectItem value="other">Other</SelectItem>

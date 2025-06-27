@@ -93,6 +93,7 @@ export const SearchSection = ({ onSearchStart }: SearchSectionProps): JSX.Elemen
                                 <SelectValue placeholder="Select Gender" />
                             </SelectTrigger>
                             <SelectContent className="border-0 shadow-lg">
+                                <SelectItem value="select" >Select</SelectItem>
                                 <SelectItem value="male">Male</SelectItem>
                                 <SelectItem value="female">Female</SelectItem>
                                 <SelectItem value="unisex">Unisex</SelectItem>

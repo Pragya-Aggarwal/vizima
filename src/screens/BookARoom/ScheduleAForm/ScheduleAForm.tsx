@@ -23,7 +23,7 @@ interface FormData {
     doubleSharing: string;
     preferredProperty: string;
     selectedDateTime: string;
-    visitType: 'physical' | 'virtual';
+    visitType: string;
 }
 
 interface FormErrors {
@@ -54,11 +54,11 @@ export const ScheduleAForm = ({ propertyId }: ScheduleAFormProps): JSX.Element =
         fullName: "",
         mobileNumber: "",
         email: "",
-        gender: "male",
+        gender: "",
         doubleSharing: "Comfort Stay PG",
         preferredProperty: "Comfort Stay PG",
         selectedDateTime: "",
-        visitType: "physical",
+        visitType: "",
     });
     // Error state
     const [errors, setErrors] = useState<FormErrors>({});
@@ -227,6 +227,7 @@ export const ScheduleAForm = ({ propertyId }: ScheduleAFormProps): JSX.Element =
                                     <SelectValue placeholder="Select visit Type" />
                                 </SelectTrigger>
                                 <SelectContent>
+                                    <SelectItem value="select" >Select</SelectItem>
                                     <SelectItem value="physical">Physical</SelectItem>
                                     <SelectItem value="virtual">Virtual</SelectItem>
                                 </SelectContent>
@@ -252,6 +253,7 @@ export const ScheduleAForm = ({ propertyId }: ScheduleAFormProps): JSX.Element =
                                     <SelectValue placeholder="Select gender" />
                                 </SelectTrigger>
                                 <SelectContent>
+                                    <SelectItem value="select" >Select</SelectItem>
                                     <SelectItem value="male">Male</SelectItem>
                                     <SelectItem value="female">Female</SelectItem>
                                     <SelectItem value="other">Other</SelectItem>

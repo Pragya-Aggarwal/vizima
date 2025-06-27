@@ -1,7 +1,9 @@
 import React from "react";
 import { Button } from "../../../components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export const PartnershipsSection = (): JSX.Element => {
+    const navigate = useNavigate();
     return (
         <section
             className="relative w-full min-h-[500px] md:min-h-[600px] bg-cover bg-center flex items-center py-16 md:py-24"
@@ -29,6 +31,7 @@ export const PartnershipsSection = (): JSX.Element => {
                     </p>
 
                     <Button 
+                        onClick={() => navigate('/product')}
                         className="bg-[#064749] hover:bg-[#053a3c] text-white text-lg px-8 py-6 rounded-full transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
                         size="lg"
                     >

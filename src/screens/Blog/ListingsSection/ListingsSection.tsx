@@ -1,8 +1,10 @@
 import React from "react";
 import { Button } from "../../../components/ui/button";
 import { aboutUs } from "../../../assets";
+import { useNavigate } from "react-router-dom";
 
 export const ListingsSection = (): JSX.Element => {
+    const navigate = useNavigate();
     return (
         <section
             className="relative w-full min-h-[500px] md:h-[600px] lg:h-[767px] py-12 md:py-16 px-4 sm:px-6 lg:px-20 flex items-end"
@@ -28,6 +30,7 @@ export const ListingsSection = (): JSX.Element => {
                 </div>
 
                 <Button 
+                    onClick={() => navigate('/product')}
                     className="mt-8 bg-[#064749] hover:bg-[#053a3c] text-white text-base md:text-lg px-8 py-6 rounded-full transition-all duration-300 hover:shadow-lg"
                     size="lg"
                 >

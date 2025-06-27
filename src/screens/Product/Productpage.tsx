@@ -1,6 +1,6 @@
 import { MinusIcon, PlusIcon, MapIcon, ListIcon } from "lucide-react";
-import React, { useState, useEffect, useCallback } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import { ApartmentListingsSection } from "./ApartmentListingsSection/ApartmentListingsSection";
 import { FAQSection } from "./FAQSection/FAQSection";
 import { PageTitleSection } from "./PageTitleSection";
@@ -17,6 +17,7 @@ export const ProductPage = (): JSX.Element => {
     const [error, setError] = useState<string | null>(null);
     const location = useLocation();
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const city = searchParams.get('city')?.toLowerCase();
     const gender = searchParams.get('gender')?.toLowerCase();
 
@@ -25,6 +26,8 @@ export const ProductPage = (): JSX.Element => {
     const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
     const [sortBy, setSortBy] = useState<string>('availability');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+    // Initialize searchQuery from URL params
+    const [searchQuery, setSearchQuery] = useState(city || '');
 
     // Filter accommodations based on active filters and search params
     const filterAccommodations = useCallback((data: Accommodation[]) => {
@@ -92,6 +95,9 @@ export const ProductPage = (): JSX.Element => {
         setFilteredAccommodations([...allAccommodations]);
         // Clear active filters
         setActiveFilters({});
+        // Clear search query and reset URL
+        setSearchQuery('');
+        navigate('/product', { replace: true });
     };
 
     // Handle filter changes from the FiltersAndSortingSection
@@ -172,6 +178,11 @@ export const ProductPage = (): JSX.Element => {
         fetchData();
     }, [location.state]);
 
+    // Update searchQuery when URL city param changes
+    useEffect(() => {
+        setSearchQuery(city || '');
+    }, [city]);
+
     // Apply filters and sorting whenever dependencies change
     useEffect(() => {
         if (allAccommodations.length > 0) {
@@ -198,7 +209,17 @@ export const ProductPage = (): JSX.Element => {
             <div className="bg-white w-full relative">
                 {/* Search Bar Section */}
                 <div className="w-full max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12">
-                    <SearchBarSection />
+                    <SearchBarSection 
+                        value={searchQuery}
+                        onChange={setSearchQuery}
+                        onSearch={() => {
+                            if (searchQuery.trim()) {
+                                const params = new URLSearchParams();
+                                params.set('city', searchQuery.trim().toLowerCase());
+                                navigate(`/product?${params.toString()}`);
+                            }
+                        }}
+                    />
                 </div>
 
                 {/* Filters and Sorting Section */}
@@ -242,6 +263,7 @@ export const ProductPage = (): JSX.Element => {
                                 accommodations={filteredAccommodations}
                                 loading={loading}
                                 error={error}
+                                onClearSearch={() => setSearchQuery('')}
                             />
                         </div>
 

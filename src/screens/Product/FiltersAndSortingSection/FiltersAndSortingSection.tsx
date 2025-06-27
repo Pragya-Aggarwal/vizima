@@ -42,7 +42,6 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
   accommodations
 }) => {
     const [isOpen, setIsOpen] = useState(false);
-    
     const [activeFilters, setActiveFilters] = useState<ActiveFilter[]>([]);
     const [filterOptions, setFilterOptions] = useState<FilterOption[]>([
         { 
@@ -352,9 +351,13 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
     // Desktop View
     const renderDesktopView = () => (
         <div className="hidden lg:flex flex-col gap-4 px-12 py-4">
-            <div className="flex items-center gap-4">
-                {filterOptions.map(filter => renderFilterSelect(filter))}
-                {renderSortSection()}
+            <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-4">
+                    {filterOptions.map(filter => renderFilterSelect(filter))}
+                </div>
+                <div className="flex items-center gap-4">
+                    {renderSortSection()}
+                </div>
             </div>
             
             {/* Active filters */}
@@ -387,6 +390,8 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
         <>
             {renderMobileView()}
             {renderDesktopView()}
+            
+
         </>
     );
 };

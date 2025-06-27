@@ -59,7 +59,20 @@ function PropertyDetails() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8; // Show 8 items per page
     const navigate = useNavigate();
+    
+    // Calculate pagination for related properties
+    const totalPages = Math.ceil(relatedProperties.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedRelatedProperties = relatedProperties.slice(startIndex, startIndex + itemsPerPage);
+    
+    // Handle page change
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: document.getElementById('related-properties')?.offsetTop, behavior: 'smooth' });
+    };
 
     const images = useMemo(() => {
         if (!property?.images?.length) return [home];
@@ -429,11 +442,11 @@ function PropertyDetails() {
                         </div>
                     </div>
                 </div>
-                {relatedProperties.length > 0 && (
+                {relatedProperties.length > 0 && relatedProperties.length > itemsPerPage && (
                     <div className="mt-8 md:mt-12">
                         <h2 className="text-xl md:text-2xl font-semibold text-center mb-6">Related PGs Nearby</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
-                            {relatedProperties.map((pg) => {
+                            {paginatedRelatedProperties.map((pg) => {
                                 const imageUrl = (pg.images?.[0] || pg?.image || home) as string;
                                 const pgTitle = pg?.title || 'Property';
                                 
@@ -481,6 +494,43 @@ function PropertyDetails() {
                                 );
                             })}
                         </div>
+                        
+                        {/* Pagination */}
+                        {relatedProperties.length > itemsPerPage && (
+                            <div className="flex justify-center mt-8 space-x-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className="px-3 py-1"
+                                >
+                                    Previous
+                                </Button>
+                                
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                    <Button
+                                        key={page}
+                                        variant={currentPage === page ? "default" : "outline"}
+                                        size="sm"
+                                        onClick={() => handlePageChange(page)}
+                                        className={`px-3 py-1 ${currentPage === page ? 'bg-green text-white' : ''}`}
+                                    >
+                                        {page}
+                                    </Button>
+                                ))}
+                                
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className="px-3 py-1"
+                                >
+                                    Next
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

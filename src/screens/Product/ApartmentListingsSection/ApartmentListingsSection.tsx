@@ -1,15 +1,17 @@
-import React, { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Button } from "../../../components/ui/button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { accommodationService, Accommodation, Rating } from "../../../api/services/accommodationService";
 import { Star, MapPin, Wifi, Bath, Heart, Home, Users } from "lucide-react";
 import { Card } from "../../../components/ui/card";
+import { RotateCcw } from "lucide-react";
 
 interface ApartmentListingsSectionProps {
   accommodations?: Accommodation[];
   loading?: boolean;
   error?: string | null;
   onViewDetails?: (id: string) => void;
+  onClearSearch?: () => void;
 }
 
 interface AccommodationCardProps {
@@ -21,10 +23,9 @@ const AccommodationCard = ({ apartment, onViewDetails }: AccommodationCardProps)
   const navigate = useNavigate();
   const handleClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    // onViewDetails(apartment.id);
+    onViewDetails(id);
     navigate(`/property-details/${id}`);
   };
-console.log(apartment);
   return (
 
     <section className="py-3 sm:py-6 bg-gray-50">
@@ -197,10 +198,16 @@ export const ApartmentListingsSection = ({
   accommodations: propAccommodations, 
   loading: propLoading = false,
   error: propError = null,
-  onViewDetails 
+  onViewDetails,
+  onClearSearch 
 }: ApartmentListingsSectionProps) => {
+  const [urlSearchParams] = useSearchParams();
+  const cityParam = urlSearchParams.get('city')?.toLowerCase();
+  const genderParam = urlSearchParams.get('gender')?.toLowerCase();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Show 5 items per page
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+
   
   // Always call the hook, but let it know if we have props
   const { loading: hookLoading, accommodations: hookAccommodations, error: hookError } = 
@@ -212,83 +219,77 @@ export const ApartmentListingsSection = ({
   const error = hasPropAccommodations ? propError : hookError;
   const accommodations = hasPropAccommodations ? propAccommodations : (hookAccommodations || []);
   
-  // Default onViewDetails handler if not provided
-  const handleViewDetails = useMemo(() => 
-    onViewDetails || ((id: string) => {
-      navigate(`/property-details/${id}`);
-    }), 
-    [navigate, onViewDetails]
-  );
-
-  // Memoize the filtered accommodations
+  // Reset to first page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [cityParam, genderParam]);
+  
+  // Filter accommodations based on search parameters
   const filteredAccommodations = useMemo(() => {
-    try {
-      const type = searchParams.get('type')?.toLowerCase() || '';
+    if (!cityParam && !genderParam) return accommodations;
+    
+    return accommodations.filter(accommodation => {
+      const matchesCity = !cityParam || 
+        (accommodation.city?.toLowerCase().includes(cityParam));
+      const matchesGender = !genderParam || 
+        (accommodation.gender?.toLowerCase() === genderParam);
       
-      // If no search type or no accommodations, return empty array
-      if (!type || !accommodations || !Array.isArray(accommodations)) {
-        return [];
-      }
-      
-      const searchTerm = type.replace(/-/g, ' ').trim();
-      if (!searchTerm) return [];
-      
-      return accommodations.filter(acc => {
-        if (!acc) return false;
-        
-        // Search in title and location
-        const nameMatch = acc.title?.toLowerCase().includes(searchTerm) || false;
-        const locationMatch = acc.location?.toLowerCase().includes(searchTerm) || false;
-        
-        // Search in bulk accommodation types if available
-        const bulkTypeMatch = Array.isArray(acc.bulkAccommodationType) && 
-          acc.bulkAccommodationType.some(type => 
-            type?.toLowerCase().includes(searchTerm)
-          ) || false;
-        
-        // Search in sharing types if available
-        const sharingTypeMatch = Array.isArray(acc.sharingType) && 
-          acc.sharingType.some(type => 
-            type?.toLowerCase().includes(searchTerm)
-          ) || false;
-        
-        return nameMatch || locationMatch || bulkTypeMatch || sharingTypeMatch;
-      }) || [];
-    } catch (error) {
-      console.error('Error filtering accommodations:', error);
-      return [];
-    }
-  }, [accommodations, searchParams]);
-
-  // Loading state
-  if (loading) {
+      return matchesCity && matchesGender;
+    });
+  }, [accommodations, cityParam, genderParam]);
+  
+  // Show no results message when filters don't match any accommodations
+  const showNoResults = (cityParam || genderParam) && filteredAccommodations.length === 0 && !loading;
+  
+  // Show no results message when filters don't match any accommodations
+  if (showNoResults) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+      <div className="py-12">
+        <div className="max-w-md mx-auto px-4 text-center">
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-medium text-gray-700">No properties found</h3>
+              <p className="text-gray-500 mt-1">
+                {cityParam && genderParam 
+                  ? `No ${genderParam} accommodations found in ${cityParam}`
+                  : cityParam 
+                    ? `No accommodations found in ${cityParam}`
+                    : `No ${genderParam} accommodations found`}
+              </p>
+            </div>
+            <Button
+              onClick={() => {
+                navigate('/product');
+                onClearSearch?.();
+              }}
+              variant="outline"
+              className="mx-auto flex items-center gap-2 border-green text-green hover:bg-green hover:text-white rounded-full px-6 py-2 transition-all duration-200 whitespace-nowrap"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span className="text-sm font-medium">Show All Results</span>
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
-  
-  // Ensure we have valid accommodations array
-  const safeAccommodations = accommodations || [];
-  const safeFilteredAccommodations = filteredAccommodations || [];
-  
-  // Determine which accommodations to display
-  const displayAccommodations = safeFilteredAccommodations.length > 0 
-    ? safeFilteredAccommodations 
-    : safeAccommodations.length > 0 
-      ? safeAccommodations 
-      : [];
-      
-  // Check if we should show the "no results" message
-  const showNoResultsMessage = searchParams.get('type') && safeFilteredAccommodations.length === 0;
-  
-  // Check if we're showing dummy data
-  const showDummyMessage = !searchParams.get('type') && 
-    safeAccommodations.length > 0 && 
-    safeAccommodations[0]?.id?.startsWith('dummy-');
 
-  if (error && safeAccommodations.length === 0) {
+  // Calculate pagination
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const totalPages = Math.ceil(filteredAccommodations.length / itemsPerPage);
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+      
+  // Check if we're showing dummy data
+  const showDummyMessage = !cityParam && !genderParam && 
+    accommodations.length > 0 && 
+    accommodations[0]?.id?.startsWith('dummy-');
+
+  if (error && accommodations.length === 0) {
     return (
       <div className="text-center p-8">
         <p className="text-red-500 mb-4">Error: {error}</p>
@@ -311,14 +312,38 @@ export const ApartmentListingsSection = ({
   return (
     <section className="py-6 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Search Results Header */}
+        {(cityParam || genderParam) && filteredAccommodations.length > 0 && (
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+            <div className="text-gray-700 font-medium">
+              Found {filteredAccommodations.length} propert{filteredAccommodations.length === 1 ? 'y' : 'ies'}
+              {cityParam ? ` in ${cityParam.charAt(0).toUpperCase() + cityParam.slice(1)}` : ''}
+            </div>
+            <Button
+              onClick={() => navigate('/product')}
+              variant="outline"
+              className="flex items-center gap-2 border-green text-green hover:bg-green hover:text-white rounded-full px-4 py-2 text-sm whitespace-nowrap"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Show All Results</span>
+            </Button>
+          </div>
+        )}
+
         {/* No results message when searching */}
-        {showNoResultsMessage && (
+        {showNoResults && (
           <div className="text-center mb-8 p-8 bg-white rounded-xl shadow-sm border border-gray-100">
             <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
               <Home className="w-8 h-8 text-red-400" />
             </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">No properties found</h3>
-            <p className="text-gray-600 mb-6">We couldn't find any properties matching your search criteria.</p>
+            <p className="text-gray-600 mb-6">
+              {cityParam && genderParam 
+                ? `No ${genderParam} accommodations found in ${cityParam}`
+                : cityParam 
+                  ? `No accommodations found in ${cityParam}`
+                  : `No ${genderParam} accommodations found`}
+            </p>
             <Button 
               variant="outline"
               onClick={() => {
@@ -343,25 +368,55 @@ export const ApartmentListingsSection = ({
           </div>
         )}
 
-        {/* Search results count */}
-        {searchParams.get('type') && safeFilteredAccommodations.length > 0 && (
-          <div className="mb-6">
-            <p className="text-gray-600">
-              Showing {safeFilteredAccommodations.length} {safeFilteredAccommodations.length === 1 ? 'result' : 'results'} for "{searchParams.get('type')?.replace(/-/g, ' ')}"
-            </p>
+        {/* Accommodations grid */}
+        <div className="space-y-6">
+          {filteredAccommodations
+            .slice(startIndex, startIndex + itemsPerPage)
+            .map((apartment) => (
+              <AccommodationCard 
+                key={apartment.id}
+                apartment={apartment}
+                onViewDetails={onViewDetails || ((id: string) => navigate(`/property-details/${id}`))}
+              />
+            ))}
+        </div>
+
+        {/* Pagination - Only show if more than 5 items */}
+        {filteredAccommodations.length > itemsPerPage && totalPages > 1 && (
+          <div className="flex justify-center mt-8 space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-3 py-1"
+            >
+              Previous
+            </Button>
+            
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Button
+                key={page}
+                variant={currentPage === page ? "default" : "outline"}
+                size="sm"
+                onClick={() => handlePageChange(page)}
+                className={`px-3 py-1 ${currentPage === page ? 'bg-green text-white' : ''}`}
+              >
+                {page}
+              </Button>
+            ))}
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1"
+            >
+              Next
+            </Button>
           </div>
         )}
-
-        {/* Accommodations grid */}
-        <div >
-          {displayAccommodations.map((apartment) => (
-            <AccommodationCard 
-              key={apartment.id}
-              apartment={apartment}
-              onViewDetails={handleViewDetails}
-            />
-          ))}
-        </div>
         </div>
     </section>
   );

@@ -2,17 +2,10 @@ import { MapPinIcon, SearchIcon, UsersIcon, Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
-import { Separator } from "../../../components/ui/separator";
-import {
-    Select,
-    SelectTrigger,
-    SelectValue,
-    SelectContent,
-    SelectItem,
-} from "../../../components/ui/select";
 import { Input } from "../../../components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
+import { Separator } from "../../../components/ui/separator";
 import { toast } from "../../../components/ui/use-toast";
-import { hostelService } from "../../../api/services/hostelService";
 
 interface SearchSectionProps {
     onSearchResults?: (results: any[]) => void;
@@ -25,36 +18,28 @@ export const SearchSection = ({ onSearchStart }: SearchSectionProps): JSX.Elemen
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleSearch = async () => {
+    const handleSearch = async (searchCity: string, searchGender: string) => {
         try {
             setIsLoading(true);
             onSearchStart?.();
-            
-            // Prepare search params object with only provided values
+
             const searchParams: { city?: string; gender?: string } = {};
-            if (city.trim()) searchParams.city = city.trim();
-            if (gender) searchParams.gender = gender;
+            if (searchCity.trim()) searchParams.city = searchCity.trim();
+            if (searchGender) searchParams.gender = searchGender;
             
-            // Call API with search params (or empty object if no params)
-            const response = await hostelService.searchHostels(searchParams);
+            // Prepare search parameters
+            const queryParams = new URLSearchParams();
+            if (searchParams.city) queryParams.set('city', searchParams.city.trim().toLowerCase());
+            if (searchParams.gender) queryParams.set('gender', searchParams.gender.toLowerCase());
             
             // Navigate to product page with search parameters
-            const queryParams = new URLSearchParams();
-            if (searchParams.city) queryParams.set('city', searchParams.city);
-            if (searchParams.gender) queryParams.set('gender', searchParams.gender);
+            navigate(`/product?${queryParams.toString()}`);
             
-            navigate(`/product?${queryParams.toString()}`, { 
-                state: { 
-                    searchParams: { city, gender },
-                    initialResults: response.data?.data || []
-                } 
-            });
-            
-            // Show message if no results but only if there were search criteria
-            if (response.data?.data?.length === 0 && (searchParams.city || searchParams.gender)) {
+            // Show message if no search criteria provided
+            if (!searchParams.city && !searchParams.gender) {
                 toast({
-                    title: "No results found",
-                    description: "Please try different search criteria.",
+                    title: "Search criteria required",
+                    description: "Please enter a city or select a gender to search.",
                     variant: "destructive",
                 });
             }
@@ -72,13 +57,17 @@ export const SearchSection = ({ onSearchStart }: SearchSectionProps): JSX.Elemen
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
-            handleSearch();
+            handleSearch(city, gender);
         }
     };
 
     return (
         <div className="w-full px-3 sm:px-4 md:px-6">
             <div className="relative w-full max-w-[900px] mx-auto">
+                <form onSubmit={(e) => {
+                        e.preventDefault();
+                        handleSearch(city, gender);
+                    }}>
                 <div className="flex flex-col sm:flex-row w-full items-center justify-between p-2 sm:p-2 bg-white rounded-xl border border-green shadow-md gap-2 sm:gap-3 hover:shadow-lg transition-shadow duration-300">
                     {/* City input with proper focus */}
                     <div className="flex items-center flex-1 w-full sm:w-auto gap-2 rounded-lg px-2 sm:px-3 py-1 focus-within:ring-1 focus-within:ring-green focus-within:bg-white transition-all duration-200">
@@ -113,7 +102,7 @@ export const SearchSection = ({ onSearchStart }: SearchSectionProps): JSX.Elemen
 
                     {/* Search button */}
                     <Button
-                        onClick={handleSearch}
+                        type="submit"
                         disabled={isLoading}
                         className="flex items-center gap-1 w-full sm:w-auto px-3 sm:px-4 py-1.5 rounded-lg bg-green hover:bg-green-dark text-white text-sm font-medium transition-colors duration-200 shadow-sm hover:shadow-md"
                     >
@@ -130,7 +119,8 @@ export const SearchSection = ({ onSearchStart }: SearchSectionProps): JSX.Elemen
                         )}
                     </Button>
                 </div>
-            </div>
+            </form>
         </div>
+    </div>
     );
 };

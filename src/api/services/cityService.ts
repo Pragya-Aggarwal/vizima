@@ -3,7 +3,7 @@ import { apiService } from '../apiService';
 export interface City {
   id: string;
   name: string;
-  image?: string;
+  imageUrl?: string;
   // Add other city properties from the API response as needed
 }
 
@@ -15,7 +15,7 @@ export const cityService = {
   getCities: async (): Promise<City[]> => {
     try {
       const response = await apiService.get<{ data: City[] }>('/cities');
-      return response.data.data || [];
+      return response.data || [];
     } catch (error) {
       console.error('Error fetching cities:', error);
       throw error;
@@ -43,7 +43,7 @@ export const cityService = {
 
     return cities.map((city, index) => ({
       ...city,
-      image: city.image || defaultImages[index % defaultImages.length],
+      imageUrl: city.imageUrl || defaultImages[index % defaultImages.length],
     }));
   },
 };

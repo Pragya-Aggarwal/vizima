@@ -14,6 +14,7 @@ import { BookingsPage } from '../screens/UserProfile/BookingsPage';
 import { DocumentsPage } from '../screens/UserProfile/DocumentPage';
 import { ProfilePage } from '../screens/UserProfile/ProfilePage';
 import WhatsAppButton from '../components/WhatsAppButton';
+import { Toaster } from '../components/ui/toast';
 
 const App = () => {
     return (
@@ -22,6 +23,7 @@ const App = () => {
                 <ScrollToTop />
                 <NavigationMenuSection />
                 <main className="flex-grow">
+                    <Toaster />
                     <Routes>
                         <Route path="/" element={<Homepage />} />
                         <Route path="/product" element={<ProductPage />} />

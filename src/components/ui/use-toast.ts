@@ -9,23 +9,46 @@ interface ToastOptions {
   duration?: number;
 }
 
-export function toast({ title, description, variant = 'default', duration = 3000 }: ToastOptions) {
-  // In a real implementation, you might want to use a toast library like react-hot-toast or sonner
-  // This is a simplified version that logs to the console
-
-  
-  // In a real implementation, you would dispatch a custom event or use a state management library
-  // to show the toast in your UI
-  const event = new CustomEvent('show-toast', {
-    detail: { title, description, variant, duration }
+// Create a toast event
+function createToastEvent(options: ToastOptions) {
+  return new CustomEvent('show-toast', {
+    detail: {
+      title: options.title,
+      description: options.description,
+      variant: options.variant || 'default',
+      duration: options.duration || 3000,
+    },
   });
+}
+
+// Main toast function
+export function toast(options: ToastOptions) {
+  // Dispatch the custom event
+  const event = createToastEvent(options);
   window.dispatchEvent(event);
 }
 
+// Success toast helper
+toast.success = (title: string, description?: string, duration?: number) => {
+  toast({ title, description, variant: 'success', duration });
+};
+
+// Error toast helper
+toast.error = (title: string, description?: string, duration?: number) => {
+  toast({ title, description, variant: 'destructive', duration });
+};
+
+// Hook version
 export function useToast() {
   const showToast = useCallback((options: ToastOptions) => {
     toast(options);
   }, []);
 
-  return { toast: showToast };
+  return {
+    toast: showToast,
+    success: (title: string, description?: string, duration?: number) =>
+      showToast({ title, description, variant: 'success', duration }),
+    error: (title: string, description?: string, duration?: number) =>
+      showToast({ title, description, variant: 'destructive', duration }),
+  };
 }

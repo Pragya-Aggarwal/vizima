@@ -1,113 +1,3 @@
-// import {
-//     ChevronDownIcon,
-//     ChevronLeftIcon,
-//     ChevronRightIcon,
-// } from "lucide-react";
-// import React from "react";
-// import { Button } from "../../../components/ui/button";
-// import { Card, CardContent } from "../../../components/ui/card";
-// import { Input } from "../../../components/ui/input";
-// import {
-//     Select,
-//     SelectContent,
-//     SelectItem,
-//     SelectTrigger,
-//     SelectValue,
-// } from "../../../components/ui/select";
-
-// export const ScheduleAForm = (): JSX.Element => {
-//     // Form field data
-//     const formFields = [
-//         { id: "fullName", label: "Full Name", placeholder: "Full Name" },
-//         {
-//             id: "mobileNumber",
-//             label: "Mobile Number",
-//             placeholder: "+91- XXXXX XXXXX",
-//         },
-//         { id: "email", label: "E-mail", placeholder: "E-mail" },
-//     ];
-
-
-//     return (
-//         <Card className="w-full max-w-[600px] bg-[#e2f1e8] rounded-xl border border-solid border-[#c3d0d7]">
-//             <CardContent className="p-[34px]">
-//                 {/* Text input fields */}
-//                 {formFields.map((field) => (
-//                     <div key={field.id} className="mb-5">
-//                         <div className="font-desktop-subtitle-bold text-text mb-1 ml-2.5">
-//                             {field.label}
-//                         </div>
-//                         <Input
-//                             className="h-[52px] bg-white rounded-xl border border-solid border-[#c3d0d7] pl-[26px] font-desktop-subtitle text-text"
-//                             placeholder={field.placeholder}
-//                         />
-//                     </div>
-//                 ))}
-
-//                 <div className="mb-5">
-//                     <div className="font-desktop-subtitle-bold text-text mb-1 ml-2.5">
-//                         How would you Like to see around?
-//                     </div>
-//                     <Select defaultValue="Physical">
-//                         <SelectTrigger className="h-[52px] bg-white rounded-xl border border-solid border-[#c3d0d7] pl-[26px] font-desktop-subtitle text-text">
-//                             <SelectValue placeholder="Select gender" />
-//                         </SelectTrigger>
-//                         <SelectContent>
-//                             <SelectItem value="Physical">Physical</SelectItem>
-//                             <SelectItem value="Online">Online</SelectItem>
-//                         </SelectContent>
-//                     </Select>
-//                 </div>
-//                 {/* Gender dropdown */}
-//                 <div className="mb-5">
-//                     <div className="font-desktop-subtitle-bold text-text mb-1 ml-2.5">
-//                         Gender
-//                     </div>
-//                     <Select defaultValue="male">
-//                         <SelectTrigger className="h-[52px] bg-white rounded-xl border border-solid border-[#c3d0d7] pl-[26px] font-desktop-subtitle text-text">
-//                             <SelectValue placeholder="Select gender" />
-//                         </SelectTrigger>
-//                         <SelectContent>
-//                             <SelectItem value="male">Male</SelectItem>
-//                             <SelectItem value="female">Female</SelectItem>
-//                             <SelectItem value="other">Other</SelectItem>
-//                         </SelectContent>
-//                     </Select>
-//                 </div>
-
-//                 {/* Double Sharing */}
-//                 <div className="mb-5">
-//                     <div className="flex items-center ml-2.5 mb-1">
-//                         <span className="font-desktop-subtitle-bold text-text">
-//                             Double Sharing
-//                         </span>
-//                         <ChevronDownIcon className="w-[31px] h-[26px] ml-2" />
-//                     </div>
-//                     <Input
-//                         className="h-[52px] bg-white rounded-xl border border-solid border-[#c3d0d7] pl-[26px] font-desktop-subtitle text-text"
-//                         defaultValue="Comfort Stay PG"
-//                     />
-//                 </div>
-
-//                 {/* Preferred Property Name */}
-//                 <div className="mb-5">
-//                     <div className="flex items-center ml-2.5 mb-1">
-//                         <span className="font-desktop-subtitle-bold text-text">
-//                             Preferred Property Name
-//                         </span>
-//                         <ChevronDownIcon className="w-[31px] h-[26px] ml-2" />
-//                     </div>
-//                     <Input
-//                         className="h-[52px] bg-white rounded-xl border border-solid border-[#c3d0d7] pl-[26px] font-desktop-subtitle text-text"
-//                         defaultValue="Comfort Stay PG"
-//                     />
-//                 </div>
-
-
-//             </CardContent>
-//         </Card>
-//     );
-// };
 
 
 import { ChevronDownIcon } from "lucide-react";
@@ -123,7 +13,7 @@ import {
     SelectValue,
 } from "../../../components/ui/select";
 import { visitService } from "../../../api/services/visitService";
-import { toast } from "sonner";
+import { toast } from "../../../components/ui/use-toast";
 
 interface FormData {
     fullName: string;
@@ -265,7 +155,11 @@ export const ScheduleAForm = ({ propertyId }: ScheduleAFormProps): JSX.Element =
             await visitService.scheduleVisit(visitData);
 
             // Handle successful submission
-            toast.success("Visit scheduled successfully!");
+            toast({
+                title: "Success!",
+                description: "Your visit has been successfully scheduled!",
+                variant: "success",
+            });
 
             // Reset form
             setFormData({
@@ -281,7 +175,11 @@ export const ScheduleAForm = ({ propertyId }: ScheduleAFormProps): JSX.Element =
             setErrors({});
         } catch (error) {
             console.error('Error scheduling visit:', error);
-            toast.error("Failed to schedule visit. Please try again.");
+            toast({
+                title: "Error!",
+                description: "Failed to schedule visit. Please try again.",
+                variant: "destructive",
+            });
         } finally {
             setIsSubmitting(false);
         }

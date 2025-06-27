@@ -11,6 +11,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../../../components/ui/select";
+import { toast } from "../../../components/ui/use-toast";
 
 interface ContactInfo {
     phone: string;
@@ -180,7 +181,11 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
             const response = await bookingService.createBooking(bookingData);
 
             // Handle successful booking
-            alert('Booking successful!');
+            toast({
+                title: "Success!",
+                description: "Your booking has been successfully created!",
+                variant: "success",
+            });
 
             // Reset form
             setFormData({
@@ -206,7 +211,12 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
             setErrors({});
         } catch (error) {
             console.error('Booking submission failed:', error);
-            alert("Failed to submit booking. Please try again.");
+            toast({
+                title: 'Booking Failed!',
+                description: 'Failed to submit booking. Please try again.',
+                variant: 'destructive',
+                duration: 5000
+            });
         } finally {
             setIsSubmitting(false);
         }

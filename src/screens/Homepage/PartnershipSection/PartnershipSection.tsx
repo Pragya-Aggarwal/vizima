@@ -124,11 +124,19 @@ export const PartnershipSection = (): JSX.Element => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        if (!selectedDate || !time || !meetingType) {
+        // Validate required fields
+        const missingFields = [];
+        if (!selectedDate) missingFields.push('date');
+        if (!time) missingFields.push('time');
+        if (!meetingType) missingFields.push('meeting type');
+        if (!name) missingFields.push('name');
+        if (!phone) missingFields.push('phone');
+        
+        if (missingFields.length > 0) {
             toast({
-                title: "Error",
-                description: "Please fill in all required fields",
-                variant: "destructive",
+                title: 'Missing required fields',
+                description: `Please fill in: ${missingFields.join(', ')}`,
+                variant: 'destructive'
             });
             return;
         }
@@ -158,10 +166,13 @@ export const PartnershipSection = (): JSX.Element => {
             };
 
             const response = await homeService.bookVisit(requestData);
-
+            
+            // Show success toast
             toast({
-                title: "Success!",
-                description: "Your visit has been booked successfully. We'll contact you soon!",
+                title: 'Booking Successful!',
+                description: 'Your visit has been booked successfully. We\'ll contact you soon!',
+                variant: 'success',
+                duration: 5000
             });
 
             // Reset form
@@ -174,10 +185,13 @@ export const PartnershipSection = (): JSX.Element => {
             
         } catch (error) {
             console.error('Booking failed:', error);
+            const errorMessage = error instanceof Error ? error.message : 'Failed to book visit. Please try again later.';
+            
             toast({
-                title: "Error",
-                description: "Failed to book visit. Please try again later.",
-                variant: "destructive",
+                title: 'Booking Failed',
+                description: errorMessage,
+                variant: 'destructive',
+                duration: 5000
             });
         } finally {
             setIsSubmitting(false);

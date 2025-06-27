@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ScrollToTop } from '../components/ScrollToTop'; // Moved to components root
 import { Homepage } from '../screens/Homepage/Homepage';
 import { ProductPage } from '../screens/Product/Productpage';
 import { NavigationMenuSection } from '../screens/Homepage/NavigationMenuSection/NavigationMenuSection';
@@ -18,6 +19,7 @@ const App = () => {
     return (
         <Router>
             <div className="min-h-screen flex flex-col">
+                <ScrollToTop />
                 <NavigationMenuSection />
                 <main className="flex-grow">
                     <Routes>

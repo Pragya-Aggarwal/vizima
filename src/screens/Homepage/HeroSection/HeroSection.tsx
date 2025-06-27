@@ -34,7 +34,7 @@ export const HeroSection = (): JSX.Element => {
     
     // Navigate to product page with city filter
     const handleCityClick = (cityName: string) => {
-        navigate(`/product`);
+        navigate(`/product?city=${encodeURIComponent(cityName)}`);
     };
 
     // Loading state

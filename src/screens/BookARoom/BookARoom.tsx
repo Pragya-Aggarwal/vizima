@@ -77,7 +77,7 @@ export const BookARoom = (): JSX.Element => {
     const reviewCount = typeof property.rating === 'object' ? property.rating.count : property.reviews;
 
     const propertyPrice = property.price || property.rent || 0;
-    const serviceFee = 1500;
+    const serviceFee = 0;
     const totalPrice = Number(propertyPrice) + serviceFee;
 
 

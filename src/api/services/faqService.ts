@@ -16,11 +16,15 @@ export const faqService = {
    */
   getFAQs: async (): Promise<FAQItem[]> => {
     try {
-      const response = await apiService.get<{ data: FAQItem[] }>('/faqs');
-      return response?.data || [];
+      const response = await apiService.get<{ data: FAQItem[] } | FAQItem[]>('/faqs');
+      // Handle both response.data and direct array responses
+      const data = Array.isArray(response) ? response : response?.data?.data;
+      // Ensure we return an array even if data is undefined or null
+      return Array.isArray(data) ? data : [];
     } catch (error) {
       console.error('Error fetching FAQs:', error);
-      throw error;
+      // Return empty array instead of throwing to prevent component crash
+      return [];
     }
   },
 };

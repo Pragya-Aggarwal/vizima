@@ -29,9 +29,8 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
                 
                 // Apply maxItems if provided
                 if (maxItems) {
-                    data = data.slice(0, maxItems);
+                    data = data?.slice(0, maxItems);
                 }
-                
                 setFaqs(data);
             } catch (err) {
                 console.error('Failed to fetch FAQs:', err);
@@ -85,7 +84,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
 
     // Default open FAQs based on defaultOpenCount
     const defaultOpenValues = faqs
-        .slice(0, defaultOpenCount)
+        ?.slice(0, defaultOpenCount)
         .map((_, index) => `item-${index}`);
 
     return (
@@ -96,7 +95,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
                 className="w-full"
             >
                 {faqs.map((item, index) => (
-                    <AccordionItem
+                        <AccordionItem
                         key={index}
                         value={`item-${index}`}
                         className="border-b py-5"

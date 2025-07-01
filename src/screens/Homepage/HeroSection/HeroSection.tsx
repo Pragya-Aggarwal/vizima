@@ -17,7 +17,7 @@ export const HeroSection = (): JSX.Element => {
                 setIsLoading(true);
                 const data = await cityService.getCities();
                 const transformedCities = cityService.transformCities(data);
-                setCities(transformedCities);
+                setCities(data);
             } catch (err) {
                 console.error('Failed to fetch cities:', err);
                 setError('Failed to load cities. Please try again later.');
@@ -67,7 +67,7 @@ export const HeroSection = (): JSX.Element => {
                     <p className="text-red-500 mb-4">{error}</p>
                     <Button 
                         onClick={() => window.location.reload()}
-                        className="bg-green-600 hover:bg-green-700"
+                        className="bg-green hover:bg-green"
                     >
                         Retry
                     </Button>

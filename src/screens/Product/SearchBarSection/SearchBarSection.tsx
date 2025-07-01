@@ -34,7 +34,7 @@ export const SearchBarSection = ({
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     // In a real app, you would reverse geocode these coordinates to get the city
-                    console.log('Location accessed:', position.coords);
+                    
                     // For now, we'll just focus the input
                     const input = document.querySelector('input[type="text"]') as HTMLInputElement;
                     input?.focus();
@@ -47,7 +47,6 @@ export const SearchBarSection = ({
                 }
             );
         } else {
-            console.log('Geolocation is not supported by this browser.');
             const input = document.querySelector('input[type="text"]') as HTMLInputElement;
             input?.focus();
         }

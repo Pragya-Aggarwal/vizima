@@ -2,7 +2,7 @@ import { apiService } from '../apiService';
 
 export interface Banner {
   id: string;
-  imageUrl: string;
+  image: string;
   title?: string;
   subtitle?: string;
   isActive: boolean;

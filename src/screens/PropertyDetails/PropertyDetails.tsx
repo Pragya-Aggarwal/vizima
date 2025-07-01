@@ -137,7 +137,7 @@ function PropertyDetails() {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green"></div>
             </div>
         )
     }
@@ -305,7 +305,7 @@ function PropertyDetails() {
                                             src={img} 
                                             alt={`Thumbnail ${index + 1}`} 
                                             onClick={() => setCurrentImageIndex(index)} 
-                                            className={`w-full h-full object-cover rounded-lg cursor-pointer transition-opacity ${currentImageIndex === index ? 'ring-2 ring-green-500' : 'opacity-80 hover:opacity-100'} border border-gray-200`} 
+                                            className={`w-full h-full object-cover rounded-lg cursor-pointer transition-opacity ${currentImageIndex === index ? 'ring-2 ring-green' : 'opacity-80 hover:opacity-100'} border border-gray-200`} 
                                             onError={(e) => { e.currentTarget.src = home; }} 
                                         />
                                     </div>
@@ -324,7 +324,7 @@ function PropertyDetails() {
                                         <div className="flex justify-between items-start mb-3">
                                             <div>
                                                 <h3 className="font-medium text-base">{room.type}</h3>
-                                                <div className="text-green-600 font-semibold text-sm mt-1">{room.rent}/month</div>
+                                                <div className="text-green font-semibold text-sm mt-1">{room.rent}/month</div>
                                             </div>
                                             <span className="text-sm bg-gray-100 px-2 py-1 rounded">{room.acType}</span>
                                         </div>
@@ -367,7 +367,7 @@ function PropertyDetails() {
                                         {roomOptions.map((room, index) => (
                                             <tr key={index} className="hover:bg-gray-50">
                                                 <td className="py-4 px-3 font-medium text-sm">{room.type}</td>
-                                                <td className="py-4 px-3 text-green-600 font-semibold text-sm">{room.rent}</td>
+                                                <td className="py-4 px-3 text-green font-semibold text-sm">{room.rent}</td>
                                                 <td className="py-4 px-3 text-sm">{room.security}</td>
                                                 <td className="py-4 px-3 text-sm">{room.acType}</td>
                                                 <td className="py-4 px-3 text-sm">{room.mealsIncluded ? "Yes" : "No"}</td>
@@ -463,7 +463,7 @@ function PropertyDetails() {
                                         <div className="p-4 flex-1 flex flex-col">
                                             <h3 className="font-semibold mb-1 text-gray-900">{pgTitle}</h3>
                                             <p className="text-sm text-gray-600 mb-3">{pg.location}</p>
-                                            <p className="text-green-600 font-semibold mb-3">{formatPrice(pg.rent || pg.price)}</p>
+                                            <p className="text-green font-semibold mb-3">{formatPrice(pg.rent || pg.price)}</p>
                                             <div className="flex flex-wrap gap-3 mt-auto">
                                                 <div className="flex items-center gap-1 text-sm text-gray-600">
                                                     <div className="relative w-5 h-5">

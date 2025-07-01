@@ -73,14 +73,14 @@ const BannerSlider = () => {
                 >
                     <img
                         className="w-full h-full object-cover"
-                        src={banner.imageUrl}
+                        src={banner.image}
                         alt={banner.title || 'Banner'}
                         loading={index === 0 ? 'eager' : 'lazy'}
                     />
                 </div>
             ))}
             
-            {/* Banner indicators */}
+            {/* Banner indicators
             {banners.length > 1 && (
                 <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
                     {banners.map((_, index) => (
@@ -96,7 +96,7 @@ const BannerSlider = () => {
                         />
                     ))}
                 </div>
-            )}
+            )} */}
         </div>
     );
 };

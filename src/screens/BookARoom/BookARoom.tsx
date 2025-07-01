@@ -52,7 +52,7 @@ export const BookARoom = (): JSX.Element => {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green"></div>
             </div>
         );
     }
@@ -310,8 +310,8 @@ export const BookARoom = (): JSX.Element => {
                                     </div>
 
                                     <div className="mt-6 pt-6 border-t border-gray-100">
-                                        <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                                            <Shield className="w-5 h-5 text-green-600 flex-shrink-0" />
+                                        <div className="flex items-center gap-3 p-3 bg-green rounded-lg">
+                                            <Shield className="w-5 h-5 text-green flex-shrink-0" />
                                             <p className="text-sm text-gray-700">
                                                 <span className="font-medium">Secure booking</span> with SSL encryption. Your information is safe with us.
                                             </p>

@@ -65,7 +65,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
                 <p className="text-red-500 mb-4">{error}</p>
                 <button
                     onClick={() => window.location.reload()}
-                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                    className="px-4 py-2 bg-green text-white rounded-md hover:bg-green"
                 >
                     Retry
                 </button>

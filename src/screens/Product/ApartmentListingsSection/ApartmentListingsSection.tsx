@@ -78,7 +78,7 @@ const AccommodationCard = ({ apartment, onViewDetails }: AccommodationCardProps)
                                         {/* Header */}
                                         <div className="mb-3">
                                             <div className="flex items-center gap-2 text-gray-500 mb-1">
-                                                <MapPin className="w-4 h-4 text-green-600" />
+                                                <MapPin className="w-4 h-4 text-green" />
                                                 <span className="text-xs font-medium">{apartment.location}</span>
                                             </div>
                                             <h3 className="text-lg font-bold text-gray-900 mb-1">
@@ -301,7 +301,7 @@ export const ApartmentListingsSection = ({
         
         <Button 
           onClick={() => window.location.reload()}
-          className="mt-8 bg-green-600 hover:bg-green-700"
+          className="mt-8 bg-green hover:bg-green"
         >
           Try Again
         </Button>

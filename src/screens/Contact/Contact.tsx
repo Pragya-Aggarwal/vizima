@@ -114,7 +114,7 @@ const Contact = () => {
                                         placeholder="John Doe"
                                         value={formData.fullName}
                                         onChange={handleChange}
-                                        className="pl-10 h-12 border-gray-300 focus:border-green-500 focus:ring-green-500 rounded-lg"
+                                        className="pl-10 h-12 border-gray-300 focus:border-green focus:ring-green rounded-lg"
                                         disabled={isSubmitting}
                                         required
                                     />
@@ -132,7 +132,7 @@ const Contact = () => {
                                         placeholder="you@example.com"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        className="pl-10 h-12 border-gray-300 focus:border-green-500 focus:ring-green-500 rounded-lg"
+                                        className="pl-10 h-12 border-gray-300 focus:border-green focus:ring-green rounded-lg"
                                         disabled={isSubmitting}
                                         required
                                     />
@@ -150,7 +150,7 @@ const Contact = () => {
                                         placeholder="+91 XXXXX XXXXX"
                                         value={formData.phone}
                                         onChange={handleChange}
-                                        className="pl-10 h-12 border-gray-300 focus:border-green-500 focus:ring-green-500 rounded-lg"
+                                        className="pl-10 h-12 border-gray-300 focus:border-green focus:ring-green rounded-lg"
                                         disabled={isSubmitting}
                                         required
                                     />
@@ -166,7 +166,7 @@ const Contact = () => {
                                         name="message"
                                         placeholder="How can we help you?"
                                         rows={5}
-                                        className="border-gray-300 focus:border-green-500 focus:ring-green-500 rounded-lg pl-10 pt-3"
+                                        className="border-gray-300 focus:border-green focus:ring-green rounded-lg pl-10 pt-3"
                                         value={formData.message}
                                         onChange={handleChange}
                                         disabled={isSubmitting}
@@ -213,7 +213,7 @@ const Contact = () => {
                                     <div>
                                         <h3 className="text-lg font-semibold text-gray-900 mb-1">Phone</h3>
                                         <p className="text-gray-600 mb-2">Available 24/7 for emergencies</p>
-                                        <a href="tel:+911234567890" className="text-green-600 hover:underline font-medium">
+                                        <a href="tel:+911234567890" className="text-green hover:underline font-medium">
                                             +91 12345 67890
                                         </a>
                                     </div>
@@ -229,7 +229,7 @@ const Contact = () => {
                                     <div>
                                         <h3 className="text-lg font-semibold text-gray-900 mb-1">Email</h3>
                                         <p className="text-gray-600 mb-2">We'll respond as soon as possible</p>
-                                        <a href="mailto:support@vizima.com" className="text-green-600 hover:underline">
+                                        <a href="mailto:support@vizima.com" className="text-green hover:underline">
                                             support@vizima.com
                                         </a>
                                     </div>

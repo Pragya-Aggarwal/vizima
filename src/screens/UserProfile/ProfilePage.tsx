@@ -1,125 +1,171 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Mail, Phone, MapPin, Calendar, Edit, Save, Lock, LogOut, X, Camera } from 'lucide-react';
+import { ArrowLeft, User, Edit, Save, X, Camera, Loader2, MapPin } from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import { updateUserProfile, type UserProfile } from '../../services/userService';
+import { toast } from '../../components/ui/use-toast';
 
-type ProfileData = {
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  dob: string;
-  bio: string;
-  occupation: string;
-  company: string;
-  website: string;
-  gender: string;
-  maritalStatus: string;
-};
+interface Preferences {
+  location: string;
+  priceRange: {
+    min: number;
+    max: number;
+  };
+  propertyType: string[];
+}
+
+interface ProfileData extends UserProfile {
+  preferences: Preferences;
+}
 
 export const ProfilePage = () => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<ProfileData>({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 (555) 123-4567',
-    address: '123 Main St, New York, NY 10001',
-    dob: '1990-01-01',
-    bio: 'Experienced professional with a passion for technology and design.',
-    occupation: 'Senior Software Engineer',
-    company: 'Tech Solutions Inc.',
-    website: 'johndoe.dev',
-    gender: 'Male',
-    maritalStatus: 'Single'
+    name: '',
+    phone: '',
+    avatar: '',
+    preferences: {
+      location: '',
+      priceRange: {
+        min: 0,
+        max: 0
+      },
+      propertyType: []
+    }
   });
 
   const [tempData, setTempData] = useState<ProfileData>({ ...formData });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setTempData(prev => ({ ...prev, [name]: value }));
-  };
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        // TODO: Replace with actual API call to fetch user profile
+        // const response = await getUserProfile();
+        // setFormData(response.data);
+        // setTempData(response.data);
+        // if (response.data.profileImage) {
+        //   setProfileImage(response.data.profileImage);
+        // }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        toast(
+          {
+            title: "Error",
+            description: "Failed to load profile data. Please try again.",
+            variant: "destructive",
+          }
+        );
+      }
+    };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setProfileImage(event.target.result as string);
+    fetchUserProfile();
+  }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    
+    if (name.includes('preferences.')) {
+      const [_, child] = name.split('.');
+      if (child === 'location' || child === 'propertyType') {
+        setTempData(prev => ({
+          ...prev,
+          preferences: {
+            ...prev.preferences,
+            [child]: value
+          }
+        }));
+      } else if (child.startsWith('priceRange.')) {
+        const priceField = child.split('.')[1];
+        if (priceField === 'min' || priceField === 'max') {
+          setTempData(prev => ({
+            ...prev,
+            preferences: {
+              ...prev.preferences,
+              priceRange: {
+                ...prev.preferences.priceRange,
+                [priceField]: value === '' ? '' : Number(value)
+              }
+            }
+          }));
         }
-      };
-      reader.readAsDataURL(e.target.files[0]);
+      }
+    } else {
+      setTempData(prev => ({
+        ...prev,
+        [name]: type === 'number' ? (value === '' ? '' : Number(value)) : value
+      }));
     }
   };
 
-  const handleSave = () => {
-    setFormData({ ...tempData });
-    setIsEditing(false);
+ 
+
+  const handleSave = async () => {
+    try {
+      setIsSubmitting(true);
+      
+      // Update profile data
+      const updatedProfile = await updateUserProfile(tempData);
+      
+      setFormData(updatedProfile);
+      
+      toast(
+        {
+          title: "Success",
+          description: "Profile updated successfully.",
+          variant: "success",
+        }
+      );
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast(
+        {
+          title: "Error",
+          description: "Failed to update profile. Please try again.",
+          variant: "destructive",
+        }
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleCancel = () => {
-    setTempData({ ...formData });
-    setIsEditing(false);
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsSubmitting(true);
+      // TODO: Implement image upload logic
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Failed to upload image');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleLogout = () => {
-    navigate('/login');
-  };
-
-  const renderEditableField = (
-    label: string, 
-    name: keyof ProfileData, 
-    type = 'text',
-    options?: { value: string; label: string }[]
-  ) => {
+  const renderPhoneField = () => {
     return (
-      <div className="flex flex-col sm:flex-row sm:items-start py-7">
-        <label className="block text-sm font-medium text-gray-700 sm:w-1/4 sm:pt-2">
-          {label}
-        </label>
-        <div className="mt-1 sm:mt-0 sm:w-3/4">
+      <div className="flex flex-col sm:flex-row sm:items-center py-2 sm:py-3">
+        <div className="w-full sm:w-1/3 font-medium text-gray-900 text-sm sm:text-base mb-1 sm:mb-0">Phone Number</div>
+        <div className="w-full sm:w-2/3">
           {isEditing ? (
-            type === 'textarea' ? (
-              <textarea
-                name={name}
-                value={tempData[name]}
-                onChange={handleInputChange}
-                rows={3}
-                className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
-              />
-            ) : type === 'select' && options ? (
-              <select
-                name={name}
-                value={tempData[name]}
-                onChange={handleInputChange}
-                className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
-              >
-                {options.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            ) : (
+            <div className="relative">
               <input
-                type={type}
-                name={name}
-                value={tempData[name]}
+                type="tel"
+                name="phone"
+                value={tempData.phone || ''}
                 onChange={handleInputChange}
-                className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                placeholder="Enter phone number"
+                className="block w-full rounded-md border border-gray-300 py-1.5 px-3 text-sm focus:border-green focus:ring-green"
               />
-            )
+            </div>
           ) : (
-            <p className="text-gray-900">
-              {name === 'dob' 
-                ? new Date(formData.dob).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })
-                : formData[name] || <span className="text-gray-400">Not specified</span>}
+            <p className="text-gray-900 text-sm sm:text-base">
+              {formData.phone || <span className="text-gray-400">Not specified</span>}
             </p>
           )}
         </div>
@@ -127,172 +173,240 @@ export const ProfilePage = () => {
     );
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-10 sm:top-16 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => navigate(-1)}
-                className="mr-2"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <h1 className="text-xl font-semibold text-gray-900">My Profile</h1>
+  const renderPriceRangeField = () => {
+    return (
+      <div className="space-y-2 sm:space-y-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Min (₹)</label>
+            <div className="relative">
+              <input
+                type="number"
+                name="preferences.priceRange.min"
+                min="0"
+                value={tempData.preferences.priceRange?.min || ''}
+                onChange={handleInputChange}
+                className="focus:ring-green focus:border-green block w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md"
+                placeholder="0"
+                disabled={!isEditing}
+              />
             </div>
-            {!isEditing ? (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setIsEditing(true)}
-                className="flex items-center"
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Edit Profile
-              </Button>
-            ) : (
-              <div className="space-x-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleCancel}
-                  className="flex items-center"
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
-                <Button 
-                  onClick={handleSave}
-                  className="flex items-center bg-green hover:bg-green-600 mt-2"
-                >
-                  <Save className="h-4 w-4 mr-2 " />
-                  Save Changes
-                </Button>
-              </div>
-            )}
+          </div>
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Max (₹)</label>
+            <div className="relative">
+              <input
+                type="number"
+                name="preferences.priceRange.max"
+                min={tempData.preferences.priceRange?.min || 0}
+                value={tempData.preferences.priceRange?.max || ''}
+                onChange={handleInputChange}
+                className="focus:ring-green focus:border-green block w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md"
+                placeholder="0"
+                disabled={!isEditing}
+              />
+            </div>
           </div>
         </div>
-      </header>
+      </div>
+    );
+  };
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-6 pt-20 sm:px-6 lg:px-8">
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+  const renderPropertyTypeField = () => {
+    const propertyTypes = ['Apartment', 'Villa', 'House', 'Plot', 'Commercial'];
+
+    const handlePropertyTypeToggle = (type: string) => {
+      setTempData(prev => {
+        const types = prev.preferences.propertyType || [];
+        const newTypes = types.includes(type)
+          ? types.filter(t => t !== type)
+          : [...types, type];
+        return {
+          ...prev,
+          preferences: {
+            ...prev.preferences,
+            propertyType: newTypes,
+          },
+        };
+      });
+    };
+
+    return (
+      <div className="flex flex-wrap gap-2">
+        {propertyTypes.map(type => (
+          <button
+            key={type}
+            type="button"
+            onClick={() => handlePropertyTypeToggle(type)}
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              tempData.preferences.propertyType?.includes(type)
+                ? 'bg-green text-white border border-green hover:bg-green'
+                : 'bg-gray-100 text-gray-800 border border-gray-200 hover:bg-gray-200'
+            } ${!isEditing ? 'opacity-70 cursor-not-allowed' : ''}`}
+            disabled={!isEditing}
+          >
+            {type}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-4xl mx-auto py-4 sm:py-6 lg:py-8 px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center mb-6 sm:mb-8">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="mr-3 sm:mr-4"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">My Profile</h1>
+        </div>
+
+        <div className="bg-white shadow rounded-lg overflow-hidden">
           {/* Profile Header */}
-          <div className="px-6 py-5 border-b border-gray-200">
-            <div className="flex flex-col md:flex-row">
-              <div className="md:w-1/4">
-                <div className="relative w-32 h-32 mx-auto md:mx-0">
-                  <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                    {profileImage ? (
-                      <img 
-                        src={profileImage} 
-                        alt="Profile" 
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <User className="h-16 w-16 text-gray-400" />
-                    )}
-                  </div>
-                  {isEditing && (
-                    <label className="absolute bottom-0 right-0 bg-green-500 text-white p-1.5 rounded-full cursor-pointer hover:bg-green-600">
-                      <Camera className="h-4 w-4" />
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleImageChange}
-                      />
-                    </label>
+          <div className="px-4 sm:px-6 py-6 sm:py-8 bg-gradient-to-r from-green to-blue">
+            <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0">
+              <div className="relative group">
+                <div className="h-24 w-24 sm:h-32 sm:w-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border-4 border-white shadow-md">
+                  {formData.avatar ? (
+                    <img
+                      src={formData.avatar}
+                      alt="Profile"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <User className="h-12 w-12 sm:h-16 sm:w-16 text-gray-400" />
                   )}
                 </div>
+                
               </div>
-              <div className="mt-4 md:mt-0 md:ml-8 flex-1">
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="name"
-                    value={tempData.name}
-                    onChange={handleInputChange}
-                    className="text-2xl font-bold text-gray-900 border-b border-gray-300 focus:border-green-500 focus:outline-none w-full"
-                  />
-                ) : (
-                  <h2 className="text-2xl font-bold text-gray-900">{formData.name}</h2>
-                )}
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="occupation"
-                    value={tempData.occupation}
-                    onChange={handleInputChange}
-                    className="text-gray-600 mt-1 border-b border-gray-300 focus:border-green-500 focus:outline-none w-full"
-                    placeholder="Your occupation"
-                  />
-                ) : (
-                  <p className="text-gray-600 mt-1">{formData.occupation}</p>
-                )}
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="company"
-                    value={tempData.company}
-                    onChange={handleInputChange}
-                    className="text-gray-500 text-sm mt-1 border-b border-gray-300 focus:border-green-500 focus:outline-none w-full"
-                    placeholder="Your company"
-                  />
-                ) : (
-                  <p className="text-gray-500 text-sm mt-1">{formData.company}</p>
-                )}
+              <div className="mt-4 sm:mt-0 sm:ml-6 lg:ml-8 flex-1 w-full">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-4 sm:space-y-0">
+                  <div className="flex-1 w-full">
+                    <div className="flex flex-col space-y-2">
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          name="name"
+                          value={tempData.name}
+                          onChange={handleInputChange}
+                          className="text-xl sm:text-2xl font-bold text-gray-900 border-b border-gray-300 focus:border-green focus:outline-none w-full bg-transparent"
+                          placeholder="Your name"
+                        />
+                      ) : (
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{formData.name || 'Your Name'}</h2>
+                      )}
+                      <div className="flex items-center text-gray-700">
+                        <span className="flex items-center">
+                          <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              name="preferences.location"
+                              value={tempData.preferences.location}
+                              onChange={handleInputChange}
+                              className="border-b border-gray-300 focus:border-green focus:outline-none ml-1 bg-transparent w-full max-w-xs"
+                              placeholder="Add location"
+                            />
+                          ) : (
+                            <span className="text-sm sm:text-base">{formData.preferences.location || 'Location not set'}</span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="w-full sm:w-auto flex justify-end">
+                    {!isEditing ? (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setTempData(JSON.parse(JSON.stringify(formData)));
+                          setIsEditing(true);
+                        }}
+                        className="w-full sm:w-auto"
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit Profile
+                      </Button>
+                    ) : (
+                      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setIsEditing(false);
+                            setTempData(JSON.parse(JSON.stringify(formData)));
+                          }}
+                          disabled={isSubmitting}
+                          className="w-full sm:w-auto"
+                        >
+                          <X className="h-4 w-4 mr-2" />
+                          Cancel
+                        </Button>
+                        <Button 
+                          onClick={handleSave}
+                          className="w-full sm:w-auto bg-green hover:bg-green flex items-center"
+                          disabled={isSubmitting}
+                        >
+                        {isSubmitting ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <Save className="h-4 w-4 mr-2" />
+                        )}
+                        {isSubmitting ? 'Saving...' : 'Save Changes'}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Profile Details */}
-          <div className="px-6 py-5">
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Personal Information</h3>
-                <div className="space-y-4">
-                  {renderEditableField('Full Name', 'name')}
-                  {renderEditableField('Email', 'email', 'email')}
-                  {renderEditableField('Phone', 'phone', 'tel')}
-                  {renderEditableField('Address', 'address')}
-                  {renderEditableField('Date of Birth', 'dob', 'date')}
-                  {renderEditableField('Gender', 'gender', 'select', [
-                    { value: 'Male', label: 'Male' },
-                    { value: 'Female', label: 'Female' },
-                    { value: 'Other', label: 'Other' },
-                    { value: 'Prefer not to say', label: 'Prefer not to say' }
-                  ])}
-                  {renderEditableField('Marital Status', 'maritalStatus', 'select', [
-                    { value: 'Single', label: 'Single' },
-                    { value: 'Married', label: 'Married' },
-                    { value: 'Divorced', label: 'Divorced' },
-                    { value: 'Widowed', label: 'Widowed' }
-                  ])}
-                </div>
-              </div>
+          <div className="px-4 sm:px-6 py-6 sm:py-8">
+            <div className="border-b border-gray-200 pb-4 sm:pb-6">
+              <h3 className="text-lg sm:text-xl font-medium text-gray-900">Contact Information</h3>
+              <p className="mt-1 text-sm text-gray-500">Update your contact details.</p>
+            </div>
 
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Professional Information</h3>
-                <div className="space-y-4">
-                  {renderEditableField('Occupation', 'occupation')}
-                  {renderEditableField('Company', 'company')}
-                  {renderEditableField('Website', 'website', 'url')}
+            <div className="mt-6 sm:mt-8">
+              <div className="space-y-8 sm:space-y-10">
+                {/* Phone Number */}
+                <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                  <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-2 sm:mb-3">Phone Number</h3>
+                  <div className="py-1">
+                    {renderPhoneField()}
+                  </div>
                 </div>
-              </div>
 
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">About</h3>
-                {renderEditableField('Bio', 'bio', 'textarea')}
+                {/* Price Range */}
+                <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                  <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-2 sm:mb-3">Price Range</h3>
+                  <div>
+                    {renderPriceRangeField()}
+                  </div>
+                </div>
+
+                {/* Property Preferences */}
+                <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                  <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-2 sm:mb-3">Property Preferences</h3>
+                  <div className="mt-2">
+                    {renderPropertyTypeField()}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };
+
+export default ProfilePage;

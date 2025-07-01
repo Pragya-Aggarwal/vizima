@@ -124,7 +124,7 @@ export const Login = () => {
                             )}
                             <Button
                                 type="submit"
-                                className="w-full bg-green hover:bg-green-700 text-white text-sm sm:text-base py-2 sm:py-3"
+                                className="w-full bg-green hover:bg-green text-white text-sm sm:text-base py-2 sm:py-3"
                                 disabled={isLoading}
                             >
                                 {isLoading ? "Sending OTP..." : "Send OTP"}
@@ -157,7 +157,7 @@ export const Login = () => {
                                         setShowOtpInput(false);
                                         setOtpValues(Array(6).fill(""));
                                     }}
-                                    className="mt-4 text-green hover:text-green-700 text-xs sm:text-sm font-medium w-full text-center"
+                                    className="mt-4 text-green hover:text-green text-xs sm:text-sm font-medium w-full text-center"
                                 >
                                     Change mobile number
                                 </button>
@@ -169,7 +169,7 @@ export const Login = () => {
                             )}
                             <Button
                                 type="submit"
-                                className="w-full bg-green hover:bg-green-700 text-white text-sm sm:text-base py-2 sm:py-3"
+                                className="w-full bg-green hover:bg-green text-white text-sm sm:text-base py-2 sm:py-3"
                                 disabled={isLoading}
                             >
                                 {isLoading ? "Verifying..." : "Verify OTP"}

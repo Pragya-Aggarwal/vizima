@@ -291,7 +291,7 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
                             <SlidersHorizontal className="w-4 h-4" />
                             <span>Filters</span>
                             {activeFilters.length > 0 && (
-                                <span className="ml-1 flex items-center justify-center w-5 h-5 rounded-full bg-green-500 text-white text-xs">
+                                <span className="ml-1 flex items-center justify-center w-5 h-5 rounded-full bg-green text-white text-xs">
                                     {activeFilters.length}
                                 </span>
                             )}

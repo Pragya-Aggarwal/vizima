@@ -120,7 +120,7 @@ export const NavigationMenuSection = (): JSX.Element => {
                                     </DropdownMenu>
                                 ) : (
                                     <Button
-                                        className="rounded-full px-6 py-2 font-medium flex items-center gap-2 transition-all duration-200 bg-green hover:bg-green-600 text-white shadow-md hover:shadow-lg"
+                                        className="rounded-full px-6 py-2 font-medium flex items-center gap-2 transition-all duration-200 bg-green hover:bg-green text-white shadow-md hover:shadow-lg"
                                         onClick={handleAuthAction}
                                     >
                                         Login
@@ -148,7 +148,7 @@ export const NavigationMenuSection = (): JSX.Element => {
                                 <NavigationMenuItem key={index}>
                                     <NavigationMenuLink
                                         href={item.href}
-                                        className="font-['Lato',Helvetica] font-semibold text-gray-700 hover:text-green-600 text-base leading-6 transition-colors duration-200"
+                                        className="font-['Lato',Helvetica] font-semibold text-gray-700 hover:text-green text-base leading-6 transition-colors duration-200"
                                     >
                                         {item.label}
                                     </NavigationMenuLink>
@@ -196,7 +196,7 @@ export const NavigationMenuSection = (): JSX.Element => {
                                     </DropdownMenu>
                                 ) : (
                                     <Button
-                                        className="rounded-full px-6 py-2 font-medium flex items-center gap-2 transition-all duration-200 bg-green hover:bg-green-600 text-white shadow-md hover:shadow-lg"
+                                        className="rounded-full px-6 py-2 font-medium flex items-center gap-2 transition-all duration-200 bg-green hover:bg-green text-white shadow-md hover:shadow-lg"
                                         onClick={handleAuthAction}
                                     >
                                         Login

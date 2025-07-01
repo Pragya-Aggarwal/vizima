@@ -81,7 +81,7 @@ export const SearchBarSection = ({
                     <button
                         type="button"
                         onClick={handleLocationClick}
-                        className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full text-[#064749] hover:bg-green-50 transition-colors"
+                        className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full text-[#064749] hover:bg-green transition-colors"
                         aria-label="Use my location"
                     >
                         <LocateFixed className="w-4 h-4 sm:w-5 sm:h-5" />

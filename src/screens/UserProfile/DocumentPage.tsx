@@ -66,19 +66,19 @@ export const DocumentsPage = () => {
     switch (status) {
       case 'verified':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green text-green">
             <CheckCircle className="h-3.5 w-3.5 mr-1" /> Verified
           </span>
         );
       case 'pending':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow text-yellow">
             <Clock className="h-3.5 w-3.5 mr-1" /> Pending
           </span>
         );
       case 'rejected':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red text-red">
             <XCircle className="h-3.5 w-3.5 mr-1" /> Rejected
           </span>
         );
@@ -90,11 +90,11 @@ export const DocumentsPage = () => {
   const getDocumentIcon = (type: string) => {
     switch (type) {
       case 'id':
-        return <FileText className="h-5 w-5 text-blue-500" />;
+        return <FileText className="h-5 w-5 text-blue" />;
       case 'address':
-        return <FileText className="h-5 w-5 text-purple-500" />;
+        return <FileText className="h-5 w-5 text-purple" />;
       case 'income':
-        return <FileText className="h-5 w-5 text-green-500" />;
+        return <FileText className="h-5 w-5 text-green" />;
       default:
         return <File className="h-5 w-5 text-gray-400" />;
     }
@@ -122,7 +122,7 @@ export const DocumentsPage = () => {
               onClick={() => setActiveTab('uploaded')}
               className={`px-4 py-2 text-sm font-medium ${
                 activeTab === 'uploaded'
-                  ? 'border-b-2 border-green-500 text-green-600'
+                  ? 'border-b-2 border-green text-green'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -132,7 +132,7 @@ export const DocumentsPage = () => {
               onClick={() => setActiveTab('required')}
               className={`px-4 py-2 text-sm font-medium ${
                 activeTab === 'required'
-                  ? 'border-b-2 border-green-500 text-green-600'
+                  ? 'border-b-2 border-green text-green'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -281,7 +281,7 @@ export const DocumentsPage = () => {
                   </label>
                   <select
                     id="document-type"
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-green focus:ring-green"
                     value={documentType}
                     onChange={(e) => setDocumentType(e.target.value)}
                   >
@@ -300,7 +300,7 @@ export const DocumentsPage = () => {
                       <div className="flex text-sm text-gray-600">
                         <label
                           htmlFor="file-upload"
-                          className="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 focus-within:outline-none"
+                          className="relative cursor-pointer bg-white rounded-md font-medium text-green hover:text-green focus-within:outline-none"
                         >
                           <span>Upload a file</span>
                           <input
@@ -339,7 +339,7 @@ export const DocumentsPage = () => {
               <Button
                 onClick={handleUpload}
                 disabled={!selectedFile}
-                className="bg-green hover:bg-green-600"
+                className="bg-green hover:bg-green"
               >
                 Upload
               </Button>

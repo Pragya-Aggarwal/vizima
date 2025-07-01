@@ -149,7 +149,7 @@ export const BulkAccommodationSection = (): JSX.Element => {
                                     <p className="text-red-500 text-xs sm:text-sm">{error}</p>
                                 )}
                                 {success && (
-                                    <p className="text-green-600 text-xs sm:text-sm">
+                                    <p className="text-green text-xs sm:text-sm">
                                         Successfully subscribed to newsletter!
                                     </p>
                                 )}

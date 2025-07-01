@@ -105,7 +105,7 @@ export const SearchSection = ({ onSearchStart }: SearchSectionProps): JSX.Elemen
                     <Button
                         type="submit"
                         disabled={isLoading}
-                        className="flex items-center gap-1 w-full sm:w-auto px-3 sm:px-4 py-1.5 rounded-lg bg-green hover:bg-green-dark text-white text-sm font-medium transition-colors duration-200 shadow-sm hover:shadow-md"
+                        className="flex items-center gap-1 w-full sm:w-auto px-3 sm:px-4 py-1.5 rounded-lg bg-green hover:bg-green text-white text-sm font-medium transition-colors duration-200 shadow-sm hover:shadow-md"
                     >
                         {isLoading ? (
                             <>

@@ -66,7 +66,7 @@ export const DocumentsPage = () => {
     switch (status) {
       case 'verified':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green text-green">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green text-white">
             <CheckCircle className="h-3.5 w-3.5 mr-1" /> Verified
           </span>
         );
@@ -106,9 +106,9 @@ export const DocumentsPage = () => {
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center">
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => navigate(-1)}
               className="mr-2"
             >
@@ -116,25 +116,23 @@ export const DocumentsPage = () => {
             </Button>
             <h1 className="text-xl font-semibold text-gray-900">My Documents</h1>
           </div>
-          
+
           <div className="mt-4 flex border-b">
             <button
               onClick={() => setActiveTab('uploaded')}
-              className={`px-4 py-2 text-sm font-medium ${
-                activeTab === 'uploaded'
+              className={`px-4 py-2 text-sm font-medium ${activeTab === 'uploaded'
                   ? 'border-b-2 border-green text-green'
                   : 'text-gray-500 hover:text-gray-700'
-              }`}
+                }`}
             >
               My Documents
             </button>
             <button
               onClick={() => setActiveTab('required')}
-              className={`px-4 py-2 text-sm font-medium ${
-                activeTab === 'required'
+              className={`px-4 py-2 text-sm font-medium ${activeTab === 'required'
                   ? 'border-b-2 border-green text-green'
                   : 'text-gray-500 hover:text-gray-700'
-              }`}
+                }`}
             >
               Required Documents
             </button>
@@ -147,7 +145,7 @@ export const DocumentsPage = () => {
         {activeTab === 'uploaded' ? (
           <div className="space-y-4">
             <div className="flex justify-end">
-              <Button 
+              <Button
                 onClick={() => setShowUploadModal(true)}
                 className="flex items-center"
               >
@@ -230,8 +228,8 @@ export const DocumentsPage = () => {
                             <div className="text-sm text-gray-500">{doc.description}</div>
                           </div>
                         </div>
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           size="sm"
                           onClick={() => {
                             setDocumentType(doc.id);
@@ -348,7 +346,7 @@ export const DocumentsPage = () => {
         </div>
       )}
 
-      
+
     </div>
   );
 };

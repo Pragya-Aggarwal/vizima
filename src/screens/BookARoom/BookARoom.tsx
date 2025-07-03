@@ -189,7 +189,7 @@ export const BookARoom = (): JSX.Element => {
                                                 </p>
                                             </div>
                                             <div className="-mx-2 sm:mx-0">
-                                                <ScheduleAForm propertyId={id} />
+                                                <ScheduleAForm propertyId={id} propertyName={property.title} />
                                             </div>
                                         </TabsContent>
                                     </div>
@@ -311,8 +311,8 @@ export const BookARoom = (): JSX.Element => {
 
                                     <div className="mt-6 pt-6 border-t border-gray-100">
                                         <div className="flex items-center gap-3 p-3 bg-green rounded-lg">
-                                            <Shield className="w-5 h-5 text-green flex-shrink-0" />
-                                            <p className="text-sm text-gray-700">
+                                            <Shield className="w-5 h-5 text-white flex-shrink-0" />
+                                            <p className="text-sm text-white">
                                                 <span className="font-medium">Secure booking</span> with SSL encryption. Your information is safe with us.
                                             </p>
                                         </div>

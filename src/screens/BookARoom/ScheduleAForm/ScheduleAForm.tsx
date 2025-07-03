@@ -46,9 +46,10 @@ interface FormField {
 
 interface ScheduleAFormProps {
     propertyId?: string;
+    propertyName?: string;
 }
 
-export const ScheduleAForm = ({ propertyId }: ScheduleAFormProps): JSX.Element => {
+export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps): JSX.Element => {
     // Form state
     const [formData, setFormData] = useState<FormData>({
         fullName: "",
@@ -149,6 +150,7 @@ export const ScheduleAForm = ({ propertyId }: ScheduleAFormProps): JSX.Element =
                 mode: formData.visitType,
                 sharing: "double",
                 propertyId: propertyId || "507f191e810c19729de860ea",
+                propertyName: propertyName || "",
             };
 
             // Call the visit service

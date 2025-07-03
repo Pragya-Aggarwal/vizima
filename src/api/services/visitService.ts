@@ -13,7 +13,10 @@ export interface ScheduleVisitParams {
 export const visitService = {
   scheduleVisit: async (data: ScheduleVisitParams) => {
     try {
-      const response = await apiService.post('/schedule/schedule-visit', data);
+      const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+      const response = await apiService.post('/schedule-visits', data, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      });
       return response.data;
     } catch (error) {
       console.error('Error scheduling visit:', error);

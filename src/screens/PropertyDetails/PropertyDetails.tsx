@@ -60,14 +60,14 @@ function PropertyDetails() {
     const [error, setError] = useState<string | null>(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 8; // Show 8 items per page
+    const itemsPerPage = 4; // Show 8 items per page
     const navigate = useNavigate();
-    
+
     // Calculate pagination for related properties
     const totalPages = Math.ceil(relatedProperties.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedRelatedProperties = relatedProperties.slice(startIndex, startIndex + itemsPerPage);
-    
+
     // Handle page change
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -198,7 +198,7 @@ function PropertyDetails() {
                                 <div className="flex items-center gap-1 sm:ml-2">
                                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                                     <span className="font-medium text-sm md:text-base">
-                                        {typeof property.rating === 'object' ? property.rating.average.toFixed(1) : property.rating?.average|| 'N/A'}
+                                        {typeof property.rating === 'object' ? property.rating.average.toFixed(1) : property.rating?.average || 'N/A'}
                                         &nbsp; (
                                         {typeof property.rating === 'object' ? property.rating.count : (property.reviews || 0)}
                                         &nbsp;Reviews)
@@ -238,11 +238,11 @@ function PropertyDetails() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                             {images.map((img, index) => (
                                 <div key={index} className="relative aspect-[4/3] rounded-lg overflow-hidden">
-                                    <img 
-                                        src={img} 
-                                        alt={`Image ${index + 1}`} 
-                                        className="w-full h-full object-cover" 
-                                        onError={(e) => { e.currentTarget.src = home; }} 
+                                    <img
+                                        src={img}
+                                        alt={`Image ${index + 1}`}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => { e.currentTarget.src = home; }}
                                     />
                                     {images.length > 1 && (
                                         <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
@@ -264,22 +264,22 @@ function PropertyDetails() {
                         <div className="flex flex-col md:flex-row gap-3 sm:gap-4">
                             <div className="w-full md:flex-[2] md:min-w-0">
                                 <div className="relative aspect-[4/3] md:rounded-lg overflow-hidden">
-                                    <img 
-                                        src={images[currentImageIndex]} 
-                                        alt="Main" 
-                                        className="w-full h-full object-cover" 
-                                        onError={(e) => { e.currentTarget.src = home; }} 
+                                    <img
+                                        src={images[currentImageIndex]}
+                                        alt="Main"
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => { e.currentTarget.src = home; }}
                                     />
                                     <div className="absolute inset-0 flex items-center justify-between px-2 sm:px-4">
-                                        <button 
-                                            onClick={prevImage} 
+                                        <button
+                                            onClick={prevImage}
                                             className="bg-black/50 text-white p-1.5 sm:p-2 rounded-full hover:bg-black/70 transition-all"
                                             aria-label="Previous image"
                                         >
                                             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
                                         </button>
-                                        <button 
-                                            onClick={nextImage} 
+                                        <button
+                                            onClick={nextImage}
                                             className="bg-black/50 text-white p-1.5 sm:p-2 rounded-full hover:bg-black/70 transition-all"
                                             aria-label="Next image"
                                         >
@@ -301,12 +301,12 @@ function PropertyDetails() {
                             <div className="grid grid-cols-2 gap-2 w-full md:w-auto md:max-w-[200px] lg:max-w-[260px]">
                                 {images.slice(0, 4).map((img, index) => (
                                     <div key={index} className="relative aspect-square">
-                                        <img 
-                                            src={img} 
-                                            alt={`Thumbnail ${index + 1}`} 
-                                            onClick={() => setCurrentImageIndex(index)} 
-                                            className={`w-full h-full object-cover rounded-lg cursor-pointer transition-opacity ${currentImageIndex === index ? 'ring-2 ring-green' : 'opacity-80 hover:opacity-100'} border border-gray-200`} 
-                                            onError={(e) => { e.currentTarget.src = home; }} 
+                                        <img
+                                            src={img}
+                                            alt={`Thumbnail ${index + 1}`}
+                                            onClick={() => setCurrentImageIndex(index)}
+                                            className={`w-full h-full object-cover rounded-lg cursor-pointer transition-opacity ${currentImageIndex === index ? 'ring-2 ring-green' : 'opacity-80 hover:opacity-100'} border border-gray-200`}
+                                            onError={(e) => { e.currentTarget.src = home; }}
                                         />
                                     </div>
                                 ))}
@@ -338,13 +338,13 @@ function PropertyDetails() {
                                                 <span>Meals: {room.mealsIncluded ? "Included" : "Not Included"}</span>
                                             </div>
                                         </div>
-                                        <button 
-                                            onClick={handleBookRoom} 
+                                        <button
+                                            onClick={handleBookRoom}
                                             disabled={!room.isAvailable}
-                                            className={`w-full py-2 px-4 rounded-full text-sm font-medium ${room.isAvailable 
-                                                ? "bg-[#064749] text-white hover:bg-[#053a3c]" 
+                                            className={`w-full py-2 px-4 rounded-full text-sm font-medium ${room.isAvailable
+                                                ? "bg-[#064749] text-white hover:bg-[#053a3c]"
                                                 : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                                            }`}
+                                                }`}
                                         >
                                             {room.isAvailable ? "Book Now" : "Not Available"}
                                         </button>
@@ -372,13 +372,13 @@ function PropertyDetails() {
                                                 <td className="py-4 px-3 text-sm">{room.acType}</td>
                                                 <td className="py-4 px-3 text-sm">{room.mealsIncluded ? "Yes" : "No"}</td>
                                                 <td className="py-4 px-3">
-                                                    <button 
-                                                        onClick={handleBookRoom} 
+                                                    <button
+                                                        onClick={handleBookRoom}
                                                         disabled={!room.isAvailable}
-                                                        className={`text-white text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-full whitespace-nowrap ${room.isAvailable 
-                                                            ? "bg-[#064749] hover:bg-[#053a3c]" 
+                                                        className={`text-white text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-full whitespace-nowrap ${room.isAvailable
+                                                            ? "bg-[#064749] hover:bg-[#053a3c]"
                                                             : "bg-gray-400 cursor-not-allowed"
-                                                        }`}
+                                                            }`}
                                                     >
                                                         {room.isAvailable ? "Book Now" : "Not Available"}
                                                     </button>
@@ -394,8 +394,8 @@ function PropertyDetails() {
                             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-4 sm:mb-6">Amenities</h2>
                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
                                 {amenities.map((amenity, index) => (
-                                    <div 
-                                        key={index} 
+                                    <div
+                                        key={index}
                                         className="flex items-center gap-2 p-2 sm:p-3 border border-[#E2F1E8] rounded-lg hover:bg-gray-50 transition-colors"
                                     >
                                         <amenity.icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#064749] flex-shrink-0" />
@@ -449,15 +449,15 @@ function PropertyDetails() {
                             {paginatedRelatedProperties.map((pg) => {
                                 const imageUrl = (pg.images?.[0] || pg?.image || home) as string;
                                 const pgTitle = pg?.title || 'Property';
-                                
+
                                 return (
                                     <div key={pg.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col">
                                         <div className="relative aspect-video">
-                                            <img 
+                                            <img
                                                 src={imageUrl}
                                                 alt={pgTitle}
-                                                className="w-full h-full object-cover" 
-                                                onError={(e) => { e.currentTarget.src = home; }} 
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => { e.currentTarget.src = home; }}
                                             />
                                         </div>
                                         <div className="p-4 flex-1 flex flex-col">
@@ -482,9 +482,9 @@ function PropertyDetails() {
                                                     <span>WiFi</span>
                                                 </div>
                                             </div>
-                                            <Button 
-                                                onClick={() => handleViewDetails(pg.id)} 
-                                                size="sm" 
+                                            <Button
+                                                onClick={() => handleViewDetails(pg.id)}
+                                                size="sm"
                                                 className="w-full bg-[#064749] hover:bg-[#053a3c] rounded-[40px] text-white mt-4"
                                             >
                                                 View Details
@@ -494,43 +494,8 @@ function PropertyDetails() {
                                 );
                             })}
                         </div>
-                        
-                        {/* Pagination */}
-                        {relatedProperties.length > itemsPerPage && (
-                            <div className="flex justify-center mt-8 space-x-2">
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => handlePageChange(currentPage - 1)}
-                                    disabled={currentPage === 1}
-                                    className="px-3 py-1"
-                                >
-                                    Previous
-                                </Button>
-                                
-                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                    <Button
-                                        key={page}
-                                        variant={currentPage === page ? "default" : "outline"}
-                                        size="sm"
-                                        onClick={() => handlePageChange(page)}
-                                        className={`px-3 py-1 ${currentPage === page ? 'bg-green text-white' : ''}`}
-                                    >
-                                        {page}
-                                    </Button>
-                                ))}
-                                
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => handlePageChange(currentPage + 1)}
-                                    disabled={currentPage === totalPages}
-                                    className="px-3 py-1"
-                                >
-                                    Next
-                                </Button>
-                            </div>
-                        )}
+
+
                     </div>
                 )}
             </div>

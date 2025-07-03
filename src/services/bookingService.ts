@@ -33,7 +33,7 @@ export const getMyBookings = async ({
   limit?: number;
 } = {}): Promise<PaginatedResponse<Booking>> => {
   try {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token')
     const response = await axios.get(`${API_BASE_URL}/api/bookings/my-bookings`, {
       params: {
         page,

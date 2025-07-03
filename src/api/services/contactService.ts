@@ -10,7 +10,10 @@ export interface ContactMessageParams {
 export const contactService = {
   async sendMessage(params: ContactMessageParams): Promise<any> {
     try {
-      const response = await apiService.post('/contact/message', params);
+      const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+      const response = await apiService.post('/contact/message', params, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      });
       return response.data;
     } catch (error) {
       console.error('Error sending contact message:', error);

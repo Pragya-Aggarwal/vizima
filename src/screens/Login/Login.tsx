@@ -4,6 +4,7 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Card, CardContent } from "../../components/ui/card";
 import { setLoggedIn } from "../../utils/auth";
+import { sendPhoneOtp, verifyPhoneOtp } from "../../services/userService";
 
 export const Login = () => {
     const navigate = useNavigate();
@@ -24,11 +25,13 @@ export const Login = () => {
             setError("Please enter a valid 10-digit mobile number");
             return;
         }
+        const number = mobileNumber.startsWith('+91')
+            ? mobileNumber
+            : `+91${mobileNumber}`;
 
         setIsLoading(true);
         try {
-            // Simulating OTP send
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await sendPhoneOtp(number);
             setShowOtpInput(true);
             // Focus the first OTP input box
             otpRefs[0].current?.focus();
@@ -72,11 +75,16 @@ export const Login = () => {
             setError("Please enter a valid 6-digit OTP");
             return;
         }
-
+        const number = mobileNumber.startsWith('+91')
+            ? mobileNumber
+            : `+91${mobileNumber}`;
         setIsLoading(true);
         try {
-            // Simulating OTP verification
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const response = await verifyPhoneOtp(number, otp);
+            // Store token in sessionStorage
+            if (response && response.data && response.data.user && response.data.user.token) {
+                sessionStorage.setItem('token', response.data.user.token);
+            }
             setLoggedIn(true);
             navigate("/");
         } catch (error) {

@@ -163,21 +163,24 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
         setIsSubmitting(true);
 
         try {
-            // Prepare booking data
+
+
+            // Prepare booking data as per API contract
             const bookingData = {
-                roomId: formData.property,
+                property: formData.property,
                 checkInDate: formData.checkIn,
                 checkOutDate: formData.checkOut,
-                guestName: formData.fullName,
-                guestEmail: formData.email,
-                guestPhone: formData.mobileNumber,
+                fullName: formData.fullName,
+                email: formData.email,
+                gender: formData.gender,
+                sharing: formData.doubleSharing,
+                phoneNumber: formData.mobileNumber,
                 specialRequests: formData.specialRequests,
                 paymentMethod: formData.paymentMethod,
                 guests: formData.guests
             };
 
-
-            // Make the API call
+            // Get token for Authorization header
             const response = await bookingService.createBooking(bookingData);
 
             // Handle successful booking

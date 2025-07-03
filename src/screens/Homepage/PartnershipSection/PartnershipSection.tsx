@@ -30,7 +30,7 @@ interface FormFieldBase {
     onChange: (value: any) => void;
 }
 
-type FormField = 
+type FormField =
     | (FormFieldBase & { picker: true; value: Date | undefined; onChange: (value: Date | undefined) => void })
     | (FormFieldBase & { picker: 'time'; value: string | null; onChange: (value: string | null) => void })
     | (FormFieldBase & { picker?: false; value: string; onChange: (value: string) => void });
@@ -47,7 +47,7 @@ export const PartnershipSection = (): JSX.Element => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
-    
+
     // Format time for display
     const formatTimeDisplay = (timeStr: string | null) => {
         if (!timeStr) return 'Select time';
@@ -98,7 +98,7 @@ export const PartnershipSection = (): JSX.Element => {
         },
         {
             id: "meetingType",
-            label: "Physical / Virtual",
+            label: "Visit Type",
             placeholder: "select",
             options: ["Physical", "Virtual"],
             value: meetingType,
@@ -123,7 +123,7 @@ export const PartnershipSection = (): JSX.Element => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         // Validate required fields
         const missingFields = [];
         if (!selectedDate) missingFields.push('date');
@@ -131,7 +131,7 @@ export const PartnershipSection = (): JSX.Element => {
         if (!meetingType) missingFields.push('meeting type');
         if (!name) missingFields.push('name');
         if (!phone) missingFields.push('phone');
-        
+
         if (missingFields.length > 0) {
             toast({
                 title: 'Missing required fields',
@@ -166,7 +166,7 @@ export const PartnershipSection = (): JSX.Element => {
             };
 
             const response = await homeService.bookVisit(requestData);
-            
+
             // Show success toast
             toast({
                 title: 'Booking Successful!',
@@ -182,11 +182,11 @@ export const PartnershipSection = (): JSX.Element => {
             setDescription("");
             setName("");
             setPhone("");
-            
+
         } catch (error) {
             console.error('Booking failed:', error);
             const errorMessage = error instanceof Error ? error.message : 'Failed to book visit. Please try again later.';
-            
+
             toast({
                 title: 'Booking Failed',
                 description: errorMessage,
@@ -210,12 +210,12 @@ export const PartnershipSection = (): JSX.Element => {
                     </p>
                 </div>
 
-               
+
             </div>
 
             <Card className="w-full lg:w-[443px] bg-[#ffffffcc] rounded-[30px] shadow-cards">
                 <CardContent className="p-4 sm:p-5">
-                    <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
+                    <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 w-full">
                         {formFields.map((field) => (
                             <div key={field.id} className="flex flex-col w-full items-start gap-3 sm:gap-4 relative">
                                 <div className="flex items-center gap-2">
@@ -276,7 +276,7 @@ export const PartnershipSection = (): JSX.Element => {
                                                 }
                                             }}
                                         >
-                                            {field.id === 'date' 
+                                            {field.id === 'date'
                                                 ? (field.value ? format(field.value as Date, 'dd/MM/yyyy') : field.placeholder)
                                                 : (field.value !== undefined && field.value !== null ? String(field.value) : field.placeholder)
                                             }
@@ -343,8 +343,8 @@ export const PartnershipSection = (): JSX.Element => {
                             </div>
                         ))}
 
-                        <Button 
-                            className="w-full sm:w-auto px-10 py-3 rounded-[40px] bg-green hover:bg-green/90"
+                        <Button
+                            className="w-full sm:w-auto px-10 py-3 rounded-[40px] bg-green hover:bg-green/90 col-span-1 sm:col-span-2"
                             type="submit"
                             disabled={isSubmitting}
                         >

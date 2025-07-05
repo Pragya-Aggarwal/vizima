@@ -21,6 +21,8 @@ import 'react-clock/dist/Clock.css';
 import { OTPVerification } from "../../../components/OTPVerification";
 import { isLoggedIn } from "../../../utils/auth";
 
+
+
 interface FormFieldBase {
     id: string;
     label: string;
@@ -177,7 +179,7 @@ export const PartnershipSection = (): JSX.Element => {
                     formattedTime = `${hours12}:${minutes} ${period}`;
                 }
             }
-const number = phone.startsWith('+91') ? phone : `+91${phone}`;
+            const number = phone.startsWith('+91') ? phone : `+91${phone}`;
             const requestData = {
                 date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '',
                 timeSlot: formattedTime,
@@ -263,7 +265,7 @@ const number = phone.startsWith('+91') ? phone : `+91${phone}`;
                                                 value={time}
                                                 disableClock={true}
                                                 clearIcon={null}
-                                                className="w-full [&>div]:w-full [&>div]:border [&>div]:rounded-xl [&>div]:border-input [&>div]:bg-background [&>div]:px-4 [&>div]:py-3 [&>div]:text-sm [&>div]:ring-offset-background [&>div]:focus-visible:outline-none [&>div]:focus-visible:ring-2 [&>div]:focus-visible:ring-ring [&>div]:focus-visible:ring-offset-2 [&>div]:disabled:cursor-not-allowed [&>div]:disabled:opacity-50"
+                                                className="w-full [&>div]:w-full [&>div]:border [&>div]:rounded-xl [&>div]:border-input [&>div]:bg-background [&>div]:px-3 sm:px-4 [&>div]:py-2 sm:py-3 [&>div]:text-sm [&>div]:ring-offset-background [&>div]:focus-visible:outline-none [&>div]:focus-visible:ring-2 [&>div]:focus-visible:ring-ring [&>div]:focus-visible:ring-offset-2 [&>div]:disabled:cursor-not-allowed [&>div]:disabled:opacity-50"
                                                 format="h:mm a"
                                                 hourPlaceholder="HH"
                                                 minutePlaceholder="MM"
@@ -326,7 +328,8 @@ const number = phone.startsWith('+91') ? phone : `+91${phone}`;
                                             </svg>
                                         </div>
                                         {field.id === "date" && showDatePicker && (
-                                            <div className="absolute z-10 mt-1 bg-white border border-gray-200 rounded-md shadow-lg">
+                                            <div className="absolute z-50 mt-2 left-0 w-[320px] max-w-[95vw] bg-white border border-gray-200 rounded-md shadow-lg overflow-x-auto">
+
                                                 <DayPicker
                                                     mode="single"
                                                     selected={field.value as Date | undefined}
@@ -334,12 +337,37 @@ const number = phone.startsWith('+91') ? phone : `+91${phone}`;
                                                         field.onChange(date);
                                                         setShowDatePicker(false);
                                                     }}
+                                                    className="p-2 sm:p-4"
+                                                    classNames={{
+                                                        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+                                                        month: "space-y-4",
+                                                        caption: "flex justify-center pt-1 relative items-center",
+
+                                                        nav: "space-x-1 flex items-center",
+                                                        nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+                                                        nav_button_previous: "absolute left-1",
+                                                        nav_button_next: "absolute right-1",
+                                                        table: "w-full table-fixed", // Force fixed table layout
+                                                        row: "flex w-full mt-2",
+                                                        cell: "flex-1 text-center text-sm p-0",
+                                                        day: "w-full h-8 sm:h-9 text-xs sm:text-sm",
+                                                        caption_label: "text-sm font-medium truncate w-full text-center",
+                                                        head_row: "flex w-full",
+                                                        head_cell: "flex-1 text-center text-muted-foreground rounded-md font-normal text-xs truncate",
+                                                        day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+                                                        day_today: "bg-accent text-accent-foreground",
+                                                        day_outside: "text-muted-foreground opacity-50",
+                                                        day_disabled: "text-muted-foreground opacity-50",
+                                                        day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
+                                                        day_hidden: "invisible",
+                                                    }}
                                                 />
                                             </div>
                                         )}
+
                                         {field.id === "time" && showTimePicker && (
-                                            <div className="absolute z-10 mt-1 bg-white border border-gray-200 rounded-md shadow-lg">
-                                                <div className="p-2">
+                                            <div className="absolute z-10 mt-1 bg-white border border-gray-200 rounded-md shadow-lg w-full sm:w-auto min-w-[200px] sm:min-w-[250px] max-w-[calc(100vw-2rem)] sm:max-w-none left-0 sm:left-auto right-0 sm:right-auto">
+                                                <div className="p-2 sm:p-4">
                                                     <TimePicker
                                                         onChange={(value) => {
                                                             field.onChange(value as string | null);
@@ -348,7 +376,7 @@ const number = phone.startsWith('+91') ? phone : `+91${phone}`;
                                                         value={field.value as string | null}
                                                         disableClock={true}
                                                         clearIcon={null}
-                                                        className="border-0"
+                                                        className="border-0 w-full [&>div]:w-full [&>div]:border [&>div]:rounded-xl [&>div]:border-input [&>div]:bg-background [&>div]:px-3 sm:px-4 [&>div]:py-2 sm:py-3 [&>div]:text-sm [&>div]:ring-offset-background [&>div]:focus-visible:outline-none [&>div]:focus-visible:ring-2 [&>div]:focus-visible:ring-ring [&>div]:focus-visible:ring-offset-2 [&>div]:disabled:cursor-not-allowed [&>div]:disabled:opacity-50"
                                                         format="h:mm a"
                                                         hourPlaceholder="HH"
                                                         minutePlaceholder="MM"

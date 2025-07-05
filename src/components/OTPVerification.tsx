@@ -91,7 +91,7 @@ export const OTPVerification: React.FC<OTPVerificationProps> = ({
             }
 
             onVerificationSuccess(phoneNumber);
-            
+
             onClose();
         } catch (error) {
             setError("Invalid OTP. Please try again.");
@@ -124,8 +124,8 @@ export const OTPVerification: React.FC<OTPVerificationProps> = ({
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <Card className="w-full max-w-md mx-4">
-                <CardContent className="p-6 bg-white">
+            <Card className="w-full max-w-xs sm:max-w-md mx-4 rounded-xl overflow-hidden">
+                <CardContent className="p-2 sm:p-6 bg-white rounded-xl">
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-xl font-semibold text-gray-900">
                             Verify Mobile Number
@@ -161,7 +161,7 @@ export const OTPVerification: React.FC<OTPVerificationProps> = ({
                             <p className="text-sm text-gray-600 text-center">
                                 Enter the 6-digit OTP sent to <strong>{phoneNumber}</strong>
                             </p>
-                            <div className="flex justify-center gap-2">
+                            <div className="flex flex-wrap justify-center gap-1 sm:gap-2 w-full">
                                 {otpValues.map((value, index) => (
                                     <Input
                                         key={index}
@@ -170,7 +170,7 @@ export const OTPVerification: React.FC<OTPVerificationProps> = ({
                                         value={value}
                                         onChange={(e) => handleOtpChange(index, e.target.value)}
                                         onKeyDown={(e) => handleKeyDown(index, e)}
-                                        className="w-12 h-12 text-center text-lg font-semibold"
+                                        className="w-8 h-8 sm:w-12 sm:h-12 text-center text-base sm:text-xl font-semibold bg-white p-0 rounded-md border"
                                         maxLength={1}
                                         required
                                     />

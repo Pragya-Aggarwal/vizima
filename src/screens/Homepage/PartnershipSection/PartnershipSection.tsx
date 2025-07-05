@@ -18,6 +18,8 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
+import { OTPVerification } from "../../../components/OTPVerification";
+import { isLoggedIn } from "../../../utils/auth";
 
 interface FormFieldBase {
     id: string;
@@ -47,6 +49,10 @@ export const PartnershipSection = (): JSX.Element => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
+
+    // OTP verification state
+    const [showOTPVerification, setShowOTPVerification] = useState(false);
+    const [isPhoneVerified, setIsPhoneVerified] = useState(false);
 
     // Format time for display
     const formatTimeDisplay = (timeStr: string | null) => {
@@ -121,6 +127,16 @@ export const PartnershipSection = (): JSX.Element => {
         }
     ];
 
+    // Handle OTP verification success
+    const handleVerificationSuccess = (phone: string) => {
+        setIsPhoneVerified(true);
+        toast({
+            title: "Phone Verified!",
+            description: "Your mobile number has been verified successfully.",
+            variant: "success",
+        });
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -141,6 +157,12 @@ export const PartnershipSection = (): JSX.Element => {
             return;
         }
 
+        // Check if user is logged in, if not, verify phone number
+        if (!isLoggedIn() && !isPhoneVerified) {
+            setShowOTPVerification(true);
+            return;
+        }
+
         try {
             setIsSubmitting(true);
             // Format time to include AM/PM if not already present
@@ -155,14 +177,14 @@ export const PartnershipSection = (): JSX.Element => {
                     formattedTime = `${hours12}:${minutes} ${period}`;
                 }
             }
-
+const number = phone.startsWith('+91') ? phone : `+91${phone}`;
             const requestData = {
                 date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '',
                 timeSlot: formattedTime,
                 mode: meetingType.toLowerCase(),
                 description: description || '',
                 name: name,
-                phone: phone
+                phone: number
             };
 
             const response = await homeService.bookVisit(requestData);
@@ -222,6 +244,11 @@ export const PartnershipSection = (): JSX.Element => {
                                     {field.icon}
                                     <span className="font-desktop-subtitle-bold font-[number:var(--desktop-subtitle-bold-font-weight)] text-[#181a18] text-[length:var(--desktop-subtitle-bold-font-size)] tracking-[var(--desktop-subtitle-bold-letter-spacing)] leading-[var(--desktop-subtitle-bold-line-height)] [font-style:var(--desktop-subtitle-bold-font-style)]">
                                         {field.label}
+                                        {field.id === 'phone' && !isLoggedIn() && (
+                                            <span className="text-sm text-gray-500 ml-2">
+                                                {isPhoneVerified ? '(✓ Verified)' : '(Verification required)'}
+                                            </span>
+                                        )}
                                     </span>
                                     {field.id === "meetingType" && (
                                         <div className="w-5 h-5 bg-[url(https://c.animaapp.com/mbhmsf5eMRDRNk/img/asset---icon---arrow.svg)] bg-[100%_100%]" />
@@ -355,6 +382,14 @@ export const PartnershipSection = (): JSX.Element => {
                     </form>
                 </CardContent>
             </Card>
+
+            {/* OTP Verification Modal */}
+            <OTPVerification
+                isOpen={showOTPVerification}
+                onClose={() => setShowOTPVerification(false)}
+                onVerificationSuccess={handleVerificationSuccess}
+                phoneNumber={phone}
+            />
         </section>
     );
 };

@@ -198,9 +198,9 @@ function PropertyDetails() {
                                 <div className="flex items-center gap-1 sm:ml-2">
                                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                                     <span className="font-medium text-sm md:text-base">
-                                        {typeof property.rating === 'object' ? property.rating.average.toFixed(1) : property.rating?.average || 'N/A'}
+                                        {property.rating?.average?.toFixed(1) || 'N/A'}
                                         &nbsp; (
-                                        {typeof property.rating === 'object' ? property.rating.count : (property.reviews || 0)}
+                                        {property.rating?.count || property.reviews || 0}
                                         &nbsp;Reviews)
                                     </span>
                                 </div>

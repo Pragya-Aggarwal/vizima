@@ -14,6 +14,8 @@ import {
 } from "../../../components/ui/select";
 import { visitService } from "../../../api/services/visitService";
 import { toast } from "../../../components/ui/use-toast";
+import { OTPVerification } from "../../../components/OTPVerification";
+import { isLoggedIn } from "../../../utils/auth";
 
 interface FormData {
     fullName: string;
@@ -65,6 +67,10 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
     const [errors, setErrors] = useState<FormErrors>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // OTP verification state
+    const [showOTPVerification, setShowOTPVerification] = useState(false);
+    const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+
     // Form field data
     const formFields: FormField[] = [
         {
@@ -88,6 +94,16 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
     ];
 
     // Removed unused variables
+
+    // Handle OTP verification success
+    const handleVerificationSuccess = (phone: string) => {
+        setIsPhoneVerified(true);
+        toast({
+            title: "Phone Verified!",
+            description: "Your mobile number has been verified successfully.",
+            variant: "success",
+        });
+    };
 
     // Handle input changes
     const handleInputChange = (field: Exclude<keyof FormData, 'description'>, value: string) => {
@@ -129,6 +145,12 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
             return;
         }
 
+        // Check if user is logged in, if not, verify phone number
+        if (!isLoggedIn() && !isPhoneVerified) {
+            setShowOTPVerification(true);
+            setIsSubmitting(false);
+            return;
+        }
 
         try {
             // Format the date and time for the API in ISO 8601 format with timezone
@@ -140,10 +162,11 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
             // Format: "2023-12-25T14:30:00Z"
             const formattedDateTime = localISOTime.slice(0, 19) + 'Z';
 
+            const number = formData.mobileNumber.startsWith('+91') ? formData.mobileNumber : `+91${formData.mobileNumber}`;
             // Prepare the visit data
             const visitData = {
                 fullName: formData.fullName,
-                phoneNumber: formData.mobileNumber,
+                phoneNumber: number,
                 email: formData.email,
                 gender: formData.gender,
                 date: formattedDateTime,
@@ -197,6 +220,11 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
                             <div key={field.id} className="mb-5">
                                 <div className="font-desktop-subtitle-bold text-text mb-1 ml-2.5">
                                     {field.label}
+                                    {field.id === 'mobileNumber' && !isLoggedIn() && (
+                                        <span className="text-sm text-gray-500 ml-2">
+                                            {isPhoneVerified ? '(✓ Verified)' : '(Verification required)'}
+                                        </span>
+                                    )}
                                 </div>
                                 <Input
                                     className={`h-[52px] bg-white rounded-xl border border-solid ${errors[field.id]
@@ -211,6 +239,11 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
                                 {errors[field.id] && (
                                     <p className="text-red-500 text-sm mt-1 ml-2.5">
                                         {errors[field.id]}
+                                    </p>
+                                )}
+                                {field.id === 'mobileNumber' && !isLoggedIn() && !isPhoneVerified && formData.mobileNumber && (
+                                    <p className="text-blue-600 text-sm mt-1 ml-2.5">
+                                        Mobile verification will be required to complete scheduling
                                     </p>
                                 )}
                             </div>
@@ -337,6 +370,14 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
                     </CardContent>
                 </Card>
             </form>
+
+            {/* OTP Verification Modal */}
+            <OTPVerification
+                isOpen={showOTPVerification}
+                onClose={() => setShowOTPVerification(false)}
+                onVerificationSuccess={handleVerificationSuccess}
+                phoneNumber={formData.mobileNumber}
+            />
         </div>
     );
 };

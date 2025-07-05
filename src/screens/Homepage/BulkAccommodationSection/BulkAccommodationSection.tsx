@@ -61,44 +61,28 @@ export const BulkAccommodationSection = (): JSX.Element => {
     ];
 
     return (
-        <section className="w-full bg-[#e2f1e8] py-8 sm:py-12 min-h-[300px]">
+        <section className="w-full bg-[#e2f1e8] py-8 sm:py-12 relative">
+            <div className="container max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+                {/* <h2 className="text-2xl sm:text-3xl font-bold text-text text-center">
+                    VIZIMA PG & HOSTEL FINDER
+                </h2> */}
+                <div className="md:col-span-3">
+                    <img
+                        className="w-[140px] sm:w-[174px] h-auto sm:h-[58px]"
+                        alt="Logo"
+                        src="https://c.animaapp.com/mbhqlborYGJdod/img/logo.png"
+                    />
+
+
+                </div>
+            </div>
             <footer className="container max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                <div className="grid grid-cols-2 md:grid-cols-12 gap-8">
                     {/* Logo and contact info */}
-                    <div className="md:col-span-3">
-                        <img
-                            className="w-[140px] sm:w-[174px] h-auto sm:h-[58px]"
-                            alt="Logo"
-                            src="https://c.animaapp.com/mbhqlborYGJdod/img/logo.png"
-                        />
 
-                        <div className="mt-4 sm:mt-6 flex flex-col gap-4 sm:gap-5">
-                            <p className="font-desktop-text-regular text-text">
-                                Contact number: 02033074477
-                            </p>
-
-                            <div className="flex flex-col gap-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-6 h-6 flex items-center justify-center">
-                                        <img
-                                            className="w-[18px] h-[18px]"
-                                            alt="Instagram"
-                                            src="https://c.animaapp.com/mbhqlborYGJdod/img/group-3.png"
-                                        />
-                                    </div>
-                                    <FacebookIcon className="w-6 h-6 text-text" />
-                                    <TwitterIcon className="w-6 h-6 text-text" />
-                                </div>
-
-                                <p className="font-desktop-text-regular text-text">
-                                    © Vizima 2025
-                                </p>
-                            </div>
-                        </div>
-                    </div>
 
                     {/* Footer links */}
-                    <div className="md:col-span-5">
+                    <div className="md:col-span-7">
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-[60px]">
                             {footerLinks.map((section, index) => (
                                 <div key={index} className="flex flex-col gap-3 sm:gap-4">
@@ -121,7 +105,7 @@ export const BulkAccommodationSection = (): JSX.Element => {
                     </div>
 
                     {/* Newsletter subscription */}
-                    <div className="md:col-span-4">
+                    <div className="md:col-span-5">
                         <form onSubmit={handleSubscribe} className="flex flex-col gap-4 sm:gap-5">
                             <div className="flex flex-col gap-2">
                                 <h4 className="font-desktop-subtitle-bold text-text">
@@ -133,18 +117,27 @@ export const BulkAccommodationSection = (): JSX.Element => {
                             </div>
 
                             <div className="flex flex-col gap-2">
-                                <Input
-                                    className={`bg-bg rounded-xl px-6 sm:px-10 py-2.5 sm:py-3 font-desktop-subtitle text-[#49735a] text-sm sm:text-base ${error ? "border-red-500" : ""}`}
-                                    placeholder="Email address"
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => {
-                                        setEmail(e.target.value);
-                                        setError("");
-                                        setSuccess(false);
-                                    }}
-                                    disabled={isSubmitting}
-                                />
+                                <div className="flex gap-2 w-full">
+                                    <Input
+                                        className={`flex-1 bg-bg rounded-xl px-4 sm:px-6 py-2.5 sm:py-3 font-desktop-subtitle text-[#49735a] text-sm sm:text-base ${error ? "border-red-500" : ""}`}
+                                        placeholder="Email address"
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => {
+                                            setEmail(e.target.value);
+                                            setError("");
+                                            setSuccess(false);
+                                        }}
+                                        disabled={isSubmitting}
+                                    />
+                                    <Button
+                                        type="submit"
+                                        className="whitespace-nowrap rounded-[40px] px-4 sm:px-6 py-2.5 sm:py-3 bg-green hover:bg-green font-desktop-subtitle-bold text-white text-sm sm:text-base"
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? "..." : "Subscribe"}
+                                    </Button>
+                                </div>
                                 {error && (
                                     <p className="text-red-500 text-xs sm:text-sm">{error}</p>
                                 )}
@@ -154,18 +147,36 @@ export const BulkAccommodationSection = (): JSX.Element => {
                                     </p>
                                 )}
                             </div>
-
-                            <Button
-                                type="submit"
-                                className="w-full sm:w-auto rounded-[40px] px-8 sm:px-10 py-2.5 sm:py-3 bg-green hover:bg-green font-desktop-subtitle-bold text-white text-sm sm:text-base"
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? "Subscribing..." : "Subscribe"}
-                            </Button>
                         </form>
+                        <div className="mt-4 sm:mt-6 flex flex-col gap-4 sm:gap-5">
+                            <p className="font-desktop-text-regular text-text">
+                                Contact number: 02033074477
+                            </p>
+
+                            <div className="flex flex-col gap-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-6 h-6 flex items-center justify-center">
+                                        <img
+                                            className="w-[18px] h-[18px]"
+                                            alt="Instagram"
+                                            src="https://c.animaapp.com/mbhqlborYGJdod/img/group-3.png"
+                                        />
+                                    </div>
+                                    <FacebookIcon className="w-6 h-6 text-text" />
+                                    <TwitterIcon className="w-6 h-6 text-text" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </footer>
+
+            {/* Copyright text positioned at bottom center */}
+            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
+                <p className="font-desktop-text-regular text-text text-center">
+                    © Vizima 2025
+                </p>
+            </div>
         </section>
     );
 };

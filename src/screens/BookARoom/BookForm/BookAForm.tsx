@@ -12,6 +12,8 @@ import {
     SelectValue,
 } from "../../../components/ui/select";
 import { toast } from "../../../components/ui/use-toast";
+import { OTPVerification } from "../../../components/OTPVerification";
+import { isLoggedIn } from "../../../utils/auth";
 
 interface ContactInfo {
     phone: string;
@@ -86,6 +88,10 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
     const [errors, setErrors] = useState<FormErrors>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // OTP verification state
+    const [showOTPVerification, setShowOTPVerification] = useState(false);
+    const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+
     // Form field data
     const formFields: FormField[] = [
         {
@@ -97,7 +103,7 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
         {
             id: "mobileNumber",
             label: "Mobile Number",
-            placeholder: "XXXXXXXXXX",
+            placeholder: "+91789XXXXXX",
             validation: (value: string) => !/^\d{10}$/.test(value) ? "Please enter a valid mobile number" : undefined
         },
         {
@@ -139,6 +145,16 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
         },
     ];
 
+    // Handle OTP verification success
+    const handleVerificationSuccess = (phone: string) => {
+        setIsPhoneVerified(true);
+        toast({
+            title: "Phone Verified!",
+            description: "Your mobile number has been verified successfully.",
+            variant: "success",
+        });
+    };
+
     // Handle form submission
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -160,11 +176,17 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
             return;
         }
 
+        // Check if user is logged in, if not, verify phone number
+        if (!isLoggedIn() && !isPhoneVerified) {
+            setShowOTPVerification(true);
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
 
-
+            const number = formData.mobileNumber.startsWith('+91') ? formData.mobileNumber : `+91${formData.mobileNumber}`;
             // Prepare booking data as per API contract
             const bookingData = {
                 property: formData.property,
@@ -174,7 +196,7 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                 email: formData.email,
                 gender: formData.gender,
                 sharing: formData.doubleSharing,
-                phoneNumber: formData.mobileNumber,
+                phoneNumber: number,
                 specialRequests: formData.specialRequests,
                 paymentMethod: formData.paymentMethod,
                 guests: formData.guests
@@ -262,6 +284,11 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                             <div key={field.id} className="mb-5">
                                 <div className="font-desktop-subtitle-bold text-text mb-1 ml-2.5">
                                     {field.label}
+                                    {field.id === 'mobileNumber' && !isLoggedIn() && (
+                                        <span className="text-sm text-gray-500 ml-2">
+                                            {isPhoneVerified ? '(✓ Verified)' : '(Verification required)'}
+                                        </span>
+                                    )}
                                 </div>
                                 <Input
                                     className={`h-[52px] bg-white rounded-xl border border-solid ${errors[field.id]
@@ -276,6 +303,11 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                                 {errors[field.id] && (
                                     <p className="text-red-500 text-sm mt-1 ml-2.5">
                                         {errors[field.id]}
+                                    </p>
+                                )}
+                                {field.id === 'mobileNumber' && !isLoggedIn() && !isPhoneVerified && formData.mobileNumber && (
+                                    <p className="text-blue-600 text-sm mt-1 ml-2.5">
+                                        Mobile verification will be required to complete booking
                                     </p>
                                 )}
                             </div>
@@ -461,6 +493,14 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                     </CardContent>
                 </Card>
             </form>
+
+            {/* OTP Verification Modal */}
+            <OTPVerification
+                isOpen={showOTPVerification}
+                onClose={() => setShowOTPVerification(false)}
+                onVerificationSuccess={handleVerificationSuccess}
+                phoneNumber={formData.mobileNumber}
+            />
         </div>
     );
 };

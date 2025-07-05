@@ -87,7 +87,7 @@ export const NavigationMenuSection = (): JSX.Element => {
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent className="w-56" align="end">
-                                            <DropdownMenuItem 
+                                            {/* <DropdownMenuItem 
                                                 className="cursor-pointer flex items-center gap-2"
                                                 onClick={() => navigate('/booking')}
                                             >
@@ -100,14 +100,14 @@ export const NavigationMenuSection = (): JSX.Element => {
                                             >
                                                 <FileText className="h-4 w-4" />
                                                 <span>Upload personal documents</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem 
+                                            </DropdownMenuItem> */}
+                                            {/* <DropdownMenuItem 
                                                 className="cursor-pointer flex items-center gap-2"
                                                 onClick={() => navigate('/profile')}
                                             >
                                                 <Settings className="h-4 w-4" />
                                                 <span>Profile editing</span>
-                                            </DropdownMenuItem>
+                                            </DropdownMenuItem> */}
                                             <div className="border-t my-1"></div>
                                             <DropdownMenuItem 
                                                 className="cursor-pointer text-red-600 hover:bg-red-50 flex items-center gap-2"
@@ -163,7 +163,7 @@ export const NavigationMenuSection = (): JSX.Element => {
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent className="w-56" align="end">
-                                            <DropdownMenuItem 
+                                            {/* <DropdownMenuItem 
                                                 className="cursor-pointer flex items-center gap-2"
                                                 onClick={() => navigate('/booking')}
                                             >
@@ -176,14 +176,14 @@ export const NavigationMenuSection = (): JSX.Element => {
                                             >
                                                 <FileText className="h-4 w-4" />
                                                 <span>Upload personal documents</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem 
+                                            </DropdownMenuItem> */}
+                                            {/* <DropdownMenuItem 
                                                 className="cursor-pointer flex items-center gap-2"
                                                 onClick={() => navigate('/profile')}
                                             >
                                                 <Settings className="h-4 w-4" />
                                                 <span>Profile editing</span>
-                                            </DropdownMenuItem>
+                                            </DropdownMenuItem> */}
                                             <div className="border-t my-1"></div>
                                             <DropdownMenuItem 
                                                 className="cursor-pointer text-red-600 hover:bg-red-50 flex items-center gap-2"

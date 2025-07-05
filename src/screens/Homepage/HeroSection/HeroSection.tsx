@@ -42,7 +42,7 @@ export const HeroSection = (): JSX.Element => {
         return (
             <section className="flex flex-col items-center gap-8 sm:gap-12 md:gap-16 px-4 sm:px-6 md:px-8 lg:px-20 py-10 sm:py-12 md:py-16 w-full">
                 <h2 className="text-2xl sm:text-[length:var(--desktop-h2-font-size)] font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
-                    Choose Your City
+                    Explore PGs & Hostels Across Delhi NCR
                 </h2>
                 <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6 w-full max-w-7xl mx-auto">
                     {[...Array(5)].map((_, index) => (
@@ -61,7 +61,7 @@ export const HeroSection = (): JSX.Element => {
         return (
             <section className="flex flex-col items-center gap-8 sm:gap-12 md:gap-16 px-4 sm:px-6 md:px-8 lg:px-20 py-10 sm:py-12 md:py-16 w-full">
                 <h2 className="text-2xl sm:text-[length:var(--desktop-h2-font-size)] font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
-                    Choose Your City
+                    Explore PGs & Hostels Across Delhi NCR
                 </h2>
                 <div className="text-center">
                     <p className="text-red-500 mb-4">{error}</p>
@@ -91,7 +91,7 @@ export const HeroSection = (): JSX.Element => {
     return (
         <section className="flex flex-col items-center gap-8 sm:gap-12 md:gap-16 px-4 sm:px-6 md:px-8 lg:px-20 py-10 sm:py-12 md:py-16 w-full">
             <h2 className="text-2xl sm:text-[length:var(--desktop-h2-font-size)] font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-text tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
-                Choose Your City
+                Explore PGs & Hostels Across Delhi NCR
             </h2>
 
             <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6 w-full max-w-7xl mx-auto">

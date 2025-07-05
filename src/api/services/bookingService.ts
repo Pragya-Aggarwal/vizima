@@ -9,12 +9,31 @@ export interface Booking {
   guestName: string;
   guestEmail: string;
   status?: 'pending' | 'confirmed' | 'cancelled';
+  microSiteLink?: string;
+  // Additional fields that might be needed by the API
+  gender?: string;
+  sharing?: string;
+  phoneNumber?: string;
+  scheduleDate?: string;
+  specialRequests?: string;
+  paymentMethod?: string;
+  guests?: number;
+  totalAmount?: number;
+  contactInfo?: {
+    phone: string;
+    email: string;
+    emergencyContact: {
+      name: string;
+      phone: string;
+      relation: string;
+    };
+  };
 }
 
 // Example API service functions for bookings
 export const bookingService = {
   // Create a new booking
-  createBooking: async (bookingData: Omit<Booking, 'id' | 'status'>) => {
+  createBooking: async (bookingData: Partial<Booking>) => {
     const token = sessionStorage.getItem('token') || localStorage.getItem('token');
     return apiService.post<{ booking: Booking }>('/bookings', bookingData, {
       headers: token ? { 'Authorization': `Bearer ${token}` } : {}

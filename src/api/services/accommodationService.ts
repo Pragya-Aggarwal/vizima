@@ -9,12 +9,12 @@ export interface Accommodation {
   id: string;
   title: string;
   location: string;
-  type:string;
-  city:string;
-  gender:string;
-  bulkAccommodation?:boolean;
-  bulkAccommodationType?:string[];
-  sharingType?:string[];
+  type: string;
+  city: string;
+  gender: string;
+  bulkAccommodation?: boolean;
+  bulkAccommodationType?: string[];
+  sharingType?: string[];
   images: string[];
   amenities: string[];
   bedrooms: number;
@@ -38,6 +38,7 @@ export interface Accommodation {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  micrositeLink: string
 }
 
 export const accommodationService = {
@@ -77,6 +78,7 @@ export const accommodationService = {
         createdAt: item.createdAt || '',
         updatedAt: item.updatedAt || '',
         __v: item.__v || 0,
+        micrositeLink: item.microSiteLink || "",
         description: item.description || 'No description available',
       }));
     } catch (error) {

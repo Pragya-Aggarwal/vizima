@@ -2,6 +2,7 @@ import { ChevronDownIcon } from "lucide-react";
 import { useState, FormEvent } from "react";
 import { Button } from "../../../components/ui/button";
 import { bookingService } from "../../../api/services/bookingService";
+import { bulkAccommodationService } from "../../../api/services/bulkAccommodationService";
 import { Card, CardContent } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import {
@@ -14,6 +15,8 @@ import {
 import { toast } from "../../../components/ui/use-toast";
 import { OTPVerification } from "../../../components/OTPVerification";
 import { isLoggedIn } from "../../../utils/auth";
+import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
+import { accommodationService } from "../../../api/services/accommodationService";
 
 interface ContactInfo {
     phone: string;
@@ -35,7 +38,7 @@ interface FormData {
     fullName: string;
     mobileNumber: string;
     email: string;
-    gender: string;
+    gender: string | undefined;
 }
 
 interface FormErrors {
@@ -190,16 +193,28 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
             // Prepare booking data as per API contract
             const bookingData = {
                 property: formData.property,
-                checkInDate: formData.checkIn,
-                checkOutDate: formData.checkOut,
+                checkIn: formData.checkIn,
+
+                checkOut: formData.checkOut,
                 fullName: formData.fullName,
                 email: formData.email,
                 gender: formData.gender,
                 sharing: formData.doubleSharing,
                 phoneNumber: number,
+                scheduleDate: formData.checkIn,
                 specialRequests: formData.specialRequests,
                 paymentMethod: formData.paymentMethod,
-                guests: formData.guests
+                guests: Number(formData.guests),
+                totalAmount: 0,
+                contactInfo: {
+                    phone: number,
+                    email: formData.email,
+                    emergencyContact: {
+                        name: formData.fullName,
+                        phone: number,
+                        relation: "Self"
+                    }
+                }
             };
 
             // Get token for Authorization header
@@ -211,6 +226,33 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                 description: "Your booking has been successfully created!",
                 variant: "success",
             });
+
+            // Show notification about upcoming redirect
+            toast({
+                title: "Redirect Notice",
+                description: "You will be redirected to additional accommodation options in 5 seconds.",
+                variant: "default",
+                duration: 5000,
+            });
+
+            // Call bulk accommodation API and schedule redirect after 5 minutes
+            setTimeout(async () => {
+                try {
+                    // Call bulk accommodation API
+                    const data = await accommodationService.getAccommodations();
+                    const foundProperty = data.find(p => p.id === propertyId);
+
+                    // Find the first property with microSiteLink
+                    const propertyWithMicroSite = foundProperty?.micrositeLink;
+
+                    if (propertyWithMicroSite) {
+                        // Open microSiteLink in new tab
+                        window.open(propertyWithMicroSite, '_blank');
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch bulk accommodation data:', error);
+                }
+            }, 5000); // 5 minutes = 300000 milliseconds
 
             // Reset form
             setFormData({
@@ -231,7 +273,7 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                 fullName: "",
                 mobileNumber: "",
                 email: "",
-                gender: ""
+                gender: undefined
             });
             setErrors({});
         } catch (error) {
@@ -296,7 +338,7 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                                         : "border-[#c3d0d7]"
                                         } pl-[26px] font-desktop-subtitle text-text`}
                                     placeholder={field.placeholder}
-                                    value={formData[field.id]}  // if moved to contactInfo
+                                    value={formData[field.id] || ''}
                                     onChange={(e) => handleInputChange(field.id, e.target.value)}
                                     disabled={isSubmitting}
                                 />

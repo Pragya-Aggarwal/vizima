@@ -91,12 +91,7 @@ export const OTPVerification: React.FC<OTPVerificationProps> = ({
             }
 
             onVerificationSuccess(phoneNumber);
-            toast({
-                title: "Phone Verified!",
-                description: "Your mobile number has been verified successfully.",
-                variant: "success",
-            });
-
+            
             onClose();
         } catch (error) {
             setError("Invalid OTP. Please try again.");

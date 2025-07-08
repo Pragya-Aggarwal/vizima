@@ -28,29 +28,72 @@ export interface Amenity {
     label: string;
 }
 
+export interface Location {
+    coordinates?: {
+        lat: number;
+        lng: number;
+    };
+    address?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+}
+
 export interface ExtendedAccommodation {
+    _id?: string;
     id: string;
     title: string;
-    rating?: { average: number; count: number };
+    description?: string;
+    type?: string;
+    gender?: string;
+    bulkAccommodation?: boolean;
+    bulkAccommodationType?: string[];
+    sharingType?: string[];
+    price: number;
+    rent?: number;
+    amenities?: string[] | { name: string; available: boolean }[];
     images?: string[];
     image?: string;
-    price?: number;
-    rent?: number;
-    pgType?: string;
     bedrooms?: number;
     bathrooms?: number;
-    gender?: string;
+    area?: number;
+    isAvailable?: boolean;
+    isFeatured?: boolean;
+    rating?: {
+        average: number;
+        count: number;
+    };
+    location?: Location | string;
+    owner?: {
+        _id: string;
+        name: string;
+        email: string;
+        phone: string;
+    } | null;
+    views?: number;
+    rules?: string[];
+    nearbyPlaces?: Array<{
+        name: string;
+        distance: string;
+        type: string;
+        _id: string;
+        id: string;
+    }>;
+    visitBookings?: any[];
+    scheduleVisits?: any[];
+    microSiteLink?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    __v?: number;
+    averageRating?: number;
     houseRules?: string[];
     roomOptions?: RoomOption[];
     contact?: {
         phone: string;
         email: string;
     };
-    location?: string;
     reviews?: number;
-    amenities?: Amenity[];
     tags?: string[];
-    description?: string;
 }
 
 const amenityDetailsMap: { [key: string]: { label: string; icon: React.ComponentType<{ className?: string }> } } = {

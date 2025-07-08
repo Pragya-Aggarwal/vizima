@@ -1,56 +1,106 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
-import {
-    MapPin,
-    Star,
-    ChevronLeft,
-    ChevronRight,
-    Wifi as WifiIcon,
-    WashingMachine,
-    Zap,
-    Camera,
-    Users,
-    Utensils as UtensilsIcon,
-    Shield as ShieldIcon,
-    Car as CarIcon,
+import { 
+    MapPin, 
+    Star, 
+    ChevronLeft, 
+    ChevronRight, 
+    Bed, 
+    Bath, 
+    Ruler, 
+    Shield as ShieldIcon, 
+    Wifi as WifiIcon, 
+    Utensils as UtensilsIcon, 
+    Car as CarIcon, 
+    Users as UsersIcon,
+    Battery,
+    Video,
+    Sofa,
     Dumbbell,
-    BedDouble
+    Check,
+    Phone,
+    Mail,
+    Share2,
+    Heart,
+    MessageSquare,
+    Map as MapIcon,
+    Building2,
+    Landmark,
+    School,
+    Train,
+    Clock,
+    Calendar,
+    User,
+    Lock,
+    Eye,
+    EyeOff
 } from 'lucide-react';
 import { home } from '../../assets';
 import { accommodationService } from '../../api/services/accommodationService';
-import { ExtendedAccommodation, RoomOption, Amenity, transformToExtended } from '../../lib/types';
+import { ExtendedAccommodation, transformToExtended, Location, Amenity } from '../../lib/types';
 
-const formatPrice = (price: string | number | undefined): string => {
-    if (price === undefined || price === null) return "N/A";
-    const numericPrice = typeof price === 'string'
-        ? parseFloat(price.replace(/[^0-9.]/g, ''))
-        : Number(price);
+interface RoomOption {
+    type: string;
+    rent: string;
+    security: string;
+    availableFrom: string;
+    acType: string;
+    isAvailable: boolean;
+    mealsIncluded: boolean;
+}
 
-    if (isNaN(numericPrice)) return "N/A";
 
-    return new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-    }).format(numericPrice);
+
+// Helper function to get amenity details
+const getAmenityDetails = (amenity: string | { name: string; available: boolean } | Amenity) => {
+    let amenityName: string;
+    let isAvailable: boolean;
+
+    if (typeof amenity === 'string') {
+        amenityName = amenity;
+        isAvailable = true;
+    } else if ('name' in amenity) {
+        amenityName = amenity.name;
+        isAvailable = 'available' in amenity ? !!amenity.available : true;
+    } else {
+        // Handle Amenity type
+        return {
+            label: amenity.label,
+            icon: amenity.icon,
+            available: true
+        };
+    }
+    
+    const amenityDetailsMap: { [key: string]: { label: string; icon: React.ComponentType<{ className?: string }> } } = {
+        'wifi': { label: 'Wi-Fi', icon: WifiIcon },
+        'laundry': { label: 'Laundry', icon: UsersIcon },
+        'kitchen': { label: 'Kitchen', icon: UtensilsIcon },
+        'power backup': { label: 'Power Backup', icon: Battery },
+        'cctv': { label: 'CCTV', icon: Video },
+        'housekeeping': { label: 'Housekeeping', icon: UsersIcon },
+        'parking': { label: 'Parking', icon: CarIcon },
+        'security': { label: 'Security', icon: ShieldIcon },
+        'furnished': { label: 'Furnished', icon: Sofa },
+        'gym': { label: 'Gym', icon: Dumbbell },
+    };
+    
+    const details = amenityDetailsMap[amenityName.toLowerCase()] || { label: amenityName, icon: Check };
+    
+    return {
+        label: details.label,
+        icon: details.icon,
+        available: isAvailable
+    };
 };
 
-const amenityDetailsMap: { [key: string]: { label: string; icon: React.ComponentType<{ className?: string }> } } = {
-    'wifi': { label: 'Wi-Fi', icon: WifiIcon },
-    'laundry': { label: 'Laundry', icon: WashingMachine },
-    'kitchen': { label: 'Kitchen', icon: UtensilsIcon },
-    'power backup': { label: 'Power Backup', icon: Zap },
-    'cctv': { label: 'CCTV', icon: Camera },
-    'housekeeping': { label: 'Housekeeping', icon: Users },
-    'parking': { label: 'Parking', icon: CarIcon },
-    'security': { label: 'Security', icon: ShieldIcon },
-    'furnished': { label: 'Furnished', icon: BedDouble },
-    'gym': { label: 'Gym', icon: Dumbbell },
-};
 
-const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+
+const getLocationString = (location?: string | Location | null): string => {
+    if (!location) return 'Location not specified';
+    if (typeof location === 'string') return location;
+    return [location.address, location.city].filter(Boolean).join(', ');
+};
 
 function PropertyDetails() {
     const { id } = useParams<{ id: string }>();
@@ -59,20 +109,59 @@ function PropertyDetails() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 4; // Show 8 items per page
     const navigate = useNavigate();
 
-    // Calculate pagination for related properties
-    const totalPages = Math.ceil(relatedProperties.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedRelatedProperties = relatedProperties.slice(startIndex, startIndex + itemsPerPage);
+    useEffect(() => {
+        const fetchProperty = async () => {
+            if (!id) return;
+            
+            try {
+                setLoading(true);
+                // First try to find the property in the existing accommodations
+                const allAccommodations = await accommodationService.getAccommodations();
+                const foundProperty = allAccommodations.find(acc => acc.id === id);
+                
+                if (foundProperty) {
+                    setProperty(transformToExtended(foundProperty));
+                    setError(null);
+                } else {
+                    throw new Error('Property not found');
+                }
+            } catch (err) {
+                console.error('Error fetching property:', err);
+                setError('Failed to load property details. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    // Handle page change
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-        window.scrollTo({ top: document.getElementById('related-properties')?.offsetTop, behavior: 'smooth' });
-    };
+        fetchProperty();
+    }, [id]);
+
+    useEffect(() => {
+        if (!property) return;
+
+        const fetchSimilarProperties = async () => {
+            try {
+                console.log('Fetching similar properties...');
+                const allAccommodations = await accommodationService.getAccommodations();
+                console.log('All accommodations:', allAccommodations);
+                
+                // More lenient filtering - just exclude the current property
+                const similar = allAccommodations
+                    .filter(acc => acc.id !== property.id)
+                    .slice(0, 4); // Limit to 4 similar properties
+                
+                console.log('Found similar properties:', similar);
+                setRelatedProperties(similar.map(transformToExtended));
+            } catch (err) {
+                console.error('Error fetching similar properties:', err);
+                setRelatedProperties([]);
+            }
+        };
+
+        fetchSimilarProperties();
+    }, [property]);
 
     const images = useMemo(() => {
         if (!property?.images?.length) return [home];
@@ -81,36 +170,6 @@ function PropertyDetails() {
 
     const totalImages = images.length;
 
-    useEffect(() => {
-        const fetchProperty = async () => {
-            if (!id) {
-                setError("No property ID provided")
-                setLoading(false)
-                return
-            }
-
-            try {
-                setLoading(true)
-                const data = await accommodationService.getAccommodations()
-                const foundProperty = data.find(p => p.id === id)
-
-                if (!foundProperty) {
-                    throw new Error("Property not found")
-                }
-
-                setProperty(transformToExtended(foundProperty))
-                setRelatedProperties(data.filter(p => p.id !== id).map(transformToExtended));
-                setError(null)
-            } catch (err) {
-                console.error('Error fetching property details:', err)
-                setError('Failed to load property details. Please try again later.')
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchProperty()
-    }, [id])
     const nextImage = useCallback(() => {
         setCurrentImageIndex((prev) => (prev + 1) % totalImages);
     }, [totalImages]);
@@ -129,10 +188,14 @@ function PropertyDetails() {
         navigate(`/book/${property.id}`);
     }, [navigate, property]);
 
-    const handleViewDetails = useCallback((pgId: string) => {
-        navigate(`/property-details/${pgId}`);
+    const handleViewDetails = (propertyId: string) => {
+        navigate(`/property-details/${propertyId}`);
         window.scrollTo(0, 0);
-    }, [navigate]);
+    };
+
+    const getPropertyId = (property: ExtendedAccommodation): string => {
+        return property._id || property.id;
+    };
 
     if (loading) {
         return (
@@ -167,15 +230,33 @@ function PropertyDetails() {
         )
     }
 
-    const roomOptions: RoomOption[] = property.roomOptions || [
-        { type: "Single Room", rent: "₹12,000", security: "₹24,000", availableFrom: "15 Jan 2024", acType: "AC", isAvailable: true, mealsIncluded: true },
-        { type: "Double Sharing", rent: "₹8,000", security: "₹16,000", availableFrom: "20 Jan 2024", acType: "Non-AC", isAvailable: true, mealsIncluded: false },
-        { type: "Triple Sharing", rent: "₹6,500", security: "₹13,000", availableFrom: "25 Jan 2024", acType: "AC", isAvailable: false, mealsIncluded: true },
-    ]
+    const roomOptions: RoomOption[] = property.roomOptions?.length ? property.roomOptions : [
+        { type: "Single Sharing", rent: "₹8,500", security: "₹17,000", availableFrom: "15 Jan 2024", acType: "Non-AC", isAvailable: true, mealsIncluded: true },
+        { type: "Double Sharing", rent: "₹7,500", security: "₹15,000", availableFrom: "20 Jan 2024", acType: "AC", isAvailable: true, mealsIncluded: false },
+        { type: "Triple Sharing", rent: "₹6,500", security: "₹13,000", availableFrom: "25 Jan 2024", acType: "AC", isAvailable: false, mealsIncluded: true }
+    ];
 
-    const amenities: Amenity[] = property.amenities || [];
-
-    const houseRules: string[] = property.houseRules || [
+    // Get amenities and house rules with proper type checking
+    const amenities: (string | Amenity)[] = Array.isArray(property.amenities) 
+        ? property.amenities.map(amenity => {
+            if (typeof amenity === 'string') return amenity;
+            if (amenity && typeof amenity === 'object') {
+                if ('icon' in amenity && 'label' in amenity) {
+                    return amenity as Amenity;
+                }
+                if ('name' in amenity) {
+                    // Convert to proper Amenity type
+                    const details = getAmenityDetails(amenity);
+                    return {
+                        icon: details.icon,
+                        label: details.label
+                    };
+                }
+            }
+            return '';
+        }).filter(Boolean)
+        : [];
+    const houseRules = Array.isArray(property.houseRules) ? property.houseRules : [
         "No Loud Music after 10 PM",
         "No Smoking inside premises",
         "Entry time till 11 PM",
@@ -193,16 +274,15 @@ function PropertyDetails() {
                             <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-gray-600">
                                 <div className="flex items-center gap-2">
                                     <MapPin className="w-4 h-4" />
-                                    <span>{property.location}</span>
+                                    <span>{getLocationString(property.location)}</span>
                                 </div>
-                                <div className="flex items-center gap-1 sm:ml-2">
-                                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                                    <span className="font-medium text-sm md:text-base">
-                                        {property.rating?.average?.toFixed(1) || 'N/A'}
-                                        &nbsp; (
-                                        {property.rating?.count || property.reviews || 0}
-                                        &nbsp;Reviews)
+                                <div className="flex items-center text-sm text-gray-500 mb-2">
+                                    <Star className="w-4 h-4 text-yellow-400 mr-1" />
+                                    <span className="font-medium text-gray-700">
+                                        {property.rating?.average?.toFixed(1) || property.averageRating?.toFixed(1) || 'N/A'}
                                     </span>
+                                    <span className="mx-1">•</span>
+                                    <span>{property.rating?.count || property.reviews || 0} reviews</span>
                                 </div>
                             </div>
                             <div className="flex flex-wrap gap-3 md:gap-5 mt-3">
@@ -390,18 +470,62 @@ function PropertyDetails() {
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-2">
+                        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
                             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-4 sm:mb-6">Amenities</h2>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
-                                {amenities.map((amenity, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex items-center gap-2 p-2 sm:p-3 border border-[#E2F1E8] rounded-lg hover:bg-gray-50 transition-colors"
-                                    >
-                                        <amenity.icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#064749] flex-shrink-0" />
-                                        <span className="text-xs sm:text-sm font-medium truncate">{amenity.label}</span>
-                                    </div>
-                                ))}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                                {amenities.map((amenity, index) => {
+                                    // Handle different amenity types
+                                    if (typeof amenity === 'string') {
+                                        const details = getAmenityDetails(amenity);
+                                        const Icon = details.icon;
+                                        return (
+                                            <div
+                                                key={index}
+                                                className="flex items-center gap-2 p-2 sm:p-3 border border-[#E2F1E8] rounded-lg hover:bg-gray-50 transition-colors"
+                                            >
+                                                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#064749] flex-shrink-0" />
+                                                <span className="text-xs sm:text-sm font-medium truncate">
+                                                    {details.label}
+                                                </span>
+                                            </div>
+                                        );
+                                    } else if ('label' in amenity && 'icon' in amenity) {
+                                        // Handle Amenity type
+                                        const Icon = amenity.icon;
+                                        return (
+                                            <div
+                                                key={index}
+                                                className="flex items-center gap-2 p-2 sm:p-3 border border-[#E2F1E8] rounded-lg hover:bg-gray-50 transition-colors"
+                                            >
+                                                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#064749] flex-shrink-0" />
+                                                <span className="text-xs sm:text-sm font-medium truncate">
+                                                    {amenity.label}
+                                                </span>
+                                            </div>
+                                        );
+                                    } else if (amenity && typeof amenity === 'object' && 'name' in amenity) {
+                                        // Handle object with name property
+                                        const amenityObj = amenity as { name: string; available?: boolean };
+                                        const details = getAmenityDetails(amenityObj.name);
+                                        const Icon = details.icon;
+                                        const isAvailable = 'available' in amenityObj ? amenityObj.available : true;
+                                        
+                                        return (
+                                            <div
+                                                key={index}
+                                                className={`flex items-center gap-2 p-2 sm:p-3 border ${isAvailable ? 'border-[#E2F1E8]' : 'border-gray-200 opacity-50'} rounded-lg hover:bg-gray-50 transition-colors`}
+                                            >
+                                                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#064749] flex-shrink-0" />
+                                                <span className="text-xs sm:text-sm font-medium truncate">
+                                                    {details.label}
+                                                    {!isAvailable && ' (Not Available)'}
+                                                </span>
+                                            </div>
+                                        );
+                                    }
+                                    
+                                    return null;
+                                })}
                             </div>
                         </div>
                     </div>
@@ -442,60 +566,101 @@ function PropertyDetails() {
                         </div>
                     </div>
                 </div>
-                {relatedProperties.length > 0 && relatedProperties.length > itemsPerPage && (
-                    <div className="mt-8 md:mt-12">
-                        <h2 className="text-xl md:text-2xl font-semibold text-center mb-6">Related PGs Nearby</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
-                            {paginatedRelatedProperties.map((pg) => {
-                                const imageUrl = (pg.images?.[0] || pg?.image || home) as string;
-                                const pgTitle = pg?.title || 'Property';
+                {relatedProperties.length > 0 ? (
+                    <div className="mt-12 mb-8">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Similar Properties Nearby</h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                {relatedProperties.map((property) => {
+                                    const imageUrl = (property.images?.[0] || home) as string;
+                                    const propertyTitle = property?.title || 'Property';
+                                    const location = getLocationString(property.location);
 
-                                return (
-                                    <div key={pg.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col">
-                                        <div className="relative aspect-video">
-                                            <img
-                                                src={imageUrl}
-                                                alt={pgTitle}
-                                                className="w-full h-full object-cover"
-                                                onError={(e) => { e.currentTarget.src = home; }}
-                                            />
-                                        </div>
-                                        <div className="p-4 flex-1 flex flex-col">
-                                            <h3 className="font-semibold mb-1 text-gray-900">{pgTitle}</h3>
-                                            <p className="text-sm text-gray-600 mb-3">{pg.location}</p>
-                                            <p className="text-green font-semibold mb-3">{formatPrice(pg.rent || pg.price)}</p>
-                                            <div className="flex flex-wrap gap-3 mt-auto">
-                                                <div className="flex items-center gap-1 text-sm text-gray-600">
-                                                    <div className="relative w-5 h-5">
-                                                        <img className="absolute w-[17px] h-3.5 top-[3px] left-0.5" alt="Bedroom icon" src="https://c.animaapp.com/mbi2us3vKS97yu/img/group.png" />
+                                    return (
+                                        <div 
+                                            key={getPropertyId(property)}
+                                            className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col h-full"
+                                        >
+                                            <div className="relative aspect-video">
+                                                <img
+                                                    src={imageUrl}
+                                                    alt={propertyTitle}
+                                                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                                    onError={(e) => {
+                                                        (e.target as HTMLImageElement).src = home;
+                                                    }}
+                                                />
+                                                {property.isFeatured && (
+                                                    <div className="absolute top-2 right-2 bg-yellow-400 text-yellow-800 text-xs font-bold px-2 py-1 rounded-full shadow-sm">
+                                                        Featured
                                                     </div>
-                                                    <span>2 beds</span>
-                                                </div>
-                                                <div className="flex items-center gap-1 text-sm text-gray-600">
-                                                    <img className="w-5 h-5" alt="Bath icon" src="https://c.animaapp.com/mbi2us3vKS97yu/img/fa-solid-bath.svg" />
-                                                    <span>1 bath</span>
-                                                </div>
-                                                <div className="flex items-center gap-1 text-sm text-gray-600">
-                                                    <div className="relative w-5 h-5">
-                                                        <img className="absolute w-[17px] h-[13px] top-[3px] left-0.5" alt="WiFi icon" src="https://c.animaapp.com/mbi2us3vKS97yu/img/group-1.png" />
-                                                    </div>
-                                                    <span>WiFi</span>
-                                                </div>
+                                                )}
                                             </div>
-                                            <Button
-                                                onClick={() => handleViewDetails(pg.id)}
-                                                size="sm"
-                                                className="w-full bg-[#064749] hover:bg-[#053a3c] rounded-[40px] text-white mt-4"
-                                            >
-                                                View Details
-                                            </Button>
+
+                                            <div className="p-4 flex-1 flex flex-col">
+                                                <h3 className="font-semibold text-gray-900 text-lg mb-1 line-clamp-1">
+                                                    {propertyTitle}
+                                                </h3>
+                                                <div className="flex items-center text-sm text-gray-600 mb-3">
+                                                    <MapPin className="w-4 h-4 mr-1 text-gray-400" />
+                                                    <span className="line-clamp-1">{location}</span>
+                                                </div>
+
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <div className="flex items-center bg-blue-50 px-2 py-1 rounded-full">
+                                                        <Star className="w-4 h-4 text-yellow-400 fill-yellow-400 mr-1" />
+                                                        <span className="text-sm font-medium text-blue-700">
+                                                            {property.rating?.average?.toFixed(1) || property.averageRating?.toFixed(1) || 'N/A'}
+                                                        </span>
+                                                        <span className="text-xs text-blue-600 ml-1">
+                                                            ({property.rating?.count || property.reviews || 0})
+                                                        </span>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <span className="text-lg font-bold text-gray-900">
+                                                            ₹{(property.price || property.rent)?.toLocaleString() || 'N/A'}
+                                                        </span>
+                                                        <span className="text-sm text-gray-500">/month</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-gray-100">
+                                                    <div className="flex flex-col items-center text-center">
+                                                        <Bed className="w-5 h-5 text-gray-500 mb-1" />
+                                                        <span className="text-xs text-gray-600">
+                                                            {property.bedrooms || 'N/A'} Beds
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-col items-center text-center">
+                                                        <Bath className="w-5 h-5 text-gray-500 mb-1" />
+                                                        <span className="text-xs text-gray-600">
+                                                            {property.bathrooms || 'N/A'} Baths
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-col items-center text-center">
+                                                        <Ruler className="w-5 h-5 text-gray-500 mb-1" />
+                                                        <span className="text-xs text-gray-600">
+                                                            {property.area ? `${property.area} sq.ft` : 'N/A'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <Button
+                                                    onClick={() => handleViewDetails(getPropertyId(property))}
+                                                    className="mt-4 w-full bg-[#064749] hover:bg-[#053a3c] text-white py-2 px-4 rounded-md transition-colors duration-200"
+                                                >
+                                                    View Details
+                                                </Button>
+                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })}
+                            </div>
                         </div>
-
-
+                    </div>
+                ) : (
+                    <div className="mt-12 mb-8 text-center">
+                        <p className="text-gray-500">No similar properties found.</p>
                     </div>
                 )}
             </div>

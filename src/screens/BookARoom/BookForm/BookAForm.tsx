@@ -1,8 +1,7 @@
-import { ChevronDownIcon } from "lucide-react";
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { Button } from "../../../components/ui/button";
 import { bookingService } from "../../../api/services/bookingService";
-import { bulkAccommodationService } from "../../../api/services/bulkAccommodationService";
+import { propertiesService } from "../../../api/services/propertiesService";
 import { Card, CardContent } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import {
@@ -94,6 +93,33 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
     // OTP verification state
     const [showOTPVerification, setShowOTPVerification] = useState(false);
     const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+
+    // Property titles state
+    const [propertyTitles, setPropertyTitles] = useState<{id: string, title: string}[]>([]);
+    const [isLoadingProperties, setIsLoadingProperties] = useState(true);
+
+    // Fetch property titles on component mount
+    useEffect(() => {
+        const fetchPropertyTitles = async () => {
+            try {
+                const response = await propertiesService.getPropertyTitles(1, 100); // Fetch first 100 properties
+                if (response.data) {
+                    setPropertyTitles(response.data);
+                }
+            } catch (error) {
+                console.error('Error fetching property titles:', error);
+                toast({
+                    title: "Error",
+                    description: "Failed to load property titles. Please try again later.",
+                    variant: "destructive",
+                });
+            } finally {
+                setIsLoadingProperties(false);
+            }
+        };
+
+        fetchPropertyTitles();
+    }, []);
 
     // Form field data
     const formFields: FormField[] = [
@@ -199,7 +225,7 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                 fullName: formData.fullName,
                 email: formData.email,
                 gender: formData.gender,
-                sharing: formData.doubleSharing,
+                sharing: formData.doubleSharing.toLowerCase(),
                 phoneNumber: number,
                 scheduleDate: formData.checkIn,
                 specialRequests: formData.specialRequests,
@@ -380,16 +406,23 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                         <div className="mb-5">
                             <div className="flex items-center ml-2.5 mb-1">
                                 <span className="font-desktop-subtitle-bold text-text">
-                                    Double Sharing
+                                 Sharing
                                 </span>
-                                <ChevronDownIcon className="w-[31px] h-[26px] ml-2" />
                             </div>
-                            <Input
-                                className="h-[52px] bg-white rounded-xl border border-solid border-[#c3d0d7] pl-[26px] font-desktop-subtitle text-text"
+                            <Select
                                 value={formData.doubleSharing}
-                                onChange={(e) => handleInputChange("doubleSharing", e.target.value)}
-                                disabled={isSubmitting}
-                            />
+                                onValueChange={(value) => handleInputChange("doubleSharing", value)}
+                            >
+                                <SelectTrigger className="h-[52px] bg-white rounded-xl border border-solid border-[#c3d0d7] pl-[26px] font-desktop-subtitle text-text">
+                                    <SelectValue placeholder="Select sharing" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="select" disabled>Select</SelectItem>
+                                    <SelectItem value="single">Single</SelectItem>
+                                    <SelectItem value="double">Double</SelectItem>
+                                    <SelectItem value="triple">Triple</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
 
                         {/* Preferred Property Name */}
@@ -398,14 +431,30 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                                 <span className="font-desktop-subtitle-bold text-text">
                                     Preferred Property Name
                                 </span>
-                                <ChevronDownIcon className="w-[31px] h-[26px] ml-2" />
                             </div>
-                            <Input
-                                className="h-[52px] bg-white rounded-xl border border-solid border-[#c3d0d7] pl-[26px] font-desktop-subtitle text-text"
+                            <Select
                                 value={formData.preferredProperty}
-                                onChange={(e) => handleInputChange("preferredProperty", e.target.value)}
-                                disabled={isSubmitting}
-                            />
+                                onValueChange={(value) => handleInputChange("preferredProperty", value)}
+                                disabled={isSubmitting || isLoadingProperties}
+                            >
+                                <SelectTrigger className="h-[52px] bg-white rounded-xl border border-solid border-[#c3d0d7] pl-[26px] font-desktop-subtitle text-text">
+                                    <SelectValue placeholder={
+                                        isLoadingProperties ? "Loading properties..." : "Select a property"
+                                    } />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {propertyTitles.map((property) => (
+                                        <SelectItem key={property.id} value={property.id}>
+                                            {property.title}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {errors.preferredProperty && (
+                                <p className="text-red-500 text-sm mt-1 ml-2.5">
+                                    {errors.preferredProperty}
+                                </p>
+                            )}
                         </div>
 
                         {/* Date and Time Picker */}

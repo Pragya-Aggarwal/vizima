@@ -217,7 +217,7 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
                 )}>
                     <div className="flex items-center justify-between w-full">
                         <span className="text-sm font-medium">
-                            {filter.name}: {activeFilters.find(f => f.field === filter.field)?.value || `All ${filter.name}s`}
+                            {filter.name}: {activeFilters.find(f => f.field === filter.field)?.value.length > 10 ? `${activeFilters.find(f => f.field === filter.field)?.value.substring(0, 10)}...` : activeFilters.find(f => f.field === filter.field)?.value || `All ${filter.name}s`}
                         </span>
                         <ChevronDownIcon className="h-4 w-4 ml-2 text-gray-400" />
                     </div>
@@ -328,7 +328,9 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
                 <div className="flex gap-2 overflow-x-auto hide-scrollbar px-4 py-2 bg-gray-50">
                     {activeFilters.map((filter, i) => (
                         <div key={i} className="flex items-center gap-1 px-3 py-1 bg-white rounded-full border border-gray-200 text-sm">
-                            <span>{filter.name}: {filter.value}</span>
+                            <span className="truncate max-w-[150px]" title={filter.name + ': ' + filter.value}>
+                                {filter.name}: {filter.value.length > 20 ? `${filter.value.substring(0, 20)}...` : filter.value}
+                            </span>
                             <button
                                 className="text-gray-400 hover:text-gray-600"
                                 onClick={() => removeFilter(i)}
@@ -366,7 +368,9 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
                     <span className="text-sm text-gray-500">Filters:</span>
                     {activeFilters.map((filter, i) => (
                         <div key={i} className="flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full text-sm">
-                            <span>{filter.name}: {filter.value}</span>
+                            <span className="truncate max-w-[150px]" title={filter.name + ': ' + filter.value}>
+                                {filter.name}: {filter.value.length > 20 ? `${filter.value.substring(0, 20)}...` : filter.value}
+                            </span>
                             <button
                                 className="text-gray-400 hover:text-gray-600"
                                 onClick={() => removeFilter(i)}

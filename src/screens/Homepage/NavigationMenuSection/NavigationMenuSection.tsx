@@ -10,10 +10,10 @@ import {
 import { isLoggedIn, logout } from "../../../utils/auth";
 import { LogIn, LogOut, Menu, X, User, FileText, Settings, Calendar } from "lucide-react";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from "../../../components/ui/dropdown-menu";
 
 export const NavigationMenuSection = (): JSX.Element => {
@@ -65,79 +65,84 @@ export const NavigationMenuSection = (): JSX.Element => {
     return (
         <header className="w-full h-16 bg-white fixed top-0 left-0 z-50 flex items-center justify-center px-4 md:px-[60px] shadow-sm">
             <div className="w-full max-w-[1600px] flex items-center justify-between">
-                
-                
-                    <a href="/" className="flex items-center h-full">
-                        <img
-                            className="w-[100px] md:w-[141px] h-auto md:h-[47px] object-contain"
-                            alt="Vizima logo"
-                            src="https://c.animaapp.com/mbi2us3vKS97yu/img/vizima--logo-01--1--1.png"
-                        />
-                    </a>
+
+
+                <a href="/" className="flex items-center h-full">
+                    <img
+                        className="w-[100px] md:w-[141px] h-auto md:h-[47px] object-contain"
+                        alt="Vizima logo"
+                        src="https://c.animaapp.com/mbi2us3vKS97yu/img/vizima--logo-01--1--1.png"
+                    />
+                </a>
 
                 {/* Mobile Menu Button */}
                 <div className="md:hidden flex items-center gap-2">
                     {/* Profile Icon - Mobile Only */}
-              
-                                {isUserLoggedIn ? (
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" className="p-2 rounded-full hover:bg-gray-100">
-                                                <User className="h-5 w-5" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent className="w-56" align="end">
-                                            {/* <DropdownMenuItem 
-                                                className="cursor-pointer flex items-center gap-2"
-                                                onClick={() => navigate('/booking')}
-                                            >
-                                                <Calendar className="h-4 w-4" />
-                                                <span>View and manage bookings</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem 
-                                                className="cursor-pointer flex items-center gap-2"
-                                                onClick={() => navigate('/documents')}
-                                            >
-                                                <FileText className="h-4 w-4" />
-                                                <span>Upload personal documents</span>
-                                            </DropdownMenuItem> */}
-                                            {/* <DropdownMenuItem 
-                                                className="cursor-pointer flex items-center gap-2"
-                                                onClick={() => navigate('/profile')}
-                                            >
-                                                <Settings className="h-4 w-4" />
-                                                <span>Profile editing</span>
-                                            </DropdownMenuItem> */}
-                                            <div className="border-t my-1"></div>
-                                            <DropdownMenuItem 
-                                                className="cursor-pointer text-red-600 hover:bg-red-50 flex items-center gap-2"
-                                                onClick={handleAuthAction}
-                                            >
-                                                <LogOut className="h-4 w-4" />
-                                                <span>Logout</span>
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                ) : (
-                                    <Button
-                                        className="rounded-full px-6 py-2 font-medium flex items-center gap-2 transition-all duration-200 bg-green hover:bg-green text-white shadow-md hover:shadow-lg"
-                                        onClick={handleAuthAction}
-                                    >
-                                        Login
-                                    </Button>
-                                )}
-                            
-                    
-                <button
-                    className="md:hidden p-2"
-                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                >
-                    {isMobileMenuOpen ? (
-                        <X className="h-6 w-6" />
+
+                    {isUserLoggedIn ? (
+                        <Button className="rounded-full px-6 py-2 font-medium flex items-center gap-2 transition-all duration-200 bg-red-500 hover:bg-red-500 text-white shadow-md hover:shadow-lg"
+                            onClick={handleAuthAction}
+                        >
+                            Logout
+                        </Button>
+                        // <DropdownMenu>
+                        //     <DropdownMenuTrigger asChild>
+                        //         <Button variant="ghost" className="p-2 rounded-full hover:bg-gray-100">
+                        //             <User className="h-5 w-5" />
+                        //         </Button>
+                        //     </DropdownMenuTrigger>
+                        //     <DropdownMenuContent className="w-56" align="end">
+                        //         <DropdownMenuItem 
+                        //                         className="cursor-pointer flex items-center gap-2"
+                        //                         onClick={() => navigate('/booking')}
+                        //                     >
+                        //                         <Calendar className="h-4 w-4" />
+                        //                         <span>View and manage bookings</span>
+                        //                     </DropdownMenuItem>
+                        //                     <DropdownMenuItem 
+                        //                         className="cursor-pointer flex items-center gap-2"
+                        //                         onClick={() => navigate('/documents')}
+                        //                     >
+                        //                         <FileText className="h-4 w-4" />
+                        //                         <span>Upload personal documents</span>
+                        //                     </DropdownMenuItem> 
+                        //         <DropdownMenuItem 
+                        //                         className="cursor-pointer flex items-center gap-2"
+                        //                         onClick={() => navigate('/profile')}
+                        //                     >
+                        //                         <Settings className="h-4 w-4" />
+                        //                         <span>Profile editing</span>
+                        //                     </DropdownMenuItem> 
+                        //         <div className="border-t my-1"></div>
+                        //         <DropdownMenuItem
+                        //             className="cursor-pointer text-red-600 hover:bg-red-50 flex items-center gap-2"
+                        //             onClick={handleAuthAction}
+                        //         >
+                        //             <LogOut className="h-4 w-4" />
+                        //             <span>Logout</span>
+                        //         </DropdownMenuItem>
+                        //     </DropdownMenuContent>
+                        // </DropdownMenu>
                     ) : (
-                        <Menu className="h-6 w-6" />
+                        <Button
+                            className="rounded-full px-6 py-2 font-medium flex items-center gap-2 transition-all duration-200 bg-green hover:bg-green text-white shadow-md hover:shadow-lg"
+                            onClick={handleAuthAction}
+                        >
+                            Login
+                        </Button>
                     )}
-                </button>
+
+
+                    <button
+                        className="md:hidden p-2"
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    >
+                        {isMobileMenuOpen ? (
+                            <X className="h-6 w-6" />
+                        ) : (
+                            <Menu className="h-6 w-6" />
+                        )}
+                    </button>
                 </div>
 
                 {/* Desktop Navigation */}
@@ -156,44 +161,49 @@ export const NavigationMenuSection = (): JSX.Element => {
                             ))}
                             <NavigationMenuItem>
                                 {isUserLoggedIn ? (
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" className="p-2 rounded-full hover:bg-gray-100">
-                                                <User className="h-5 w-5" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent className="w-56" align="end">
-                                            {/* <DropdownMenuItem 
-                                                className="cursor-pointer flex items-center gap-2"
-                                                onClick={() => navigate('/booking')}
-                                            >
-                                                <Calendar className="h-4 w-4" />
-                                                <span>View and manage bookings</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem 
-                                                className="cursor-pointer flex items-center gap-2"
-                                                onClick={() => navigate('/documents')}
-                                            >
-                                                <FileText className="h-4 w-4" />
-                                                <span>Upload personal documents</span>
-                                            </DropdownMenuItem> */}
-                                            {/* <DropdownMenuItem 
-                                                className="cursor-pointer flex items-center gap-2"
-                                                onClick={() => navigate('/profile')}
-                                            >
-                                                <Settings className="h-4 w-4" />
-                                                <span>Profile editing</span>
-                                            </DropdownMenuItem> */}
-                                            <div className="border-t my-1"></div>
-                                            <DropdownMenuItem 
-                                                className="cursor-pointer text-red-600 hover:bg-red-50 flex items-center gap-2"
-                                                onClick={handleAuthAction}
-                                            >
-                                                <LogOut className="h-4 w-4" />
-                                                <span>Logout</span>
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
+                                    <Button className="rounded-full px-6 py-2 font-medium flex items-center gap-2 transition-all duration-200 bg-red-500 hover:bg-red-500 text-white shadow-md hover:shadow-lg"
+                                        onClick={handleAuthAction}
+                                    >
+                                        Logout
+                                    </Button>
+                                    // <DropdownMenu>
+                                    //     <DropdownMenuTrigger asChild>
+                                    //         <Button variant="ghost" className="p-2 rounded-full hover:bg-gray-100">
+                                    //             <User className="h-5 w-5" />
+                                    //         </Button>
+                                    //     </DropdownMenuTrigger>
+                                    //     <DropdownMenuContent className="w-56" align="end">
+                                    //          <DropdownMenuItem 
+                                    //             className="cursor-pointer flex items-center gap-2"
+                                    //             onClick={() => navigate('/booking')}
+                                    //         >
+                                    //             <Calendar className="h-4 w-4" />
+                                    //             <span>View and manage bookings</span>
+                                    //         </DropdownMenuItem>
+                                    //         <DropdownMenuItem 
+                                    //             className="cursor-pointer flex items-center gap-2"
+                                    //             onClick={() => navigate('/documents')}
+                                    //         >
+                                    //             <FileText className="h-4 w-4" />
+                                    //             <span>Upload personal documents</span>
+                                    //         </DropdownMenuItem> 
+                                    //         <DropdownMenuItem 
+                                    //             className="cursor-pointer flex items-center gap-2"
+                                    //             onClick={() => navigate('/profile')}
+                                    //         >
+                                    //             <Settings className="h-4 w-4" />
+                                    //             <span>Profile editing</span>
+                                    //         </DropdownMenuItem>
+                                    //         <div className="border-t my-1"></div>
+                                    //         <DropdownMenuItem 
+                                    //             className="cursor-pointer text-red-600 hover:bg-red-50 flex items-center gap-2"
+                                    //             onClick={handleAuthAction}
+                                    //         >
+                                    //             <LogOut className="h-4 w-4" />
+                                    //             <span>Logout</span>
+                                    //         </DropdownMenuItem>
+                                    //     </DropdownMenuContent>
+                                    // </DropdownMenu>
                                 ) : (
                                     <Button
                                         className="rounded-full px-6 py-2 font-medium flex items-center gap-2 transition-all duration-200 bg-green hover:bg-green text-white shadow-md hover:shadow-lg"
@@ -209,18 +219,16 @@ export const NavigationMenuSection = (): JSX.Element => {
 
                 {/* Mobile Navigation */}
                 {/* Mobile Menu Overlay */}
-                <div 
-                    className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
-                        isMobileMenuOpen ? 'opacity-100 z-40' : 'opacity-0 pointer-events-none'
-                    }`}
+                <div
+                    className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 md:hidden ${isMobileMenuOpen ? 'opacity-100 z-40' : 'opacity-0 pointer-events-none'
+                        }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
-                
+
                 {/* Mobile Menu Panel */}
-                <div 
-                    className={`fixed top-0 left-0 h-full w-4/5 max-w-sm bg-white shadow-2xl md:hidden transition-all duration-300 ease-in-out z-50 ${
-                        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-                    }`}
+                <div
+                    className={`fixed top-0 left-0 h-full w-4/5 max-w-sm bg-white shadow-2xl md:hidden transition-all duration-300 ease-in-out z-50 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+                        }`}
                 >
                     <div className="h-full flex flex-col">
                         <div className="flex items-center justify-between p-4 border-b">
@@ -248,7 +256,7 @@ export const NavigationMenuSection = (): JSX.Element => {
                                     {item.label}
                                 </a>
                             ))}
-                            
+
                         </nav>
                     </div>
                 </div>

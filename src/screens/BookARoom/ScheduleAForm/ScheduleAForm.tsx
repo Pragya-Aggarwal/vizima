@@ -207,7 +207,7 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
                 gender: formData.gender,
                 date: formattedDateTime,
                 mode: formData.visitType,
-                sharing: "double",
+                sharing: formData.doubleSharing.toLowerCase(),
                 propertyId: propertyId || "507f191e810c19729de860ea",
                 propertyName: propertyName || "",
             };

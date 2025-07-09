@@ -21,7 +21,7 @@
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tabs": "^1.1.1",
-    "@react-google-maps/api": "^2.20.6",
+    "@react-google-maps/api": "^2.20.7",
     "@types/react-time-picker": "^4.0.3",
     "axios": "^1.10.0",
     "class-variance-authority": "^0.7.1",

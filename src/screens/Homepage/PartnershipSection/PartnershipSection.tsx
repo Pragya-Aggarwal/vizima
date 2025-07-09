@@ -21,6 +21,47 @@ import 'react-clock/dist/Clock.css';
 import { OTPVerification } from "../../../components/OTPVerification";
 import { isLoggedIn } from "../../../utils/auth";
 
+// Add global styles for TimePicker
+const timePickerStyles = `
+  .react-time-picker {
+    width: 100%;
+  }
+  
+  .react-time-picker__wrapper {
+    border: 1px solid #d1d5db !important;
+    border-radius: 0.75rem !important;
+    background: white !important;
+    padding: 0.5rem 1rem !important;
+  }
+  
+  .react-time-picker__inputGroup {
+    min-width: 0.5rem !important;
+  }
+  
+  .react-time-picker__inputGroup__input,
+  .react-time-picker__inputGroup__leadingZero,
+  .react-time-picker__inputGroup__divider,
+  .react-time-picker__inputGroup__amPm {
+    color: black !important;
+    background: white !important;
+  }
+  
+  .react-time-picker__select {
+    background: white !important;
+  }
+  
+  .react-time-picker__select select {
+    background: white !important;
+    color: black !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+  }
+`;
+
 
 
 interface FormFieldBase {
@@ -237,6 +278,7 @@ export const PartnershipSection = (): JSX.Element => {
 
             </div>
 
+            <style>{timePickerStyles}</style>
             <Card className="w-full lg:w-[443px] bg-[#ffffffcc] rounded-[30px] shadow-cards">
                 <CardContent className="p-4 sm:p-5">
                     <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 w-full">
@@ -265,7 +307,7 @@ export const PartnershipSection = (): JSX.Element => {
                                                 value={time}
                                                 disableClock={true}
                                                 clearIcon={null}
-                                                className="w-full [&>div]:w-full [&>div]:border [&>div]:rounded-xl [&>div]:border-input [&>div]:bg-background [&>div]:px-3 sm:px-4 [&>div]:py-2 sm:py-3 [&>div]:text-sm [&>div]:ring-offset-background [&>div]:focus-visible:outline-none [&>div]:focus-visible:ring-2 [&>div]:focus-visible:ring-ring [&>div]:focus-visible:ring-offset-2 [&>div]:disabled:cursor-not-allowed [&>div]:disabled:opacity-50"
+                                                className="w-full [&>div]:w-full [&>div]:border [&>div]:rounded-xl [&>div]:border-input [&>div]:bg-white [&>div]:px-3 sm:px-4 [&>div]:py-2 sm:py-3 [&>div]:text-sm [&>div]:ring-offset-background [&>div]:focus-visible:outline-none [&>div]:focus-visible:ring-2 [&>div]:focus-visible:ring-ring [&>div]:focus-visible:ring-offset-2 [&>div]:disabled:cursor-not-allowed [&>div]:disabled:opacity-50 [&_input]:bg-white [&_input]:text-black"
                                                 format="h:mm a"
                                                 hourPlaceholder="HH"
                                                 minutePlaceholder="MM"

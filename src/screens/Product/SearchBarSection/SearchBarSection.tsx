@@ -71,7 +71,7 @@ export const SearchBarSection = ({
                     onKeyDown={handleKeyDown}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
-                    placeholder="Search by city..."
+                    placeholder="Search..."
                     className="flex-1 h-12 sm:h-14 border-0 focus-visible:ring-0 placeholder:text-gray-400 focus-visible:ring-offset-0 px-2 text-sm sm:text-md text-black font-medium sm:font-semibold shadow-none"
                 />
 

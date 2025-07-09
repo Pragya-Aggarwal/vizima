@@ -27,31 +27,32 @@ export const ProductPage = (): JSX.Element => {
     const [sortBy, setSortBy] = useState<string>('availability');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
     // Initialize searchQuery from URL params
-    const [searchQuery, setSearchQuery] = useState(city || '');
+    const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
 
-    // Filter accommodations based on active filters and search params
+    // Filter accommodations based on search query, city, gender, and other filters
     const filterAccommodations = useCallback((data: Accommodation[]) => {
-        if (!data || data.length === 0) return [];
-
         return data.filter(acc => {
-            // Apply URL search params filters
-            const matchesCity = !city || (acc.city && acc.city.toLowerCase().includes(city.toLowerCase()));
-            const matchesGender = !gender || (acc.gender && acc.gender.toLowerCase() === gender.toLowerCase());
+            const searchLower = searchQuery.toLowerCase().trim();
+            const matchesSearch = !searchLower || 
+                                (acc.title && acc.title.toLowerCase().includes(searchLower)) || 
+                                (acc.location && acc.location.toLowerCase().includes(searchLower));
+                                
+            const matchesCity = !city || (acc.city && acc.city.toLowerCase() === city);
+            const matchesGender = !gender || (acc.gender && acc.gender.toLowerCase() === gender);
             
-            // Apply component filters
+            // Apply active filters
             const matchesLocation = !activeFilters.location || 
-                                 (acc.city && acc.city.toLowerCase().includes(activeFilters.location.toLowerCase()));
+                                  (acc.location && acc.location.toLowerCase().includes(activeFilters.location.toLowerCase()));
             const matchesPropertyType = !activeFilters.propertyType || 
-                                     (acc.type && acc.type.toLowerCase() === activeFilters.propertyType.toLowerCase());
+                                      (acc.type && acc.type.toLowerCase() === activeFilters.propertyType.toLowerCase());
             const matchesSharingType = !activeFilters.sharingType || 
-                                    (acc.sharingType && 
-                                     acc.sharingType.some((type: string) => 
-                                         type.toLowerCase() === activeFilters.sharingType?.toLowerCase()
-                                     ));
+                                     (acc.sharingType && Array.isArray(acc.sharingType) && 
+                                      acc.sharingType.some(type => type.toLowerCase() === activeFilters.sharingType.toLowerCase()));
             const matchesGenderFilter = !activeFilters.gender || 
                                      (acc.gender && acc.gender.toLowerCase() === activeFilters.gender.toLowerCase());
             
             return (
+                matchesSearch &&
                 matchesCity && 
                 matchesGender && 
                 matchesLocation &&
@@ -60,7 +61,7 @@ export const ProductPage = (): JSX.Element => {
                 matchesGenderFilter
             );
         });
-    }, [city, gender, activeFilters]);
+    }, [searchQuery, city, gender, activeFilters]);
 
     // Sort accommodations
     const sortAccommodations = useCallback((data: Accommodation[]) => {
@@ -178,18 +179,21 @@ export const ProductPage = (): JSX.Element => {
         fetchData();
     }, [location.state]);
 
-    // Update searchQuery when URL city param changes
+    // Update searchQuery when URL search param changes
     useEffect(() => {
-        setSearchQuery(city || '');
-    }, [city]);
+        const searchParam = searchParams.get('search');
+        if (searchParam !== null) {
+            setSearchQuery(searchParam);
+        }
+    }, [searchParams]);
 
     // Apply filters and sorting whenever dependencies change
     useEffect(() => {
         if (allAccommodations.length > 0) {
             let result = [...allAccommodations];
             
-            // Apply filters
-            if (Object.keys(activeFilters).length > 0 || city || gender) {
+            // Apply search and filters
+            if (searchQuery || Object.keys(activeFilters).length > 0 || city || gender) {
                 result = filterAccommodations(result);
             }
             
@@ -198,7 +202,7 @@ export const ProductPage = (): JSX.Element => {
             
             setFilteredAccommodations(result);
         }
-    }, [allAccommodations, activeFilters, city, gender, filterAccommodations, sortAccommodations]);
+    }, [allAccommodations, activeFilters, city, gender, searchQuery, filterAccommodations, sortAccommodations]);
 
     const toggleView = () => {
         setShowMap(!showMap);
@@ -214,9 +218,9 @@ export const ProductPage = (): JSX.Element => {
                         onChange={setSearchQuery}
                         onSearch={() => {
                             if (searchQuery.trim()) {
-                                const params = new URLSearchParams();
-                                params.set('city', searchQuery.trim().toLowerCase());
-                                navigate(`/product?${params.toString()}`);
+                                const newParams = new URLSearchParams(searchParams);
+                                newParams.set('search', searchQuery.trim().toLowerCase());
+                                navigate(`/product?${newParams.toString()}`);
                             }
                         }}
                     />

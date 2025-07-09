@@ -45,13 +45,6 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
     const [activeFilters, setActiveFilters] = useState<ActiveFilter[]>([]);
     const [filterOptions, setFilterOptions] = useState<FilterOption[]>([
         { 
-          name: "Location", 
-          width: "w-[194px]", 
-          options: [], 
-          value: 'all',
-          field: 'location'
-        },
-        { 
           name: "Property Type", 
           width: "w-[265px]", 
           options: [], 
@@ -104,13 +97,6 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
       ));
 
       setFilterOptions([
-        { 
-          name: "Location", 
-          width: "w-[194px]", 
-          options: locations, 
-          value: activeFilters.find(f => f.field === 'location')?.value || 'all',
-          field: 'location' 
-        },
         { 
           name: "Property Type", 
           width: "w-[265px]", 

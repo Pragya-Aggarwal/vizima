@@ -9,12 +9,15 @@ import { Card } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { accommodationService } from '../../api/services/accommodationService';
 import { home } from "../../assets";
 import { ExtendedAccommodation, transformToExtended } from "../../lib/types";
 
 export const BookARoom = (): JSX.Element => {
     const { id } = useParams<{ id: string }>();
+    const [searchParams] = useSearchParams();
+    const defaultTab = searchParams.get('tab') || 'book';
     const [property, setProperty] = useState<ExtendedAccommodation | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -149,7 +152,7 @@ export const BookARoom = (): JSX.Element => {
                                     <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Complete Your Booking</h2>
                                     <p className="text-xs sm:text-sm text-gray-500 mt-1">Secure your stay in just a few steps</p>
                                 </div>
-                                <Tabs defaultValue="book" className="w-full">
+                                <Tabs defaultValue={defaultTab} className="w-full">
                                     <TabsList className="w-full h-14 sm:h-16 bg-white border-b rounded-none flex">
                                         <TabsTrigger
                                             value="book"

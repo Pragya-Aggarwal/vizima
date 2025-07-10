@@ -1,18 +1,18 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
-import { 
-    MapPin, 
-    Star, 
-    ChevronLeft, 
-    ChevronRight, 
-    Bed, 
-    Bath, 
-    Ruler, 
-    Shield as ShieldIcon, 
-    Wifi as WifiIcon, 
-    Utensils as UtensilsIcon, 
-    Car as CarIcon, 
+import {
+    MapPin,
+    Star,
+    ChevronLeft,
+    ChevronRight,
+    Bed,
+    Bath,
+    Ruler,
+    Shield as ShieldIcon,
+    Wifi as WifiIcon,
+    Utensils as UtensilsIcon,
+    Car as CarIcon,
     Users as UsersIcon,
     Battery,
     Video,
@@ -71,7 +71,7 @@ const getAmenityDetails = (amenity: string | { name: string; available: boolean 
             available: true
         };
     }
-    
+
     const amenityDetailsMap: { [key: string]: { label: string; icon: React.ComponentType<{ className?: string }> } } = {
         'wifi': { label: 'Wi-Fi', icon: WifiIcon },
         'laundry': { label: 'Laundry', icon: UsersIcon },
@@ -84,9 +84,9 @@ const getAmenityDetails = (amenity: string | { name: string; available: boolean 
         'furnished': { label: 'Furnished', icon: Sofa },
         'gym': { label: 'Gym', icon: Dumbbell },
     };
-    
+
     const details = amenityDetailsMap[amenityName.toLowerCase()] || { label: amenityName, icon: Check };
-    
+
     return {
         label: details.label,
         icon: details.icon,
@@ -114,13 +114,13 @@ function PropertyDetails() {
     useEffect(() => {
         const fetchProperty = async () => {
             if (!id) return;
-            
+
             try {
                 setLoading(true);
                 // First try to find the property in the existing accommodations
                 const allAccommodations = await accommodationService.getAccommodations();
                 const foundProperty = allAccommodations.find(acc => acc.id === id);
-                
+
                 if (foundProperty) {
                     setProperty(transformToExtended(foundProperty));
                     setError(null);
@@ -146,12 +146,12 @@ function PropertyDetails() {
                 console.log('Fetching similar properties...');
                 const allAccommodations = await accommodationService.getAccommodations();
                 console.log('All accommodations:', allAccommodations);
-                
+
                 // More lenient filtering - just exclude the current property
                 const similar = allAccommodations
                     .filter(acc => acc.id !== property.id)
                     .slice(0, 4); // Limit to 4 similar properties
-                
+
                 console.log('Found similar properties:', similar);
                 setRelatedProperties(similar.map(transformToExtended));
             } catch (err) {
@@ -185,7 +185,7 @@ function PropertyDetails() {
 
     const handleScheduleRoom = useCallback(() => {
         if (!property) return;
-        navigate(`/book/${property.id}`);
+        navigate(`/book/${property.id}?tab=schedule`);
     }, [navigate, property]);
 
     const handleViewDetails = (propertyId: string) => {
@@ -237,7 +237,7 @@ function PropertyDetails() {
     ];
 
     // Get amenities and house rules with proper type checking
-    const amenities: (string | Amenity)[] = Array.isArray(property.amenities) 
+    const amenities: (string | Amenity)[] = Array.isArray(property.amenities)
         ? property.amenities.map(amenity => {
             if (typeof amenity === 'string') return amenity;
             if (amenity && typeof amenity === 'object') {
@@ -509,7 +509,7 @@ function PropertyDetails() {
                                         const details = getAmenityDetails(amenityObj.name);
                                         const Icon = details.icon;
                                         const isAvailable = 'available' in amenityObj ? amenityObj.available : true;
-                                        
+
                                         return (
                                             <div
                                                 key={index}
@@ -523,7 +523,7 @@ function PropertyDetails() {
                                             </div>
                                         );
                                     }
-                                    
+
                                     return null;
                                 })}
                             </div>
@@ -577,7 +577,7 @@ function PropertyDetails() {
                                     const location = getLocationString(property.location);
 
                                     return (
-                                        <div 
+                                        <div
                                             key={getPropertyId(property)}
                                             className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col h-full"
                                         >

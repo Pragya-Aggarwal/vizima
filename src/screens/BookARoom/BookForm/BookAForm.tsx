@@ -262,7 +262,6 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                 title: "Redirect Notice",
                 description: "You will be redirected to additional accommodation options in 5 seconds.",
                 variant: "default",
-                duration: 5000,
             });
 
             // Call bulk accommodation API and schedule redirect after 5 minutes
@@ -283,7 +282,7 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                 } catch (error) {
                     console.error('Failed to fetch bulk accommodation data:', error);
                 }
-            }, 5000); // 5 minutes = 300000 milliseconds
+            }, 1); // 5 minutes = 300000 milliseconds
 
             // Reset form
             setFormData({

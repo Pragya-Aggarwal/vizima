@@ -1,4 +1,4 @@
-import { CalendarIcon, Clock, Command, Phone, Sparkles, User } from "lucide-react";
+import { CalendarIcon, Clock, Command, Phone, Sparkles, User, ChevronDown } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
@@ -32,6 +32,16 @@ const timePickerStyles = `
     border-radius: 0.75rem !important;
     background: white !important;
     padding: 0.5rem 1rem !important;
+    transition: all 0.2s ease;
+  }
+  
+  .react-time-picker__wrapper:hover {
+    border-color: #9ca3af !important;
+  }
+  
+  .react-time-picker__wrapper:focus-within {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
   }
   
   .react-time-picker__inputGroup {
@@ -42,8 +52,10 @@ const timePickerStyles = `
   .react-time-picker__inputGroup__leadingZero,
   .react-time-picker__inputGroup__divider,
   .react-time-picker__inputGroup__amPm {
-    color: black !important;
+    color: #1f2937 !important;
     background: white !important;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
   
   .react-time-picker__select {
@@ -52,13 +64,27 @@ const timePickerStyles = `
   
   .react-time-picker__select select {
     background: white !important;
-    color: black !important;
+    color: #1f2937 !important;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
     border: none;
     outline: none;
     cursor: pointer;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+  
+  .react-time-picker__button {
+    padding: 0 0.5rem;
+  }
+  
+  .react-time-picker__button:enabled:hover .react-time-picker__button__icon {
+    stroke: #3b82f6;
+  }
+  
+  .react-time-picker__button:enabled:active .react-time-picker__button__icon {
+    stroke: #2563eb;
   }
 `;
 
@@ -264,50 +290,89 @@ export const PartnershipSection = (): JSX.Element => {
     };
 
     return (
-        <section className="flex flex-col lg:flex-row w-full items-center lg:items-stretch justify-between gap-6 lg:gap-8 px-4 sm:px-8 lg:px-20 py-12 sm:py-16 lg:py-24 relative [background:linear-gradient(90deg,rgba(0,0,0,0.8)_0%,rgba(0,0,0,0)_100%),url(https://c.animaapp.com/mbhmsf5eMRDRNk/img/bespoke-partnerships.png)_50%_50%_/_cover]">
-            <div className="flex flex-col items-start justify-center gap-8 lg:gap-[60px] max-w-[522px] w-full lg:w-auto">
-                <div className="flex flex-col items-start gap-4 w-full">
-                    <h2 className="text-2xl sm:text-[length:var(--desktop-h2-font-size)] font-desktop-h2 font-[number:var(--desktop-h2-font-weight)] text-white tracking-[var(--desktop-h2-letter-spacing)] leading-[var(--desktop-h2-line-height)] [font-style:var(--desktop-h2-font-style)]">
-                        Visit Before You Book
-                    </h2>
-                    <p className="font-desktop-subtitle font-[number:var(--desktop-subtitle-font-weight)] text-white text-[length:var(--desktop-subtitle-font-size)] tracking-[var(--desktop-subtitle-letter-spacing)] leading-[var(--desktop-subtitle-line-height)] [font-style:var(--desktop-subtitle-font-style)]">
-                        Schedule in-person or virtual tours easily.
-                    </p>
+        <section className="flex flex-col lg:flex-row w-full items-center lg:items-stretch justify-between gap-8 lg:gap-12 px-4 sm:px-8 lg:px-20 py-16 sm:py-20 lg:py-28 relative overflow-hidden bg-cover bg-center bg-[var(--bg)]" 
+                style={{
+                    background: 'url(https://c.animaapp.com/mbhmsf5eMRDRNk/img/bespoke-partnerships.png) center/cover no-repeat',
+                    // background: 'linear-gradient(90deg, white 0%, rgba(6, 71, 73, 0.8) 100%), url(https://c.animaapp.com/mbhmsf5eMRDRNk/img/bespoke-partnerships.png) center/cover no-repeat',
+                    backgroundAttachment: 'fixed'
+                }}>
+                <div className="flex flex-col items-start justify-center gap-8 lg:gap-10 max-w-[600px] w-full lg:w-auto relative z-10">
+                    <div className="flex flex-col items-start gap-5 w-full">
+                        <div className="inline-block bg-[var(--green)] backdrop-blur-sm text-white text-xs font-medium px-3 py-1.5 rounded-full mb-2 border border-white/20">
+                            Schedule a Visit
+                        </div>
+                        <h2 className="font-desktop-h2 text-black lg:text-white text-[36px] lg:text-[48px] leading-[1.2] lg:leading-[54px] font-bold">
+                            Experience Our Space <span className="text-[var(--black)] lg:text-white/90">Before You Commit</span>
+                        </h2>
+                        <p className="font-desktop-subtitle text-black/80 lg:text-white text-[16px] lg:text-[18px] leading-relaxed max-w-lg">
+                            See our facilities in person or take a virtual tour. Schedule a visit that fits your schedule and let us show you why we're the perfect choice.
+                        </p>
+                        
+                        <div className="mt-6 flex flex-col gap-4 text-black/80 lg:text-white">
+                            <div className="flex items-center gap-3">
+                                <div className="w-6 h-6 rounded-full bg-green flex items-center justify-center">
+                                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <span className="text-sm font-desktop-text-regular">Flexible scheduling</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <div className="w-6 h-6 rounded-full bg-green flex items-center justify-center">
+                                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <span className="text-sm">Virtual or in-person options</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <div className="w-6 h-6 rounded-full bg-green flex items-center justify-center">
+                                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <span className="text-sm">No-obligation consultation</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-
-            </div>
-
             <style>{timePickerStyles}</style>
-            <Card className="w-full lg:w-[443px] bg-[#ffffffcc] rounded-[30px] shadow-cards">
-                <CardContent className="p-4 sm:p-5">
-                    <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 w-full">
+            <Card className="w-full lg:w-[500px] bg-white/95 backdrop-blur-sm rounded-2xl shadow-cards border border-white/20 overflow-hidden transition-all duration-300 hover:shadow-lg">
+                <div className="bg-[var(--green)] p-5 text-white">
+                    <h3 className="font-desktop-h4 text-white">Schedule a Visit</h3>
+                    <p className="font-desktop-text-regular text-white/90 text-sm mt-1">Book your appointment in just a few clicks</p>
+                </div>
+                <CardContent className="p-6">
+                    <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
                         {formFields.map((field) => (
                             <div key={field.id} className="flex flex-col w-full items-start gap-3 sm:gap-4 relative">
-                                <div className="flex items-center gap-2">
-                                    {field.icon}
-                                    <span className="font-desktop-subtitle-bold font-[number:var(--desktop-subtitle-bold-font-weight)] text-[#181a18] text-[length:var(--desktop-subtitle-bold-font-size)] tracking-[var(--desktop-subtitle-bold-letter-spacing)] leading-[var(--desktop-subtitle-bold-line-height)] [font-style:var(--desktop-subtitle-bold-font-style)]">
-                                        {field.label}
-                                        {field.id === 'phone' && !isLoggedIn() && (
-                                            <span className="text-sm text-gray-500 ml-2">
-                                                {isPhoneVerified ? '(✓ Verified)' : '(Verification required)'}
-                                            </span>
-                                        )}
-                                    </span>
-                                    {field.id === "meetingType" && (
-                                        <div className="w-5 h-5 bg-[url(https://c.animaapp.com/mbhmsf5eMRDRNk/img/asset---icon---arrow.svg)] bg-[100%_100%]" />
-                                    )}
+                                <div className="flex items-center gap-2 w-full">
+                                    <div className="text-green">
+                                        {field.icon}
+                                    </div>
+                                    <div className="flex-1">
+                                        <label htmlFor={field.id} className="block text-sm font-medium text-[var(--text)]">
+                                            {field.label}
+                                            {field.id === 'phone' && !isLoggedIn() && (
+                                                <span className={`text-xs font-normal ml-1 ${isPhoneVerified ? 'text-green' : 'text-black'}`}>
+                                                    {isPhoneVerified ? '(✓ Verified)' : '(Verification required)'}
+                                                </span>
+                                            )}
+                                        </label>
+                                    </div>
                                 </div>
 
                                 {field.picker === 'time' ? (
-                                    <div className="w-full">
-                                        <div className="w-full [&_.react-time-picker]:w-full">
+                                    <div className="w-full relative">
+                                        <div className="w-full">
                                             <TimePicker
+                                                id="time"
                                                 onChange={(value) => setTime(value)}
                                                 value={time}
                                                 disableClock={true}
                                                 clearIcon={null}
-                                                className="w-full [&>div]:w-full [&>div]:border [&>div]:rounded-xl [&>div]:border-input [&>div]:bg-white [&>div]:px-3 sm:px-4 [&>div]:py-2 sm:py-3 [&>div]:text-sm [&>div]:ring-offset-background [&>div]:focus-visible:outline-none [&>div]:focus-visible:ring-2 [&>div]:focus-visible:ring-ring [&>div]:focus-visible:ring-offset-2 [&>div]:disabled:cursor-not-allowed [&>div]:disabled:opacity-50 [&_input]:bg-white [&_input]:text-black"
+                                                className="w-full [&>div]:w-full [&>div]:border [&>div]:rounded-lg [&>div]:border-[var(--border)] [&>div]:bg-white [&>div]:px-4 [&>div]:py-2.5 [&>div]:text-sm [&>div]:text-[var(--text)] [&>div]:focus:ring-2 [&>div]:focus:ring-[var(--green)] [&>div]:focus:border-[var(--green)] [&>div]:transition-all [&>div]:duration-200 [&>div]:shadow-sm"
                                                 format="h:mm a"
                                                 hourPlaceholder="HH"
                                                 minutePlaceholder="MM"
@@ -315,19 +380,26 @@ export const PartnershipSection = (): JSX.Element => {
                                                 required
                                             />
                                         </div>
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                            <ChevronDown className="h-4 w-4" />
+                                        </div>
                                     </div>
                                 ) : field.id === "meetingType" ? (
                                     <Select
                                         value={field.value as string}
                                         onValueChange={field.onChange}
                                     >
-                                        <SelectTrigger className="w-full px-4 sm:px-5 py-3 sm:py-4 bg-white rounded-xl">
+                                        <SelectTrigger className="w-full h-auto min-h-[42px] px-4 py-2.5 bg-white border-[var(--border)] rounded-lg text-sm text-[var(--text)] focus:ring-2 focus:ring-[var(--green)] focus:border-[var(--green)] transition-all duration-200 shadow-sm">
                                             <SelectValue placeholder={field.placeholder} />
                                         </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="select" >Select</SelectItem>
+                                        <SelectContent className="bg-white border border-[var(--border)] rounded-lg shadow-lg mt-1">
+                                            <SelectItem value="select" className="text-muted-foreground hover:bg-accent/50">Select an option</SelectItem>
                                             {field.options?.map((option) => (
-                                                <SelectItem key={option} value={option}>
+                                                <SelectItem 
+                                                    key={option} 
+                                                    value={option}
+                                                    className="hover:bg-accent/50 focus:bg-accent/50"
+                                                >
                                                     {option}
                                                 </SelectItem>
                                             ))}
@@ -336,7 +408,7 @@ export const PartnershipSection = (): JSX.Element => {
                                 ) : field.picker ? (
                                     <div className="relative w-full">
                                         <div
-                                            className="w-full px-4 sm:px-5 py-3 sm:py-4 bg-white rounded-xl font-main-text-p1-500 font-[number:var(--main-text-p1-500-font-weight)] text-[#8b8b8b] text-[length:var(--main-text-p1-500-font-size)] tracking-[var(--main-text-p1-500-letter-spacing)] leading-[var(--main-text-p1-500-line-height)] [font-style:var(--main-text-p1-500-font-style)] cursor-pointer flex items-center justify-between"
+                                            className="w-full px-4 py-2.5 bg-white border border-[var(--border)] rounded-lg text-sm text-[var(--text)] cursor-pointer flex items-center justify-between hover:border-[var(--green)] focus:outline-none focus:ring-2 focus:ring-[var(--green)] focus:border-[var(--green)] transition-all duration-200"
                                             onClick={() => {
                                                 if (field.id === "date") {
                                                     setShowDatePicker(!showDatePicker);
@@ -347,10 +419,12 @@ export const PartnershipSection = (): JSX.Element => {
                                                 }
                                             }}
                                         >
-                                            {field.id === 'date'
-                                                ? (field.value ? format(field.value as Date, 'dd/MM/yyyy') : field.placeholder)
-                                                : (field.value !== undefined && field.value !== null ? String(field.value) : field.placeholder)
-                                            }
+                                            <span className={!field.value ? 'text-muted-foreground' : 'text-foreground'}>
+                                                {field.id === 'date'
+                                                    ? (field.value ? format(field.value as Date, 'dd MMM yyyy') : field.placeholder)
+                                                    : (field.value !== undefined && field.value !== null ? String(field.value) : field.placeholder)
+                                                }
+                                            </span>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 className="h-5 w-5 text-gray-400"
@@ -379,7 +453,37 @@ export const PartnershipSection = (): JSX.Element => {
                                                         field.onChange(date);
                                                         setShowDatePicker(false);
                                                     }}
-                                                    className="p-2 sm:p-4"
+                                                    className="p-3 border border-[var(--border)] rounded-lg shadow-lg bg-white"
+                                                    styles={{
+                                                        caption: { color: '#1e40af' },
+                                                        day: { 
+                                                            margin: '0.2em',
+                                                            padding: '0.3em 0',
+                                                            borderRadius: '0.25rem',
+                                                            transition: 'all 0.2s ease-in-out'
+                                                        },
+                                                        day_selected: { 
+                                                            backgroundColor: 'var(--green)',
+                                                            color: 'white',
+                                                            fontWeight: '500'
+                                                        },
+                                                        day_today: { 
+                                                            color: 'var(--green)',
+                                                            fontWeight: 'bold' 
+                                                        },
+                                                        day_disabled: { 
+                                                            color: '#9ca3af',
+                                                            cursor: 'not-allowed' 
+                                                        },
+                                                        day_outside: { 
+                                                            color: '#9ca3af',
+                                                            opacity: 0.5 
+                                                        },
+                                                        day_range_middle: {
+                                                            backgroundColor: 'rgba(6, 71, 73, 0.1)',
+                                                            color: 'var(--green)'
+                                                        }
+                                                    }}
                                                     classNames={{
                                                         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
                                                         month: "space-y-4",
@@ -440,15 +544,17 @@ export const PartnershipSection = (): JSX.Element => {
                             </div>
                         ))}
 
-                        <Button
-                            className="w-full sm:w-auto px-10 py-3 rounded-[40px] bg-green hover:bg-green/90 col-span-1 sm:col-span-2"
-                            type="submit"
-                            disabled={isSubmitting}
-                        >
-                            <span className="font-desktop-subtitle-bold font-[number:var(--desktop-subtitle-bold-font-weight)] text-white text-[length:var(--desktop-subtitle-bold-font-size)] tracking-[var(--desktop-subtitle-bold-letter-spacing)] leading-[var(--desktop-subtitle-bold-line-height)] [font-style:var(--desktop-subtitle-bold-font-style)]">
-                                {isSubmitting ? 'Scheduling...' : 'Start booking'}
-                            </span>
-                        </Button>
+                        <div className="w-full flex justify-center col-span-1 sm:col-span-2">
+                            <Button 
+                                type="submit" 
+                                className="w-full sm:w-auto mt-2 sm:mt-4 bg-[var(--green)] hover:bg-[#053a3c] text-white font-medium py-3 px-8 rounded-lg transition-all duration-200 transform hover:scale-[1.02] shadow-cards hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                                disabled={isSubmitting}
+                            >
+                                <span className="font-desktop-subtitle-bold font-[number:var(--desktop-subtitle-bold-font-weight)] text-white text-[length:var(--desktop-subtitle-bold-font-size)] tracking-[var(--desktop-subtitle-bold-letter-spacing)] leading-[var(--desktop-subtitle-bold-line-height)] [font-style:var(--desktop-subtitle-bold-font-style)]">
+                                    {isSubmitting ? 'Scheduling...' : 'Start booking'}
+                                </span>
+                            </Button>
+                        </div>
                     </form>
                 </CardContent>
             </Card>

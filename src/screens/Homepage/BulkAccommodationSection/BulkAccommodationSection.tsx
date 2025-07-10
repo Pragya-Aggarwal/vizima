@@ -1,4 +1,4 @@
-import { FacebookIcon, TwitterIcon } from "lucide-react";
+import { FacebookIcon, TwitterIcon, Check, Phone } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
@@ -61,7 +61,7 @@ export const BulkAccommodationSection = (): JSX.Element => {
     ];
 
     return (
-        <section className="w-full bg-[#e2f1e8] py-6 sm:py-8 md:py-12 relative">
+        <section className="w-full bg-[#e2f1e8] py-6 sm:py-8 md:py-5 relative">
             <div className="container max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8">
                 <div className="flex justify-center sm:justify-start">
                     <img
@@ -72,7 +72,7 @@ export const BulkAccommodationSection = (): JSX.Element => {
                 </div>
             </div>
 
-            <footer className="container max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8">
+            <footer className="container max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 border-t border-gray-300 pt-8 mt-8 bg-[#e2f1e8]">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8">
                     {/* Footer links */}
                     <div className="md:col-span-7">
@@ -86,8 +86,9 @@ export const BulkAccommodationSection = (): JSX.Element => {
                                     {section.links.map((link, linkIndex) => (
                                         <a
                                             key={linkIndex}
-                                            href="#"
-                                            className="font-desktop-subtitle text-text hover:underline text-xs sm:text-sm md:text-base"
+                                            href="#" // TODO: Replace with real links
+                                            className="font-desktop-subtitle text-text hover:underline focus:underline text-xs sm:text-sm md:text-base transition-colors duration-150"
+                                            tabIndex={0}
                                         >
                                             {link}
                                         </a>
@@ -135,28 +136,57 @@ export const BulkAccommodationSection = (): JSX.Element => {
                                     <p className="text-red-500 text-xs sm:text-sm">{error}</p>
                                 )}
                                 {success && (
-                                    <p className="text-green text-xs sm:text-sm">
+                                    <p className="flex items-center gap-2 text-green text-xs sm:text-sm">
+                                        <Check className="w-4 h-4" />
                                         Successfully subscribed to newsletter!
                                     </p>
                                 )}
                             </div>
                         </form>
                         <div className="mt-3 sm:mt-4 md:mt-6 flex flex-col gap-3 sm:gap-4 md:gap-5">
-                            <p className="font-desktop-text-regular text-text text-xs sm:text-sm md:text-base">
-                                Contact number: 9667300983
-                            </p>
+                            <a
+                                href="tel:9667300983"
+                                className="font-desktop-text-regular text-text text-xs sm:text-sm md:text-base flex items-center gap-2 hover:underline focus:underline"
+                                tabIndex={0}
+                                title="Call us"
+                            >
+                                <Phone className="w-4 h-4 text-green" />
+                                9667300983
+                            </a>
 
                             <div className="flex flex-col gap-2 sm:gap-3">
                                 <div className="flex items-center gap-2 sm:gap-3">
-                                    <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center">
+                                    <a
+                                        href="https://instagram.com"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-tr from-pink-500 to-yellow-400 hover:from-pink-600 hover:to-yellow-500 transition-colors duration-200 shadow group"
+                                        title="Instagram"
+                                    >
                                         <img
-                                            className="w-[16px] h-[16px] sm:w-[18px] sm:h-[18px]"
+                                            className="w-4 h-4 sm:w-5 sm:h-5"
                                             alt="Instagram"
                                             src="https://c.animaapp.com/mbhqlborYGJdod/img/group-3.png"
                                         />
-                                    </div>
-                                    <FacebookIcon className="w-5 h-5 sm:w-6 sm:h-6 text-text" />
-                                    <TwitterIcon className="w-5 h-5 sm:w-6 sm:h-6 text-text" />
+                                    </a>
+                                    <a
+                                        href="https://facebook.com"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 transition-colors duration-200 shadow group"
+                                        title="Facebook"
+                                    >
+                                        <FacebookIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                                    </a>
+                                    <a
+                                        href="https://twitter.com"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-400 hover:bg-sky-500 transition-colors duration-200 shadow group"
+                                        title="Twitter"
+                                    >
+                                        <TwitterIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -165,9 +195,9 @@ export const BulkAccommodationSection = (): JSX.Element => {
             </footer>
 
             {/* Copyright text positioned at bottom center */}
-            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
-                <p className="font-desktop-text-regular text-text text-center text-xs sm:text-sm">
-                    © Vizima 2025
+            <div className="w-full flex justify-center py-2 mt-4 border-t border-gray-200 bg-[#e2f1e8]">
+                <p className="font-desktop-text-regular text-text text-center text-xs sm:text-sm opacity-70">
+                    © Vizima 2025. All rights reserved.
                 </p>
             </div>
         </section>

@@ -104,7 +104,7 @@ export const BookARoom = (): JSX.Element => {
                                         <span>{property.location}</span>
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div className="grid grid-cols-2 gap-3">
                                     {property.amenities?.map((item, index) => (
                                         <div key={index} className="flex items-center gap-2 text-gray-700">
                                             <div className="text-green">

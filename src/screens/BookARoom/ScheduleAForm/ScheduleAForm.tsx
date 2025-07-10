@@ -253,7 +253,7 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
         <div className="flex items-center justify-center p-4 w-full">
             <form onSubmit={handleSubmit} className="w-full max-w-[1000px]">
                 <Card className="w-full bg-[#e2f1e8] rounded-xl border border-solid border-[#c3d0d7]">
-                    <CardContent className="p-[34px]">
+                    <CardContent className="p-2.5 md:p-[34px]">
                         {/* Text input fields */}
                         {formFields.map((field) => (
                             <div key={field.id} className="mb-5">

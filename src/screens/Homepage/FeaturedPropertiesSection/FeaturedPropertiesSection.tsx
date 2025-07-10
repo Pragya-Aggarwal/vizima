@@ -155,7 +155,7 @@ export const FeaturedPropertiesSection = () => {
 
         <div className="mt-10 text-center">
           <Button
-            onClick={() => navigate('/product')}
+            onClick={() => navigate('/property-listing')}
             variant="outline"
             className="border-green text-green hover:bg-green hover:text-white px-8 py-2"
           >

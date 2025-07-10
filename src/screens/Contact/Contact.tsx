@@ -214,7 +214,7 @@ const Contact = () => {
                                         <h3 className="text-lg font-semibold text-gray-900 mb-1">Phone</h3>
                                         <p className="text-gray-600 mb-2">Available 24/7 for emergencies</p>
                                         <a href="tel:+911234567890" className="text-green hover:underline font-medium">
-                                            +91 12345 67890
+                                            +919667300983
                                         </a>
                                     </div>
                                 </div>
@@ -245,7 +245,8 @@ const Contact = () => {
                                     <div>
                                         <h3 className="text-lg font-semibold text-gray-900 mb-1">Our Office</h3>
                                         <p className="text-gray-600 mb-2">Visit us during business hours</p>
-                                        <p className="text-gray-700">123 Living Street, Mumbai, Maharashtra 400001, India</p>
+                                        <p className="text-gray-700">Vizima premium Girls Hostel
+                                        I-110, Raipur,  Behind Windsor,  sector 126 noida.</p>
                                     </div>
                                 </div>
                             </Card>

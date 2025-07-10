@@ -33,7 +33,7 @@ export const CorporateInfoSection = (): JSX.Element => {
     const handleCardClick = (type: string) => {
         // Convert type to lowercase and replace spaces with hyphens for the URL
         const queryParam = type.toLowerCase().replace(/\s+/g, '-');
-        navigate(`/product?type=${queryParam}`);
+        navigate(`/property-listing?type=${queryParam}`);
     };
     
 

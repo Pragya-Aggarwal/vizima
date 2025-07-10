@@ -33,7 +33,7 @@ export const SearchSection = ({ onSearchStart }: SearchSectionProps): JSX.Elemen
             if (searchParams.gender) queryParams.set('gender', searchParams.gender.toLowerCase());
             
             // Navigate to product page with search parameters
-            navigate(`/product?${queryParams.toString()}`);
+            navigate(`/property-listing?${queryParams.toString()}`);
             
             // Show message if no search criteria provided
             if (!searchParams.city && !searchParams.gender) {

@@ -30,7 +30,7 @@ export const TestimonialsSection = (): JSX.Element => {
 
                         <div className="flex justify-center">
                             <Button 
-                                onClick={() => navigate('/product')}
+                                onClick={() => navigate('/property-listing')}
                                 className="bg-[#064749] hover:bg-[#053a3c] text-white text-lg px-8 py-6 rounded-full transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1"
                                 size="lg"
                             >

@@ -31,7 +31,7 @@ export const PartnershipsSection = (): JSX.Element => {
                     </p>
 
                     <Button 
-                        onClick={() => navigate('/product')}
+                        onClick={() => navigate('/property-listing')}
                         className="bg-[#064749] hover:bg-[#053a3c] text-white text-lg px-8 py-6 rounded-full transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
                         size="lg"
                     >

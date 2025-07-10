@@ -80,45 +80,47 @@ export const LocationMapSection = (): JSX.Element => {
   }
 
   return (
-    <div className="w-full h-[500px] relative rounded-lg overflow-hidden border border-gray-300">
-      <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">Find Properties on Map</h2>
+    <>
+      <h2 className="text-2xl font-bold text-center text-gray-900 mb-4 mt-4">Find Properties on Map</h2>
+      <div className="w-full h-[900px] relative  overflow-hidden border border-gray-300">
 
-      {/* Google Maps iframe */}
-      <iframe
-        className="w-full h-full border-0 rounded-lg"
-        loading="lazy"
-        allowFullScreen
-        referrerPolicy="no-referrer-when-downgrade"
-        src={getStaticMapUrl()}
-        title="Properties Location Map"
-      ></iframe>
+        {/* Google Maps iframe */}
+        <iframe
+          className="w-full h-full border-0  h-900"
+          loading="lazy"
+          allowFullScreen
+          referrerPolicy="no-referrer-when-downgrade"
+          src={getStaticMapUrl()}
+          title="Properties Location Map"
+        ></iframe>
 
-      {/* Custom markers overlay */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none rounded-lg">
-        {locationGroups.map((group, index) => {
-          // Calculate position as percentage of container
-          const left = ((group.lng - 72.8) / 0.4) * 100; // Adjust these values based on your map's bounds
-          const top = ((19.2 - group.lat) / 0.4) * 100; // Invert Y axis for CSS
+        {/* Custom markers overlay */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none rounded-lg">
+          {locationGroups.map((group, index) => {
+            // Calculate position as percentage of container
+            const left = ((group.lng - 72.8) / 0.4) * 100; // Adjust these values based on your map's bounds
+            const top = ((19.2 - group.lat) / 0.4) * 100; // Invert Y axis for CSS
 
-          // Determine marker size based on count
-          let sizeClass = 'w-8 h-8 text-xs';
-          if (group.count > 10) sizeClass = 'w-12 h-12 text-sm';
-          else if (group.count > 5) sizeClass = 'w-10 h-10 text-xs';
+            // Determine marker size based on count
+            let sizeClass = 'w-8 h-8 text-xs';
+            if (group.count > 10) sizeClass = 'w-12 h-12 text-sm';
+            else if (group.count > 5) sizeClass = 'w-10 h-10 text-xs';
 
-          return (
-            <div
-              key={index}
-              className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
-              style={{ left: `${left}%`, top: `${top}%` }}
-            >
-              <div className={`${sizeClass} rounded-full bg-blue-600 border-2 border-white flex items-center justify-center text-white font-bold shadow-lg`}>
-                {group.count}
+            return (
+              <div
+                key={index}
+                className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
+                style={{ left: `${left}%`, top: `${top}%` }}
+              >
+                <div className={`${sizeClass} rounded-full bg-blue-600 border-2 border-white flex items-center justify-center text-white font-bold shadow-lg`}>
+                  {group.count}
+                </div>
+                <div className="w-0 h-0 border-l-2 border-r-2 border-t-4 border-l-transparent border-r-transparent border-t-blue-600 -mt-1"></div>
               </div>
-              <div className="w-0 h-0 border-l-2 border-r-2 border-t-4 border-l-transparent border-r-transparent border-t-blue-600 -mt-1"></div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -95,7 +95,7 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
     const [isPhoneVerified, setIsPhoneVerified] = useState(false);
 
     // Property titles state
-    const [propertyTitles, setPropertyTitles] = useState<{id: string, title: string}[]>([]);
+    const [propertyTitles, setPropertyTitles] = useState<{ id: string, title: string }[]>([]);
     const [isLoadingProperties, setIsLoadingProperties] = useState(true);
 
     // Fetch property titles on component mount
@@ -104,7 +104,7 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
             try {
                 const response = await propertiesService.getPropertyTitles(1, 100); // Fetch first 100 properties
                 if (response.data) {
-                    setPropertyTitles(response.data);
+                    setPropertyTitles(response.data.map((p: any) => ({ id: p._id || p.id, title: p.title })));
                 }
             } catch (error) {
                 console.error('Error fetching property titles:', error);
@@ -120,6 +120,10 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
 
         fetchPropertyTitles();
     }, []);
+
+    // Debug log
+    console.log('propertyTitles:', propertyTitles);
+    console.log('preferredProperty:', formData.preferredProperty);
 
     // Form field data
     const formFields: FormField[] = [
@@ -270,10 +274,11 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
 
                     // Find the first property with microSiteLink
                     const propertyWithMicroSite = foundProperty?.micrositeLink;
-
+                    console.log(propertyWithMicroSite, "propertyWithMicroSite")
                     if (propertyWithMicroSite) {
-                        // Open microSiteLink in new tab
-                        window.open(propertyWithMicroSite, '_blank');
+                        console.log(propertyWithMicroSite, "propertyWithMicroSite")
+                        window.location.href = propertyWithMicroSite;
+                        console.log(propertyWithMicroSite, "propertyWithMicroSite")
                     }
                 } catch (error) {
                     console.error('Failed to fetch bulk accommodation data:', error);
@@ -406,7 +411,7 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                         <div className="mb-5">
                             <div className="flex items-center ml-2.5 mb-1">
                                 <span className="font-desktop-subtitle-bold text-text">
-                                 Sharing
+                                    Sharing
                                 </span>
                             </div>
                             <Select
@@ -438,9 +443,11 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
                                 disabled={isSubmitting || isLoadingProperties}
                             >
                                 <SelectTrigger className="h-[52px] bg-white rounded-xl border border-solid border-[#c3d0d7] pl-[26px] font-desktop-subtitle text-text">
-                                    <SelectValue placeholder={
-                                        isLoadingProperties ? "Loading properties..." : "Select a property"
-                                    } />
+                                    <SelectValue
+                                        placeholder={isLoadingProperties ? "Loading properties..." : "Select a property"}
+                                    >
+                                        {formData.preferredProperty && (propertyTitles.find(p => p.id === formData.preferredProperty)?.title || formData.preferredProperty)}
+                                    </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
                                     {propertyTitles.map((property) => (

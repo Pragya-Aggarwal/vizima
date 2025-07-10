@@ -30,7 +30,7 @@ export const ListingsSection = (): JSX.Element => {
                 </div>
 
                 <Button 
-                    onClick={() => navigate('/product')}
+                    onClick={() => navigate('/property-listing')}
                     className="mt-8 bg-[#064749] hover:bg-[#053a3c] text-white text-base md:text-lg px-8 py-6 rounded-full transition-all duration-300 hover:shadow-lg"
                     size="lg"
                 >

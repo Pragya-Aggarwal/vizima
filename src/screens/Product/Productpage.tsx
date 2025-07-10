@@ -33,28 +33,28 @@ export const ProductPage = (): JSX.Element => {
     const filterAccommodations = useCallback((data: Accommodation[]) => {
         return data.filter(acc => {
             const searchLower = searchQuery.toLowerCase().trim();
-            const matchesSearch = !searchLower || 
-                                (acc.title && acc.title.toLowerCase().includes(searchLower)) || 
-                                (acc.location && acc.location.toLowerCase().includes(searchLower));
-                                
+            const matchesSearch = !searchLower ||
+                (acc.title && acc.title.toLowerCase().includes(searchLower)) ||
+                (acc.location && acc.location.toLowerCase().includes(searchLower));
+
             const matchesCity = !city || (acc.city && acc.city.toLowerCase() === city);
             const matchesGender = !gender || (acc.gender && acc.gender.toLowerCase() === gender);
-            
+
             // Apply active filters
-            const matchesLocation = !activeFilters.location || 
-                                  (acc.location && acc.location.toLowerCase().includes(activeFilters.location.toLowerCase()));
-            const matchesPropertyType = !activeFilters.propertyType || 
-                                      (acc.type && acc.type.toLowerCase() === activeFilters.propertyType.toLowerCase());
-            const matchesSharingType = !activeFilters.sharingType || 
-                                     (acc.sharingType && Array.isArray(acc.sharingType) && 
-                                      acc.sharingType.some(type => type.toLowerCase() === activeFilters.sharingType.toLowerCase()));
-            const matchesGenderFilter = !activeFilters.gender || 
-                                     (acc.gender && acc.gender.toLowerCase() === activeFilters.gender.toLowerCase());
-            
+            const matchesLocation = !activeFilters.location ||
+                (acc.location && acc.location.toLowerCase().includes(activeFilters.location.toLowerCase()));
+            const matchesPropertyType = !activeFilters.propertyType ||
+                (acc.type && acc.type.toLowerCase() === activeFilters.propertyType.toLowerCase());
+            const matchesSharingType = !activeFilters.sharingType ||
+                (acc.sharingType && Array.isArray(acc.sharingType) &&
+                    acc.sharingType.some(type => type.toLowerCase() === activeFilters.sharingType.toLowerCase()));
+            const matchesGenderFilter = !activeFilters.gender ||
+                (acc.gender && acc.gender.toLowerCase() === activeFilters.gender.toLowerCase());
+
             return (
                 matchesSearch &&
-                matchesCity && 
-                matchesGender && 
+                matchesCity &&
+                matchesGender &&
                 matchesLocation &&
                 matchesPropertyType &&
                 matchesSharingType &&
@@ -65,10 +65,10 @@ export const ProductPage = (): JSX.Element => {
 
     // Sort accommodations
     const sortAccommodations = useCallback((data: Accommodation[]) => {
-        
+
         return [...data].sort((a, b) => {
             let comparison = 0;
-            
+
             switch (sortBy) {
                 case 'price':
                     comparison = (a.price || 0) - (b.price || 0);
@@ -85,7 +85,7 @@ export const ProductPage = (): JSX.Element => {
                     comparison = (a.isAvailable === b.isAvailable) ? 0 : a.isAvailable ? -1 : 1;
                     break;
             }
-            
+
             return sortOrder === 'asc' ? comparison : -comparison;
         });
     }, [sortBy, sortOrder]);
@@ -98,22 +98,22 @@ export const ProductPage = (): JSX.Element => {
         setActiveFilters({});
         // Clear search query and reset URL
         setSearchQuery('');
-        navigate('/product', { replace: true });
+        navigate('/property-listing', { replace: true });
     };
 
     // Handle filter changes from the FiltersAndSortingSection
     const handleFilterChange = (filters: Record<string, string>) => {
         setActiveFilters(filters);
-        
+
         // If no filters, show all accommodations
         if (Object.keys(filters).length === 0) {
             setFilteredAccommodations([...allAccommodations]);
             return;
         }
-        
+
         // Filter accommodations based on active filters
         let result = [...allAccommodations];
-        
+
         // Apply each active filter
         Object.entries(filters).forEach(([key, value]) => {
             if (value && value !== 'all') {
@@ -127,21 +127,21 @@ export const ProductPage = (): JSX.Element => {
                 });
             }
         });
-        
+
         setFilteredAccommodations(result);
     };
 
     // Handle sort changes from the FiltersAndSortingSection
     const handleSortChange = (sortOption: string) => {
-        
-        
+
+
         // Handle special cases for price-desc
         if (sortOption === 'price-desc') {
             setSortBy('price');
             setSortOrder('desc');
             return;
         }
-        
+
         // For all other cases, check if we're toggling the same sort option
         if (sortOption === sortBy) {
             // Toggle sort order if clicking the same sort option
@@ -159,13 +159,13 @@ export const ProductPage = (): JSX.Element => {
             try {
                 setLoading(true);
                 let data: Accommodation[] = [];
-                
+
                 if (location.state?.initialResults) {
                     data = location.state.initialResults;
                 } else {
                     data = await accommodationService.getAccommodations();
                 }
-                
+
                 setAllAccommodations(data);
                 setError(null);
             } catch (err) {
@@ -191,15 +191,15 @@ export const ProductPage = (): JSX.Element => {
     useEffect(() => {
         if (allAccommodations.length > 0) {
             let result = [...allAccommodations];
-            
+
             // Apply search and filters
             if (searchQuery || Object.keys(activeFilters).length > 0 || city || gender) {
                 result = filterAccommodations(result);
             }
-            
+
             // Apply sorting
             result = sortAccommodations(result);
-            
+
             setFilteredAccommodations(result);
         }
     }, [allAccommodations, activeFilters, city, gender, searchQuery, filterAccommodations, sortAccommodations]);
@@ -213,14 +213,14 @@ export const ProductPage = (): JSX.Element => {
             <div className="bg-white w-full relative">
                 {/* Search Bar Section */}
                 <div className="w-full max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12">
-                    <SearchBarSection 
+                    <SearchBarSection
                         value={searchQuery}
                         onChange={setSearchQuery}
                         onSearch={() => {
                             if (searchQuery.trim()) {
                                 const newParams = new URLSearchParams(searchParams);
                                 newParams.set('search', searchQuery.trim().toLowerCase());
-                                navigate(`/product?${newParams.toString()}`);
+                                navigate(`/property-listing?${newParams.toString()}`);
                             }
                         }}
                     />
@@ -229,7 +229,7 @@ export const ProductPage = (): JSX.Element => {
                 {/* Filters and Sorting Section */}
                 <div className="sticky top-0 z-30 bg-white border-b border-gray-100">
                     <div className="max-w-[1440px] mx-auto">
-                        <FiltersAndSortingSection 
+                        <FiltersAndSortingSection
                             onFilterChange={handleFilterChange}
                             onSortChange={handleSortChange}
                             onClearAll={handleClearAll}
@@ -263,7 +263,7 @@ export const ProductPage = (): JSX.Element => {
                     <div className="flex flex-col lg:flex-row gap-6 sm:gap-2">
                         {/* Left column - Apartment listings */}
                         <div className={`flex-1 min-w-0 ${showMap ? 'hidden lg:block' : 'block'}`}>
-                            <ApartmentListingsSection 
+                            <ApartmentListingsSection
                                 accommodations={filteredAccommodations}
                                 loading={loading}
                                 error={error}
@@ -272,7 +272,7 @@ export const ProductPage = (): JSX.Element => {
                         </div>
 
                         {/* Right column - Map */}
-                        <div className={`lg:w-[500px] xl:w-[600px] sticky top-[80px] h-[600px] lg:h-[calc(100vh-120px)] ${showMap ? 'block' : 'hidden lg:block'}`}>
+                        <div className={`lg:w-[500px] xl:w-[600px] sticky top-[80px] h-[900px] lg:h-[calc(100vh-120px)] ${showMap ? 'block' : 'hidden lg:block'}`}>
                             <div className="relative w-full h-full rounded-2xl overflow-hidden border border-gray-200">
                                 <LocationMapSection />
                                 {/* Map Controls */}

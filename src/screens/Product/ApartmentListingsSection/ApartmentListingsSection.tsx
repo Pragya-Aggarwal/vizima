@@ -259,7 +259,7 @@ export const ApartmentListingsSection = ({
             </div>
             <Button
               onClick={() => {
-                navigate('/product');
+                navigate('/property-listing');
                 onClearSearch?.();
               }}
               variant="outline"
@@ -320,7 +320,7 @@ export const ApartmentListingsSection = ({
               {cityParam ? ` in ${cityParam.charAt(0).toUpperCase() + cityParam.slice(1)}` : ''}
             </div>
             <Button
-              onClick={() => navigate('/product')}
+              onClick={() => navigate('/property-listing')}
               variant="outline"
               className="flex items-center gap-2 border-green text-green hover:bg-green hover:text-white rounded-full px-4 py-2 text-sm whitespace-nowrap"
             >
@@ -348,7 +348,7 @@ export const ApartmentListingsSection = ({
               variant="outline"
               onClick={() => {
                 // Clear the search and show all properties
-                navigate('/product');
+                navigate('/property-listing');
               }}
               className="border-gray-300 text-gray-700 hover:bg-gray-50"
             >

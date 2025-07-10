@@ -143,7 +143,7 @@ export const BulkAccommodationSection = (): JSX.Element => {
                         </form>
                         <div className="mt-3 sm:mt-4 md:mt-6 flex flex-col gap-3 sm:gap-4 md:gap-5">
                             <p className="font-desktop-text-regular text-text text-xs sm:text-sm md:text-base">
-                                Contact number: 02033074477
+                                Contact number: 9667300983
                             </p>
 
                             <div className="flex flex-col gap-2 sm:gap-3">

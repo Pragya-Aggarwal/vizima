@@ -60,7 +60,7 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
         email: "",
         gender: "",
         doubleSharing: "",
-        preferredProperty: propertyId || "",
+        preferredProperty: "",
         selectedDateTime: "",
         visitType: "",
     });
@@ -82,8 +82,7 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
             try {
                 const response = await propertiesService.getPropertyTitles(1, 100); // Fetch first 100 properties
                 if (response.data) {
-                    setPropertyTitles(response.data);
-                    
+                    setPropertyTitles(response.data.map((p: any) => ({ id: p._id || p.id, title: p.title })));
                     // If propertyName is provided but not in the list, add it
                     if (propertyName && !response.data.some(p => p.title === propertyName)) {
                         setPropertyTitles(prev => [
@@ -106,6 +105,10 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
 
         fetchPropertyTitles();
     }, [propertyId, propertyName]);
+
+    // Debug log
+    console.log('propertyTitles:', propertyTitles);
+    console.log('preferredProperty:', formData.preferredProperty);
 
     // Form field data
     const formFields: FormField[] = [
@@ -339,7 +342,7 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
                                     Sharing
                                 </span>
                             </div>
-                            <Select 
+                            <Select
                                 value={formData.doubleSharing}
                                 onValueChange={(value) => handleInputChange("doubleSharing", value)}
                                 disabled={isSubmitting}
@@ -368,9 +371,11 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
                                 disabled={isSubmitting || isLoadingProperties}
                             >
                                 <SelectTrigger className="h-[52px] bg-white rounded-xl border border-solid border-[#c3d0d7] pl-[26px] font-desktop-subtitle text-text">
-                                    <SelectValue placeholder={
-                                        isLoadingProperties ? "Loading properties..." : "Select a property"
-                                    } />
+                                    <SelectValue
+                                        placeholder={isLoadingProperties ? "Loading properties..." : "Select a property"}
+                                    >
+                                        {formData.preferredProperty && (propertyTitles.find(p => p.id === formData.preferredProperty)?.title || formData.preferredProperty)}
+                                    </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
                                     {propertyTitles.map((property) => (

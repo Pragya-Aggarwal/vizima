@@ -54,9 +54,10 @@ const Contact = () => {
             setIsSubmitting(true)
             // Map phone to mobileNumber for the API
             const { phone, ...rest } = formData
+            const number = phone.startsWith('+91') ? phone : `+91${phone}`;
             await contactService.sendMessage({
                 ...rest,
-                mobileNumber: phone
+                mobileNumber: number
             })
 
             toast({

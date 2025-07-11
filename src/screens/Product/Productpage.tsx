@@ -28,6 +28,8 @@ export const ProductPage = (): JSX.Element => {
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
     // Initialize searchQuery from URL params
     const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+    // Add local state for the search input (not applied until Search is clicked)
+    const [searchInput, setSearchInput] = useState(searchQuery);
 
     // Filter accommodations based on search query, city, gender, and other filters
     const filterAccommodations = useCallback((data: Accommodation[]) => {
@@ -105,13 +107,7 @@ export const ProductPage = (): JSX.Element => {
     const handleFilterChange = (filters: Record<string, string>) => {
         setActiveFilters(filters);
 
-        // If no filters, show all accommodations
-        if (Object.keys(filters).length === 0) {
-            setFilteredAccommodations([...allAccommodations]);
-            return;
-        }
-
-        // Filter accommodations based on active filters
+        // Always filter accommodations, even if no filters (do not fallback to all)
         let result = [...allAccommodations];
 
         // Apply each active filter
@@ -187,6 +183,11 @@ export const ProductPage = (): JSX.Element => {
         }
     }, [searchParams]);
 
+    // Update searchInput when searchQuery changes (e.g., from URL or clear)
+    useEffect(() => {
+        setSearchInput(searchQuery);
+    }, [searchQuery]);
+
     // Apply filters and sorting whenever dependencies change
     useEffect(() => {
         if (allAccommodations.length > 0) {
@@ -200,6 +201,7 @@ export const ProductPage = (): JSX.Element => {
             // Apply sorting
             result = sortAccommodations(result);
 
+            // Always set filteredAccommodations, even if empty
             setFilteredAccommodations(result);
         }
     }, [allAccommodations, activeFilters, city, gender, searchQuery, filterAccommodations, sortAccommodations]);
@@ -214,14 +216,19 @@ export const ProductPage = (): JSX.Element => {
                 {/* Search Bar Section */}
                 <div className="w-full max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12">
                     <SearchBarSection
-                        value={searchQuery}
-                        onChange={setSearchQuery}
+                        value={searchInput}
+                        onChange={setSearchInput}
                         onSearch={() => {
-                            if (searchQuery.trim()) {
-                                const newParams = new URLSearchParams(searchParams);
-                                newParams.set('search', searchQuery.trim().toLowerCase());
-                                navigate(`/property-listing?${newParams.toString()}`);
+                            // Only update searchQuery (and thus trigger filtering) when Search is clicked
+                            setSearchQuery(searchInput);
+                            // Optionally update the URL param as before
+                            const newParams = new URLSearchParams(searchParams);
+                            if (searchInput.trim()) {
+                                newParams.set('search', searchInput.trim().toLowerCase());
+                            } else {
+                                newParams.delete('search');
                             }
+                            navigate(`/property-listing?${newParams.toString()}`);
                         }}
                     />
                 </div>

@@ -29,130 +29,130 @@ const AccommodationCard = ({ apartment, onViewDetails }: AccommodationCardProps)
   return (
 
     <section className="py-3 sm:py-6 bg-gray-50">
-            <div className="max-w-7xl mx-auto px-2 sm:px-4">
-                <div className="grid grid-cols-1 gap-3 sm:gap-4">
-                        <Card       
-                            key={apartment.id}
-                            className="bg-white overflow-hidden rounded-2xl border-none shadow-sm hover:shadow-md transition-all duration-300 group relative"
-                        >
-                            {/* Clickable overlay for the entire card */}
-                            <div 
-                                className="absolute inset-0 z-10 cursor-pointer"
-                                onClick={(e) => handleClick(e, apartment.id)}
-                                aria-label={`View details for ${apartment.title}`}
-                            />
-                            
-                            <div className="flex flex-col lg:flex-row">
-                                {/* Image Section */}
-                                <div className="relative w-full lg:w-[300px] h-[140px] sm:h-[160px] lg:h-[180px] overflow-hidden group">
-                                    <img
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                        alt={`${apartment.title} property`}
-                                        src={apartment.images[0]}
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+      <div className="max-w-7xl mx-auto px-2 sm:px-4">
+        <div className="grid grid-cols-1 gap-3 sm:gap-4">
+          <Card
+            key={apartment.id}
+            className="bg-white overflow-hidden rounded-2xl border-none shadow-sm hover:shadow-md transition-all duration-300 group relative"
+          >
+            {/* Clickable overlay for the entire card */}
+            <div
+              className="absolute inset-0 z-10 cursor-pointer"
+              onClick={(e) => handleClick(e, apartment.id)}
+              aria-label={`View details for ${apartment.title}`}
+            />
 
-                                    {/* Tags Overlay */}
-                                    <div className="absolute top-2 left-2 flex items-center gap-2 z-20">
-                                        <span className="px-2 py-0.5 bg-blue-500 text-white text-xs font-semibold rounded-full">
-                                            Featured
-                                        </span>
-                                    </div>
+            <div className="flex flex-col lg:flex-row">
+              {/* Image Section */}
+              <div className="relative w-full lg:w-[300px] h-[140px] sm:h-[160px] lg:h-[180px] overflow-hidden group">
+                <img
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  alt={`${apartment.title} property`}
+                  src={apartment.images[0]}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-                                    {/* Wishlist Button - Positioned above the clickable overlay */}
-                                    <button 
-                                        className="absolute top-2 right-2 p-1.5 bg-green rounded-full hover:bg-white transition-colors z-20"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            // Add wishlist functionality here
-                                        }}
-                                        aria-label="Add to wishlist"
-                                    >
-                                        <Heart className="w-4 h-4 text-white" />
-                                    </button>
-                                </div>
-
-                                {/* Content Section */}
-                                <div className="flex-1 p-3 sm:p-4">
-                                    <div className="flex flex-col h-full">
-                                        {/* Header */}
-                                        <div className="mb-3">
-                                            <div className="flex items-center gap-2 text-gray-500 mb-1">
-                                                <MapPin className="w-4 h-4 text-green" />
-                                                <span className="text-xs font-medium">{apartment.location}</span>
-                                            </div>
-                                            <h3 className="text-lg font-bold text-gray-900 mb-1">
-                                                {apartment.title}
-                                            </h3>
-                                            <div className="flex items-center gap-2">
-                                                <div className="flex items-center gap-1 px-2 py-0.5 bg-yellow-50 rounded-lg">
-                                                    <Star className="w-3 h-3 text-yellow-400 fill-current" />
-                                                    <span className="text-xs font-semibold text-gray-900">
-                                                        {typeof apartment.rating === 'object' 
-                                                          ? (apartment.rating as Rating).average?.toFixed(1) 
-                                                          : (apartment.rating || 0)}
-                                                    </span>
-                                                </div>
-                                                <span className="text-xs text-gray-500">
-                                                    ({typeof apartment.rating === 'object' 
-                                                      ? (apartment.rating as Rating).count 
-                                                      : apartment.reviews} reviews)
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {/* Amenities Grid */}
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
-                                            <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                                                <Users className="w-4 h-4 text-gray-600" />
-                                                <div>
-                                                    <p className="text-xs font-medium text-gray-900">{apartment.bedrooms}</p>
-                                                    <p className="text-[10px] text-gray-500">{apartment.sharingType} Sharing</p>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                                                <Bath className="w-4 h-4 text-gray-600" />
-                                                <div>
-                                                    <p className="text-xs font-medium text-gray-900">{apartment.bathrooms}</p>
-                                                    <p className="text-[10px] text-gray-500">Attached</p>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                                                <Wifi className="w-4 h-4 text-gray-600" />
-                                                <div>
-                                                    <p className="text-xs font-medium text-gray-900">{apartment.amenities?.includes("wifi") ? "Yes" : "No"}</p>
-                                                    <p className="text-[10px] text-gray-500">High Speed</p>
-                                                </div>
-                                            </div>
-                                            
-                                        </div>
-
-                                        {/* Footer */}
-                                        <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
-                                            <div>
-                                                <p className="text-xs text-gray-500">Starting from</p>
-                                                <div className="flex items-baseline gap-1">
-                                                    <span className="text-xl font-bold text-gray-900">₹{apartment.price}</span>
-                                                    <span className="text-sm text-gray-600">/month</span>
-                                                </div>
-                                            </div>
-                                            <Button
-                                                onClick={(e) => handleClick(e, apartment.id)}
-                                                className="bg-green hover:bg-green text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap"
-                                            >
-                                                View Details
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                   
+                {/* Tags Overlay */}
+                <div className="absolute top-2 left-2 flex items-center gap-2 z-20">
+                  <span className="px-2 py-0.5 bg-blue-500 text-white text-xs font-semibold rounded-full">
+                    Featured
+                  </span>
                 </div>
 
-                
+                {/* Wishlist Button - Positioned above the clickable overlay */}
+                <button
+                  className="absolute top-2 right-2 p-1.5 bg-green rounded-full hover:bg-white transition-colors z-20"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Add wishlist functionality here
+                  }}
+                  aria-label="Add to wishlist"
+                >
+                  <Heart className="w-4 h-4 text-white" />
+                </button>
+              </div>
+
+              {/* Content Section */}
+              <div className="flex-1 p-3 sm:p-4">
+                <div className="flex flex-col h-full">
+                  {/* Header */}
+                  <div className="mb-3">
+                    <div className="flex items-center gap-2 text-gray-500 mb-1">
+                      <MapPin className="w-4 h-4 text-green" />
+                      <span className="text-xs font-medium">{apartment.location}</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-1">
+                      {apartment.title}
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 px-2 py-0.5 bg-yellow-50 rounded-lg">
+                        <Star className="w-3 h-3 text-yellow-400 fill-current" />
+                        <span className="text-xs font-semibold text-gray-900">
+                          {typeof apartment.rating === 'object'
+                            ? (apartment.rating as Rating).average?.toFixed(1)
+                            : (apartment.rating || 0)}
+                        </span>
+                      </div>
+                      <span className="text-xs text-gray-500">
+                        ({typeof apartment.rating === 'object'
+                          ? (apartment.rating as Rating).count
+                          : apartment.reviews} reviews)
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Amenities Grid */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
+                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                      <Users className="w-4 h-4 text-gray-600" />
+                      <div>
+                        <p className="text-xs font-medium text-gray-900">{apartment.bedrooms}</p>
+                        <p className="text-[10px] text-gray-500">{apartment.sharingType} Sharing</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                      <Bath className="w-4 h-4 text-gray-600" />
+                      <div>
+                        <p className="text-xs font-medium text-gray-900">{apartment.bathrooms}</p>
+                        <p className="text-[10px] text-gray-500">Attached</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                      <Wifi className="w-4 h-4 text-gray-600" />
+                      <div>
+                        <p className="text-xs font-medium text-gray-900">{apartment.amenities?.includes("wifi") ? "Yes" : "No"}</p>
+                        <p className="text-[10px] text-gray-500">High Speed</p>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* Footer */}
+                  <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
+                    <div>
+                      <p className="text-xs text-gray-500">Starting from</p>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-xl font-bold text-gray-900">₹{apartment.price}</span>
+                        <span className="text-sm text-gray-600">/month</span>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={(e) => handleClick(e, apartment.id)}
+                      className="bg-green hover:bg-green text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap"
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
-        </section>
+          </Card>
+
+        </div>
+
+
+      </div>
+    </section>
   );
 };
 
@@ -194,12 +194,12 @@ const useAccommodations = (propAccommodations?: Accommodation[]) => {
   return { loading, accommodations, error, setAccommodations };
 };
 
-export const ApartmentListingsSection = ({ 
-  accommodations: propAccommodations, 
+export const ApartmentListingsSection = ({
+  accommodations: propAccommodations,
   loading: propLoading = false,
   error: propError = null,
   onViewDetails,
-  onClearSearch 
+  onClearSearch
 }: ApartmentListingsSectionProps) => {
   const [urlSearchParams] = useSearchParams();
   const cityParam = urlSearchParams.get('city')?.toLowerCase();
@@ -208,39 +208,41 @@ export const ApartmentListingsSection = ({
   const itemsPerPage = 5; // Show 5 items per page
   const navigate = useNavigate();
 
-  
+  console.log(propAccommodations, "accommodations")
   // Always call the hook, but let it know if we have props
-  const { loading: hookLoading, accommodations: hookAccommodations, error: hookError } = 
+  const { loading: hookLoading, accommodations: hookAccommodations, error: hookError } =
     useAccommodations(propAccommodations);
-  
+
   // Use props if available, otherwise use hook state
-  const hasPropAccommodations = Array.isArray(propAccommodations) && propAccommodations.length > 0;
+  // const hasPropAccommodations = Array.isArray(propAccommodations) && propAccommodations.length > 0;
+  const hasPropAccommodations = Array.isArray(propAccommodations);
   const loading = hasPropAccommodations ? propLoading : hookLoading;
   const error = hasPropAccommodations ? propError : hookError;
   const accommodations = hasPropAccommodations ? propAccommodations : (hookAccommodations || []);
-  
+
   // Reset to first page when search changes
   useEffect(() => {
     setCurrentPage(1);
   }, [cityParam, genderParam]);
-  
+
   // Filter accommodations based on search parameters
   const filteredAccommodations = useMemo(() => {
     if (!cityParam && !genderParam) return accommodations;
-    
+
     return accommodations.filter(accommodation => {
-      const matchesCity = !cityParam || 
+      const matchesCity = !cityParam ||
         (accommodation.city?.toLowerCase().includes(cityParam));
-      const matchesGender = !genderParam || 
+      const matchesGender = !genderParam ||
         (accommodation.gender?.toLowerCase() === genderParam);
-      
+
       return matchesCity && matchesGender;
     });
   }, [accommodations, cityParam, genderParam]);
-  
+
   // Show no results message when filters don't match any accommodations
-  const showNoResults = (cityParam || genderParam) && filteredAccommodations.length === 0 && !loading;
-  
+  const showNoResults =
+    Array.isArray(propAccommodations) && propAccommodations.length === 0 && !loading;
+
   // Show no results message when filters don't match any accommodations
   if (showNoResults) {
     return (
@@ -250,11 +252,8 @@ export const ApartmentListingsSection = ({
             <div>
               <h3 className="text-lg font-medium text-gray-700">No properties found</h3>
               <p className="text-gray-500 mt-1">
-                {cityParam && genderParam 
-                  ? `No ${genderParam} accommodations found in ${cityParam}`
-                  : cityParam 
-                    ? `No accommodations found in ${cityParam}`
-                    : `No ${genderParam} accommodations found`}
+                No accommodations found for searching data. Please chlick on Below button to show all data.
+
               </p>
             </div>
             <Button
@@ -283,10 +282,10 @@ export const ApartmentListingsSection = ({
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-      
+
   // Check if we're showing dummy data
-  const showDummyMessage = !cityParam && !genderParam && 
-    accommodations.length > 0 && 
+  const showDummyMessage = !cityParam && !genderParam &&
+    accommodations.length > 0 &&
     accommodations[0]?.id?.startsWith('dummy-');
 
   if (error && accommodations.length === 0) {
@@ -298,8 +297,8 @@ export const ApartmentListingsSection = ({
           <h3 className="text-xl font-semibold text-gray-700 mb-2">Showing Sample Listings</h3>
           <p className="text-gray-500 mb-6">We're having trouble loading the latest properties. Here are some sample listings.</p>
         </div>
-        
-        <Button 
+
+        <Button
           onClick={() => window.location.reload()}
           className="mt-8 bg-green hover:bg-green"
         >
@@ -338,13 +337,9 @@ export const ApartmentListingsSection = ({
             </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">No properties found</h3>
             <p className="text-gray-600 mb-6">
-              {cityParam && genderParam 
-                ? `No ${genderParam} accommodations found in ${cityParam}`
-                : cityParam 
-                  ? `No accommodations found in ${cityParam}`
-                  : `No ${genderParam} accommodations found`}
+              No accommodations found for searching data. Please chlick on Below button to show all data.
             </p>
-            <Button 
+            <Button
               variant="outline"
               onClick={() => {
                 // Clear the search and show all properties
@@ -373,7 +368,7 @@ export const ApartmentListingsSection = ({
           {filteredAccommodations
             .slice(startIndex, startIndex + itemsPerPage)
             .map((apartment) => (
-              <AccommodationCard 
+              <AccommodationCard
                 key={apartment.id}
                 apartment={apartment}
                 onViewDetails={onViewDetails || ((id: string) => navigate(`/property-details/${id}`))}
@@ -393,7 +388,7 @@ export const ApartmentListingsSection = ({
             >
               Previous
             </Button>
-            
+
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <Button
                 key={page}
@@ -405,7 +400,7 @@ export const ApartmentListingsSection = ({
                 {page}
               </Button>
             ))}
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -417,7 +412,7 @@ export const ApartmentListingsSection = ({
             </Button>
           </div>
         )}
-        </div>
+      </div>
     </section>
   );
 };

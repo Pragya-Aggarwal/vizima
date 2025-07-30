@@ -79,7 +79,7 @@ export const NavigationMenuSection = (): JSX.Element => {
                 <div className="md:hidden flex items-center gap-2">
                     {/* Profile Icon - Mobile Only */}
 
-                    {isUserLoggedIn ? (
+                    {/* {isUserLoggedIn ? (
                         <Button className="rounded-full px-6 py-2 font-medium flex items-center gap-2 transition-all duration-200 bg-red-500 hover:bg-red-500 text-white shadow-md hover:shadow-lg"
                             onClick={handleAuthAction}
                         >
@@ -130,8 +130,11 @@ export const NavigationMenuSection = (): JSX.Element => {
                         >
                             Login
                         </Button>
-                    )}
-
+                    )} */}
+<div className="flex flex-col text-sm text-center">
+                               <span className="font-semibold">Contact for Support</span>
+                               <span>9667300983</span>
+                               </div>
 
                     <button
                         className="md:hidden p-2"
@@ -160,7 +163,7 @@ export const NavigationMenuSection = (): JSX.Element => {
                                 </NavigationMenuItem>
                             ))}
                             <NavigationMenuItem>
-                                {isUserLoggedIn ? (
+                                {/* {isUserLoggedIn ? (
                                     <Button className="rounded-full px-6 py-2 font-medium flex items-center gap-2 transition-all duration-200 bg-red-500 hover:bg-red-500 text-white shadow-md hover:shadow-lg"
                                         onClick={handleAuthAction}
                                     >
@@ -211,7 +214,11 @@ export const NavigationMenuSection = (): JSX.Element => {
                                     >
                                         Login
                                     </Button>
-                                )}
+                                )} */}
+                               <div className="flex flex-col gap-1 text-center">
+                               <span className="font-semibold">Contact for Support</span>
+                               <span>9667300983</span>
+                               </div>
                             </NavigationMenuItem>
                         </NavigationMenuList>
                     </NavigationMenu>

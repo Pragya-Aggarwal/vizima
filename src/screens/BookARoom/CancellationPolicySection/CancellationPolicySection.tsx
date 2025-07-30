@@ -21,11 +21,6 @@ export const CancellationPolicySection = (): JSX.Element => {
         { id: "wallets", label: "Wallets" },
     ];
 
-    const handleBookNow = () => {
-        // Handle book now action
-        console.log("Booking confirmed!");
-    };
-
     // Trust features data
     const trustFeatures = [
         {
@@ -142,7 +137,7 @@ export const CancellationPolicySection = (): JSX.Element => {
                     </div>
 
                     {/* Book now button */}
-                    <Button className="w-full max h-[52px] mx-auto bg-green hover:bg-green/90 text-white rounded-[40px] font-desktop-subtitle-bold" onClick={handleBookNow}>
+                    <Button className="w-full max h-[52px] mx-auto bg-green hover:bg-green/90 text-white rounded-[40px] font-desktop-subtitle-bold" >
                         Book Now
                     </Button>
                 </div>

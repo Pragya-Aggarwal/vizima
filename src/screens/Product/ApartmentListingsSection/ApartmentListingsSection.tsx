@@ -79,7 +79,11 @@ const AccommodationCard = ({ apartment, onViewDetails }: AccommodationCardProps)
                   <div className="mb-3">
                     <div className="flex items-center gap-2 text-gray-500 mb-1">
                       <MapPin className="w-4 h-4 text-green" />
-                      <span className="text-xs font-medium">{apartment.location}</span>
+                      <span className="text-xs font-medium">
+                        {typeof apartment.location === 'string' 
+                          ? apartment.location 
+                          : apartment.location?.address || 'Location not specified'}
+                      </span>
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 mb-1">
                       {apartment.title}
@@ -208,7 +212,6 @@ export const ApartmentListingsSection = ({
   const itemsPerPage = 5; // Show 5 items per page
   const navigate = useNavigate();
 
-  console.log(propAccommodations, "accommodations")
   // Always call the hook, but let it know if we have props
   const { loading: hookLoading, accommodations: hookAccommodations, error: hookError } =
     useAccommodations(propAccommodations);

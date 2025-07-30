@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
+import SimpleMap2 from '../../components/Map/SimpleMap2';
 import {
     MapPin,
     Star,
@@ -20,25 +21,19 @@ import {
     Dumbbell,
     Check,
     Phone,
-    Mail,
-    Share2,
+    Mail,MessageCircle,
     Heart,
-    MessageSquare,
-    Map as MapIcon,
-    Building2,
-    Landmark,
-    School,
-    Train,
-    Clock,
-    Calendar,
-    User,
-    Lock,
-    Eye,
-    EyeOff
+    ArrowUpRight,
+    ShieldCheck,
+    Info,
+    BathIcon,
+    WarehouseIcon
 } from 'lucide-react';
 import { home } from '../../assets';
 import { accommodationService } from '../../api/services/accommodationService';
 import { ExtendedAccommodation, transformToExtended, Location, Amenity } from '../../lib/types';
+import { toast } from '../../components/ui/use-toast';
+import { Badge } from '../../components/ui/badge';
 
 interface RoomOption {
     type: string;
@@ -83,6 +78,11 @@ const getAmenityDetails = (amenity: string | { name: string; available: boolean 
         'security': { label: 'Security', icon: ShieldIcon },
         'furnished': { label: 'Furnished', icon: Sofa },
         'gym': { label: 'Gym', icon: Dumbbell },
+        'pool': { label: 'Pool', icon:  BathIcon},
+        'Ac': { label: 'AC', icon: Check },
+        'tv': { label: 'TV', icon: Check },
+        'Balcony': { label: 'Balcony', icon: WarehouseIcon },
+        // 'garden': { label: 'Garden', icon: park },
     };
 
     const details = amenityDetailsMap[amenityName.toLowerCase()] || { label: amenityName, icon: Check };
@@ -111,6 +111,17 @@ function PropertyDetails() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const navigate = useNavigate();
 
+    // Debug log to check property location data
+    useEffect(() => {
+        if (property?.location) {
+            console.log('Property location data:', JSON.stringify(property.location, null, 2));
+            if (property.location.coordinates) {
+                console.log('Coordinates:', property.location.coordinates);
+                console.log('Coordinates type:', typeof property.location.coordinates);
+            }
+        }
+    }, [property]);
+
     useEffect(() => {
         const fetchProperty = async () => {
             if (!id) return;
@@ -123,6 +134,7 @@ function PropertyDetails() {
 
                 if (foundProperty) {
                     setProperty(transformToExtended(foundProperty));
+                    console.log('Property found:', foundProperty);
                     setError(null);
                 } else {
                     throw new Error('Property not found');
@@ -143,16 +155,13 @@ function PropertyDetails() {
 
         const fetchSimilarProperties = async () => {
             try {
-                console.log('Fetching similar properties...');
                 const allAccommodations = await accommodationService.getAccommodations();
-                console.log('All accommodations:', allAccommodations);
 
                 // More lenient filtering - just exclude the current property
                 const similar = allAccommodations
                     .filter(acc => acc.id !== property.id)
                     .slice(0, 4); // Limit to 4 similar properties
 
-                console.log('Found similar properties:', similar);
                 setRelatedProperties(similar.map(transformToExtended));
             } catch (err) {
                 console.error('Error fetching similar properties:', err);
@@ -179,8 +188,20 @@ function PropertyDetails() {
     }, [totalImages]);
 
     const handleBookRoom = useCallback(() => {
-        if (!property) return;
-        navigate(`/book/${property.id}`);
+        if (property) {
+            const propertyWithMicroSite = property?.micrositeLink;
+            if (propertyWithMicroSite) {
+                window.location.href = propertyWithMicroSite;
+            }
+        }else{
+            toast({
+                            title: "Property Not Found",
+                            description: "There is some issue to book this property",
+                            variant: "destructive",
+                        });
+                        
+            // navigate(`/book/${property.id}`);
+        }
     }, [navigate, property]);
 
     const handleScheduleRoom = useCallback(() => {
@@ -239,6 +260,7 @@ function PropertyDetails() {
     // Get amenities and house rules with proper type checking
     const amenities: (string | Amenity)[] = Array.isArray(property.amenities)
         ? property.amenities.map(amenity => {
+            console.log(amenity);
             if (typeof amenity === 'string') return amenity;
             if (amenity && typeof amenity === 'object') {
                 if ('icon' in amenity && 'label' in amenity) {
@@ -247,6 +269,7 @@ function PropertyDetails() {
                 if ('name' in amenity) {
                     // Convert to proper Amenity type
                     const details = getAmenityDetails(amenity);
+                    console.log(details);
                     return {
                         icon: details.icon,
                         label: details.label
@@ -378,7 +401,7 @@ function PropertyDetails() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-2 w-full md:w-auto md:max-w-[200px] lg:max-w-[260px]">
+                            <div className="grid grid-cols-2 gap-2 w-full md:w-auto md:max-w-[500px] lg:max-w-[500px]">
                                 {images.slice(0, 4).map((img, index) => (
                                     <div key={index} className="relative aspect-square">
                                         <img
@@ -396,6 +419,71 @@ function PropertyDetails() {
                 </div>
                 <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 mt-4 sm:mt-6">
                     <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+                    <div className="bg-white rounded-xl shadow-sm p-5 sm:p-6 border border-gray-100">
+                            <div className="flex items-center justify-between mb-5">
+                                <h2 className="text-xl font-bold text-gray-900">Amenities</h2>
+                                <span className="text-sm text-gray-500">{amenities.length} amenities</span>
+                            </div>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                                {amenities.map((amenity, index) => {
+                                    // Handle different amenity types
+                                    if (typeof amenity === 'string') {
+                                        const details = getAmenityDetails(amenity);
+                                        const Icon = details.icon;
+                                        return (
+                                            <div
+                                                key={index}
+                                            className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                                                isAvailable 
+                                                    ? 'bg-gray-50 hover:bg-gray-100' 
+                                                    : 'bg-gray-50 opacity-60'
+                                            }`}
+                                            >
+                                                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#064749] flex-shrink-0" />
+                                                <span className="text-xs sm:text-sm font-medium truncate">
+                                                    {details.label}
+                                                </span>
+                                            </div>
+                                        );
+                                    } else if ('label' in amenity && 'icon' in amenity) {
+                                        // Handle Amenity type
+                                        const Icon = amenity.icon;
+                                        return (
+                                            <div
+                                                key={index}
+                                                className="flex items-center gap-2 p-2 sm:p-3 border border-[#E2F1E8] rounded-lg hover:bg-gray-50 transition-colors"
+                                            >
+                                                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#064749] flex-shrink-0" />
+                                                <span className="text-xs sm:text-sm font-medium truncate">
+                                                    {amenity.label}
+                                                </span>
+                                            </div>
+                                        );
+                                    } else if (amenity && typeof amenity === 'object' && 'name' in amenity) {
+                                        // Handle object with name property
+                                        const amenityObj = amenity as { name: string; available?: boolean };
+                                        const details = getAmenityDetails(amenityObj.name);
+                                        const Icon = details.icon;
+                                        const isAvailable = 'available' in amenityObj ? amenityObj.available : true;
+
+                                        return (
+                                            <div
+                                                key={index}
+                                                className={`flex items-center gap-2 p-2 sm:p-3 border ${isAvailable ? 'border-[#E2F1E8]' : 'border-gray-200 opacity-50'} rounded-lg hover:bg-gray-50 transition-colors`}
+                                            >
+                                                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#064749] flex-shrink-0" />
+                                                <span className="text-xs sm:text-sm font-medium truncate">
+                                                    {details.label}
+                                                    {!isAvailable && ' (Not Available)'}
+                                                </span>
+                                            </div>
+                                        );
+                                    }
+
+                                    return null;
+                                })}
+                            </div>
+                        </div>
                         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold p-4 sm:p-6">Room Options</h2>
                             <div className="block md:hidden">
@@ -470,122 +558,152 @@ function PropertyDetails() {
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
-                            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-4 sm:mb-6">Amenities</h2>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                                {amenities.map((amenity, index) => {
-                                    // Handle different amenity types
-                                    if (typeof amenity === 'string') {
-                                        const details = getAmenityDetails(amenity);
-                                        const Icon = details.icon;
-                                        return (
-                                            <div
-                                                key={index}
-                                                className="flex items-center gap-2 p-2 sm:p-3 border border-[#E2F1E8] rounded-lg hover:bg-gray-50 transition-colors"
-                                            >
-                                                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#064749] flex-shrink-0" />
-                                                <span className="text-xs sm:text-sm font-medium truncate">
-                                                    {details.label}
-                                                </span>
-                                            </div>
-                                        );
-                                    } else if ('label' in amenity && 'icon' in amenity) {
-                                        // Handle Amenity type
-                                        const Icon = amenity.icon;
-                                        return (
-                                            <div
-                                                key={index}
-                                                className="flex items-center gap-2 p-2 sm:p-3 border border-[#E2F1E8] rounded-lg hover:bg-gray-50 transition-colors"
-                                            >
-                                                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#064749] flex-shrink-0" />
-                                                <span className="text-xs sm:text-sm font-medium truncate">
-                                                    {amenity.label}
-                                                </span>
-                                            </div>
-                                        );
-                                    } else if (amenity && typeof amenity === 'object' && 'name' in amenity) {
-                                        // Handle object with name property
-                                        const amenityObj = amenity as { name: string; available?: boolean };
-                                        const details = getAmenityDetails(amenityObj.name);
-                                        const Icon = details.icon;
-                                        const isAvailable = 'available' in amenityObj ? amenityObj.available : true;
-
-                                        return (
-                                            <div
-                                                key={index}
-                                                className={`flex items-center gap-2 p-2 sm:p-3 border ${isAvailable ? 'border-[#E2F1E8]' : 'border-gray-200 opacity-50'} rounded-lg hover:bg-gray-50 transition-colors`}
-                                            >
-                                                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#064749] flex-shrink-0" />
-                                                <span className="text-xs sm:text-sm font-medium truncate">
-                                                    {details.label}
-                                                    {!isAvailable && ' (Not Available)'}
-                                                </span>
-                                            </div>
-                                        );
-                                    }
-
-                                    return null;
-                                })}
-                            </div>
-                        </div>
+                        
                     </div>
                     <div className="space-y-6 sm:space-y-0">
-                        <div className="mb-6 sm:mb-[80px]"></div>
-                        <div className="bg-[#E2F1E8] p-4 sm:p-2 rounded-lg shadow-md border border-[#CDEAD5] space-y-4 sm:space-y-2">
-                            <h2 className="text-lg font-semibold">Pricing & Facilities</h2>
-                            <div className="space-y-4 text-sm">
-                                <div className="flex flex-col sm:flex-row justify-between border-b border-[#CDEAD5] pb-2">
-                                    <span className="font-medium">Available From</span>
-                                    <span>{roomOptions[0]?.availableFrom || 'N/A'}</span>
+                        <div className="bg-gradient-to-br mb-4 sm:mb-4 from-[#064749] to-[#0a6c6f] p-6 rounded-xl shadow-lg text-white overflow-hidden relative">
+                            {/* Decorative elements */}
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
+                            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full -ml-16 -mb-16"></div>
+                            
+                            <div className="relative z-10">
+                                <h2 className="text-xl font-bold mb-2">Need help with your booking?</h2>
+                                <p className="text-white/80 text-sm mb-6 max-w-[85%]">Our dedicated support team is available 24/7 to assist you with any questions or concerns</p>
+                                
+                                <div className="space-y-5">
+                                    <div className="flex items-start">
+                                        <div className="bg-white/10 p-2.5 rounded-lg mr-4 flex-shrink-0">
+                                            <Phone className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-medium text-white/80 mb-1">Call us anytime</h3>
+                                            <a 
+                                                href="tel:+919667300983" 
+                                                className="text-lg font-semibold hover:text-white transition-colors flex items-center group"
+                                            >
+                                                {property?.phone || +919667300983}
+                                                <ArrowUpRight className="w-4 h-4 ml-1.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex items-start">
+                                        <div className="bg-white/10 p-2.5 rounded-lg mr-4 flex-shrink-0">
+                                            <Mail className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-medium text-white/80 mb-1">Email us</h3>
+                                            <a 
+                                                href="mailto:bookings@vizima.com" 
+                                                className="text-base font-medium hover:text-white transition-colors inline-flex items-center group"
+                                            >
+                                                bookings@vizima.com
+                                                <ArrowUpRight className="w-3.5 h-3.5 ml-1.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="pt-4 mt-4 border-t border-white/10">
+                                        <div className="flex items-center">
+                                            <div className="bg-white/10 p-2 rounded-lg mr-3">
+                                                <MessageCircle className="w-5 h-5" />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-white/70">Prefer to chat?</p>
+                                                <a href="#" className="text-sm font-medium hover:underline">Start a live chat</a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col sm:flex-row justify-between border-b border-[#CDEAD5] pb-2">
-                                    <span className="font-medium">Rent Payment Options</span>
-                                    <span>Online / UPI / Card</span>
-                                </div>
-                                <div className="flex flex-col sm:flex-row justify-between border-b border-[#CDEAD5] pb-2">
-                                    <span className="font-medium">Cancellation Policy</span>
-                                    <span className="text-left sm:text-right">Free till 224 hrs before<br />check-in</span>
-                                </div>
-                            </div>
-                            <div className="flex mt-2">
-                                <input type="text" placeholder="Enter Code" className="w-full px-3 py-2 text-sm border border-r-0 border-gray-300 rounded-l-md focus:outline-none" />
-                                <button className="bg-[#064749] hover:bg-[#053a3c] text-white px-4 py-2 text-sm whitespace-nowrap rounded-r-md">Apply</button>
                             </div>
                         </div>
 
-                        <div className="bg-white shadow rounded-lg p-4 md:p-5 border">
-                            <h2 className="text-xl md:text-2xl font-semibold mb-4">House Rules</h2>
-                            <div className="space-y-4 text-sm">
-                                {houseRules.map((rule, index) => (
-                                    <div key={index} className="flex items-start gap-3">
-                                        <ShieldIcon className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
-                                        <span className="flex-1">{rule}</span>
-                                    </div>
-                                ))}
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div className="bg-gradient-to-r from-[#064749] to-[#0a6c6f] px-6 py-4">
+                                <h2 className="text-xl font-bold text-white flex items-center">
+                                    <ShieldIcon className="w-5 h-5 mr-2" />
+                                    House Rules
+                                </h2>
+                            </div>
+                            <div className="p-6">
+                                <div className="space-y-3">
+                                    {houseRules.map((rule, index) => (
+                                        <div key={index} className="flex items-start gap-3">
+                                            <ShieldCheck className="w-5 h-5 text-[#064749] mt-0.5 flex-shrink-0" />
+                                            <p className="text-gray-700">
+                                                {rule}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="mt-6 pt-5 border-t border-gray-100">
+                                    <p className="text-sm text-gray-500 flex items-center">
+                                        <Info className="w-4 h-4 mr-2 text-[#064749]" />
+                                        Please respect these rules for a comfortable stay
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                {/* Map Section */}
+                <div className="mt-12 bg-white rounded-xl shadow-sm p-6">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Location</h2>
+                    {property?.location?.coordinates?.lat && property?.location?.coordinates?.lng ? (
+                        <div className="w-full rounded-lg overflow-hidden" style={{ height: '400px' }}>
+                            <SimpleMap2 
+                                locationGroups={[{
+                                    lat: property.location.coordinates.lat,
+                                    lng: property.location.coordinates.lng,
+                                    count: 1,
+                                    number: 1,
+                                    properties: [{
+                                        title: property.title || 'Property',
+                                        city: property.location.city || ''
+                                    }]
+                                }]}
+                                mapCenter={[
+                                    property.location.coordinates.lat, 
+                                    property.location.coordinates.lng
+                                ]}
+                            />
+                        </div>
+                    ) : (
+                        <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500">
+                            Location map not available
+                        </div>
+                    )}
+                </div>
+
+                {/* Similar Properties Section */}
                 {relatedProperties.length > 0 ? (
-                    <div className="mt-12 mb-8">
+                    <div className="bg-gray-50 mt-12">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                            <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Similar Properties Nearby</h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            <div className="text-center mb-12">
+                                <h2 className="text-3xl font-bold text-gray-900 mb-3">Similar Properties Nearby</h2>
+                                <div className="w-20 h-1 bg-[#064749] mx-auto"></div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                                 {relatedProperties.map((property) => {
                                     const imageUrl = (property.images?.[0] || home) as string;
                                     const propertyTitle = property?.title || 'Property';
                                     const location = getLocationString(property.location);
-
                                     return (
                                         <div
                                             key={getPropertyId(property)}
-                                            className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col h-full"
+                                            className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col h-full transform hover:-translate-y-2"
                                         >
-                                            <div className="relative aspect-video">
+                                            <div className="relative aspect-video overflow-hidden">
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10"></div>
+                                                <div className="absolute top-4 right-4 z-20">
+                                                    <button className="bg-white/90 hover:bg-white rounded-full p-2 shadow-md transition-all hover:scale-110">
+                                                        <Heart className="w-4 h-4 text-gray-700" />
+                                                    </button>
+                                                </div>
                                                 <img
                                                     src={imageUrl}
                                                     alt={propertyTitle}
-                                                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                                     onError={(e) => {
                                                         (e.target as HTMLImageElement).src = home;
                                                     }}
@@ -597,14 +715,18 @@ function PropertyDetails() {
                                                 )}
                                             </div>
 
-                                            <div className="p-4 flex-1 flex flex-col">
-                                                <h3 className="font-semibold text-gray-900 text-lg mb-1 line-clamp-1">
-                                                    {propertyTitle}
-                                                </h3>
-                                                <div className="flex items-center text-sm text-gray-600 mb-3">
-                                                    <MapPin className="w-4 h-4 mr-1 text-gray-400" />
-                                                    <span className="line-clamp-1">{location}</span>
+                                            <div className="p-5 pt-4">
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <h3 className="font-semibold text-gray-900 text-lg line-clamp-1">{propertyTitle}</h3>
+                                                    <div className="flex items-center bg-green-50 text-green-700 text-xs font-medium px-2 py-1 rounded">
+                                                        <Star className="w-3.5 h-3.5 mr-1 fill-current" />
+                                                        {typeof property.rating === 'number' ? property.rating.toFixed(1) : property.rating?.average?.toFixed(1) || 'New'}
+                                                    </div>
                                                 </div>
+                                                <p className="text-sm text-gray-500 flex items-center mb-3">
+                                                    <MapPin className="w-3.5 h-3.5 mr-1.5 text-gray-400 flex-shrink-0" />
+                                                    <span className="line-clamp-1">{location}</span>
+                                                </p>
 
                                                 <div className="flex items-center justify-between mb-3">
                                                     <div className="flex items-center bg-blue-50 px-2 py-1 rounded-full">
@@ -625,11 +747,11 @@ function PropertyDetails() {
                                                 </div>
 
                                                 <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-gray-100">
-                                                    <div className="flex flex-col items-center text-center">
-                                                        <Bed className="w-5 h-5 text-gray-500 mb-1" />
-                                                        <span className="text-xs text-gray-600">
-                                                            {property.bedrooms || 'N/A'} Beds
-                                                        </span>
+                                                <div className="flex flex-col items-center text-center">
+                                                    <Bed className="w-5 h-5 text-gray-500 mb-1" />
+                                                    <span className="text-xs text-gray-600">
+                                                        {property.bedrooms || 'N/A'} Beds
+                                                    </span>
                                                     </div>
                                                     <div className="flex flex-col items-center text-center">
                                                         <Bath className="w-5 h-5 text-gray-500 mb-1" />

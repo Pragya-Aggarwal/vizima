@@ -25,6 +25,13 @@ const accommodationCards = [
         iconSrc:
             "https://c.animaapp.com/mbhmsf5eMRDRNk/img/stash-arrow-up-solid.svg",
     },
+    {
+        title: "Managed Apartments",
+        description: "",
+        backgroundImage: "https://c.animaapp.com/mbhmsf5eMRDRNk/img/4.png",
+        iconSrc:
+            "https://c.animaapp.com/mbhmsf5eMRDRNk/img/stash-arrow-up-solid.svg",
+    },
 ];
 
 export const CorporateInfoSection = (): JSX.Element => {
@@ -51,7 +58,7 @@ export const CorporateInfoSection = (): JSX.Element => {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 w-full">
                 {accommodationCards.map((card, index) => (
                     <Card
                         key={index}

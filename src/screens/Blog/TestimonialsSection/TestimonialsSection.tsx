@@ -17,7 +17,7 @@ export const TestimonialsSection = (): JSX.Element => {
                 
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-16">
                     <div className="max-w-4xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl p-8 md:p-12 shadow-xl">
-                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 text-center">
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-6 text-center">
                             Looking for your next PG or hostel?
                         </h2>
 

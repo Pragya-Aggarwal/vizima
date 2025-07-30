@@ -1,4 +1,6 @@
-import { CalendarIcon, Clock, Command, Phone, Sparkles, User, ChevronDown } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, Command, Phone, Sparkles, User, ChevronDown } from "lucide-react";
+
+import "react-day-picker/dist/style.css";
 import React, { useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
@@ -292,8 +294,8 @@ export const PartnershipSection = (): JSX.Element => {
     return (
         <section className="flex flex-col lg:flex-row w-full items-center lg:items-stretch justify-between gap-8 lg:gap-12 px-4 sm:px-8 lg:px-20 py-16 sm:py-20 lg:py-28 relative overflow-hidden bg-cover bg-center bg-[var(--bg)]" 
                 style={{
-                    background: 'url(https://c.animaapp.com/mbhmsf5eMRDRNk/img/bespoke-partnerships.png) center/cover no-repeat',
-                    // background: 'linear-gradient(90deg, white 0%, rgba(6, 71, 73, 0.8) 100%), url(https://c.animaapp.com/mbhmsf5eMRDRNk/img/bespoke-partnerships.png) center/cover no-repeat',
+                    // background: 'url(https://c.animaapp.com/mbhmsf5eMRDRNk/img/bespoke-partnerships.png) center/cover no-repeat',
+                    background: 'linear-gradient( rgba(6, 71, 73, 0.8) 100%), url(https://c.animaapp.com/mbhmsf5eMRDRNk/img/bespoke-partnerships.png) center/cover no-repeat',
                     backgroundAttachment: 'fixed'
                 }}>
                 <div className="flex flex-col items-start justify-center gap-8 lg:gap-10 max-w-[600px] w-full lg:w-auto relative z-10">
@@ -348,14 +350,14 @@ export const PartnershipSection = (): JSX.Element => {
                         {formFields.map((field) => (
                             <div key={field.id} className="flex flex-col w-full items-start gap-3 sm:gap-4 relative">
                                 <div className="flex items-center gap-2 w-full">
-                                    <div className="text-green">
+                                    <div className="text-white">
                                         {field.icon}
                                     </div>
                                     <div className="flex-1">
-                                        <label htmlFor={field.id} className="block text-sm font-medium text-[var(--text)]">
+                                        <label htmlFor={field.id} className="block text-sm font-medium text-white">
                                             {field.label}
                                             {field.id === 'phone' && !isLoggedIn() && (
-                                                <span className={`text-xs font-normal ml-1 ${isPhoneVerified ? 'text-green' : 'text-black'}`}>
+                                                <span className={`text-xs font-normal ml-1 ${isPhoneVerified ? 'text-green' : 'text-white'}`}>
                                                     {isPhoneVerified ? '(✓ Verified)' : '(Verification required)'}
                                                 </span>
                                             )}
@@ -379,9 +381,6 @@ export const PartnershipSection = (): JSX.Element => {
                                                 amPmAriaLabel="Select AM/PM"
                                                 required
                                             />
-                                        </div>
-                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                                            <ChevronDown className="h-4 w-4" />
                                         </div>
                                     </div>
                                 ) : field.id === "meetingType" ? (

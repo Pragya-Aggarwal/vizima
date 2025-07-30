@@ -105,7 +105,7 @@ export const BookARoom = (): JSX.Element => {
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3">
-                                    {property.amenities?.map((item, index) => (
+                                    {property.amenities?.slice(0, 6).map((item, index) => (
                                         <div key={index} className="flex items-center gap-2 text-gray-700">
                                             <div className="text-green">
                                                 <item.icon className="w-4 h-4" />
@@ -149,10 +149,10 @@ export const BookARoom = (): JSX.Element => {
                         <div className="lg:col-span-8">
                             <Card className="overflow-hidden border border-gray-200 shadow-sm">
                                 <div className="bg-gray-50 border-b border-gray-100 px-4 sm:px-6 py-3 sm:py-4">
-                                    <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Complete Your Booking</h2>
-                                    <p className="text-xs sm:text-sm text-gray-500 mt-1">Secure your stay in just a few steps</p>
+                                    <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Schedule a Visit</h2>
+                                    <p className="text-xs sm:text-sm text-gray-500 mt-1">Book a time to visit our property</p>
                                 </div>
-                                <Tabs defaultValue={defaultTab} className="w-full">
+                                {/* <Tabs defaultValue={defaultTab} className="w-full">
                                     <TabsList className="w-full h-14 sm:h-16 bg-white border-b rounded-none flex">
                                         <TabsTrigger
                                             value="book"
@@ -168,7 +168,7 @@ export const BookARoom = (): JSX.Element => {
                                         </TabsTrigger>
                                     </TabsList>
 
-                                    <div className="p-4 sm:p-6 md:p-8">
+                                <div className="p-4 sm:p-6 md:p-8">
                                         <TabsContent value="book" className="mt-0">
                                             <div className="space-y-1 mb-6 sm:mb-8">
                                                 <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
@@ -196,7 +196,10 @@ export const BookARoom = (): JSX.Element => {
                                             </div>
                                         </TabsContent>
                                     </div>
-                                </Tabs>
+                                </Tabs> */}
+                                <div className="mt-6">
+                                    <ScheduleAForm propertyId={id} propertyName={property.title} />
+                                </div>
                             </Card>
                         </div>
                         <div className="lg:col-span-4 space-y-4 sm:space-y-6 sticky top-6">
@@ -295,7 +298,7 @@ export const BookARoom = (): JSX.Element => {
                                             </div>
                                             <div>
                                                 <div className="text-sm font-medium text-gray-900">Call us</div>
-                                                <div className="text-sm text-blue-600">+91 98765 43210</div>
+                                                <div className="text-sm text-blue-600">+919667300983</div>
                                             </div>
                                         </a>
                                         <a

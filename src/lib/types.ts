@@ -10,8 +10,20 @@ import {
     Shield as ShieldIcon,
     BedDouble,
     Dumbbell,
-    Ban
+    Ban,
+    BathIcon,
+    Refrigerator,
+    WarehouseIcon,
+    Check,
+    Dog,
+    Tv,
+    UtensilsCrossedIcon,
+    Microwave,
+    Heater,
+    AirVent,
+    Trees
 } from 'lucide-react';
+import { FaParking } from 'react-icons/fa';
 
 export interface RoomOption {
     type: string;
@@ -63,7 +75,16 @@ export interface ExtendedAccommodation {
         average: number;
         count: number;
     };
-    location?: Location | string;
+    location?:{
+        coordinates?: {
+            lat: number;
+            lng: number;
+        };
+        address?: string;
+        city?: string;
+        state?: string;
+        zipCode?: string;
+    };
     owner?: {
         _id: string;
         name: string;
@@ -94,6 +115,7 @@ export interface ExtendedAccommodation {
     };
     reviews?: number;
     tags?: string[];
+    phone?: string;
 }
 
 const amenityDetailsMap: { [key: string]: { label: string; icon: React.ComponentType<{ className?: string }> } } = {
@@ -107,6 +129,16 @@ const amenityDetailsMap: { [key: string]: { label: string; icon: React.Component
     'security': { label: 'Security', icon: ShieldIcon },
     'furnished': { label: 'Furnished', icon: BedDouble },
     'gym': { label: 'Gym', icon: Dumbbell },
+    'pool': { label: 'Pool', icon: BathIcon },
+    'ac': { label: 'AC', icon: AirVent },
+    'tv': { label: 'TV', icon: Tv },
+    'balcony': { label: 'Balcony', icon: WarehouseIcon },
+    'garden': { label: 'Garden', icon:Trees  },
+    'refrigerator':{label:'Refrigerator',icon:Refrigerator},
+    'pets':{label:'Pets',icon:Dog},
+    'dishwasher':{label:'Dishwasher',icon:UtensilsCrossedIcon},
+    "microwave":{label:'Microwave',icon:Microwave},
+    "heating":{label:'Heating',icon:Heater}
 };
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
@@ -121,6 +153,7 @@ export const transformToExtended = (acc: any): ExtendedAccommodation => {
         { icon: CarIcon, label: "Parking" },
         { icon: UtensilsIcon, label: "Kitchen" },
         { icon: ShieldIcon, label: "Security" },
+        
     ];
 
     let processedAmenities: Amenity[] = defaultAmenities;

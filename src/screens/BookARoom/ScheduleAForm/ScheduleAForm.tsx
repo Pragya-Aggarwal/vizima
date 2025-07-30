@@ -27,6 +27,7 @@ interface FormData {
     preferredProperty: string;
     selectedDateTime: string;
     visitType: string;
+    description: string;
 }
 
 interface FormErrors {
@@ -38,6 +39,7 @@ interface FormErrors {
     preferredProperty?: string;
     selectedDateTime?: string;
     visitType?: string;
+    description?: string;
 }
 
 interface FormField {
@@ -63,6 +65,7 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
         preferredProperty: "",
         selectedDateTime: "",
         visitType: "",
+        description: "",
     });
     // Error state
     const [errors, setErrors] = useState<FormErrors>({});
@@ -106,10 +109,6 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
         fetchPropertyTitles();
     }, [propertyId, propertyName]);
 
-    // Debug log
-    console.log('propertyTitles:', propertyTitles);
-    console.log('preferredProperty:', formData.preferredProperty);
-
     // Form field data
     const formFields: FormField[] = [
         {
@@ -145,7 +144,7 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
     };
 
     // Handle input changes
-    const handleInputChange = (field: Exclude<keyof FormData, 'description'>, value: string) => {
+    const handleInputChange = (field: Exclude<keyof FormData, 'des'>, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
         if (errors[field]) {
             setErrors(prev => {
@@ -213,6 +212,7 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
                 sharing: formData.doubleSharing.toLowerCase(),
                 propertyId: propertyId || "507f191e810c19729de860ea",
                 propertyName: propertyName || "",
+                description: formData.description,
             };
 
             // Call the visit service
@@ -230,11 +230,12 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
                 fullName: "",
                 mobileNumber: "",
                 email: "",
-                gender: "male",
-                doubleSharing: "Comfort Stay PG",
+                gender: "",
+                doubleSharing: "",
                 selectedDateTime: "",
-                visitType: "physical",
+                visitType: "",
                 preferredProperty: "",
+                description: "",
             });
             setErrors({});
         } catch (error) {
@@ -411,7 +412,24 @@ export const ScheduleAForm = ({ propertyId, propertyName }: ScheduleAFormProps):
                                 </p>
                             )}
                         </div>
-
+                        <div className="mb-5">
+                        <div className="font-desktop-subtitle-bold text-text mb-1 ml-2.5">
+                                Description
+                        </div>
+                        <Input
+                                type="text"
+                                className="h-[52px] bg-white rounded-xl border border-solid border-[#c3d0d7] pl-[26px] font-desktop-subtitle text-text"
+                                value={formData.description}
+                                placeholder="Description"
+                                onChange={(e) => handleInputChange("description", e.target.value)}
+                                disabled={isSubmitting}
+                            />
+                            {errors.description && (
+                                <p className="text-red-500 text-sm mt-1 ml-2.5">
+                                    {errors.description}
+                                </p>
+                            )}
+                        </div>
                         {/* Payment Section */}
                         <div className="space-y-10">
 

@@ -2,7 +2,22 @@ import { useEffect, useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { accommodationService, type Accommodation } from "../../../api/services/accommodationService";
+import { accommodationService, type Accommodation, type Rating } from "../../../api/services/accommodationService";
+
+// Helper function to safely display ratings
+const getRatingDisplay = (rating: number | Rating | undefined): string => {
+  if (rating === undefined || rating === null) return 'N/A';
+  
+  if (typeof rating === 'number') {
+    return rating.toFixed(1);
+  }
+  
+  if (typeof rating === 'object' && 'average' in rating) {
+    return typeof rating.average === 'number' ? rating.average.toFixed(1) : 'N/A';
+  }
+  
+  return 'N/A';
+};
 
 interface PropertyCardProps {
   property: Accommodation;
@@ -13,7 +28,7 @@ const PropertyCard = ({ property, onViewDetails }: PropertyCardProps) => (
   <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
     <div className="relative h-48 bg-gray-100">
       <img
-        src={property.images[0] || ''}
+        src={property.images?.[0] || ''}
         alt={property.title}
         className="w-full h-full object-cover"
         onError={(e) => {
@@ -27,12 +42,16 @@ const PropertyCard = ({ property, onViewDetails }: PropertyCardProps) => (
     </div>
     <CardContent className="p-4">
       <h3 className="text-lg font-semibold mb-1 line-clamp-1">{property.title}</h3>
-      <p className="text-sm text-gray-600 mb-3">{property.location}</p>
+      <p className="text-sm text-gray-600 mb-3">
+        {typeof property.location === 'string' 
+          ? property.location 
+          : property.location?.address || 'Location not specified'}
+      </p>
 
       <div className="flex items-center justify-between mt-4">
         <div className="flex space-x-2">
           <div className="flex items-center text-xs text-gray-500">
-            <span>⭐ {typeof property.rating === 'object' ? property.rating.average.toFixed(1) : property.rating?.toFixed(1) || 'N/A'}</span>
+            <span>⭐ {getRatingDisplay(property.rating)}</span>
           </div>
           <div className="flex items-center text-xs text-gray-500">
             <span>🛏️ {property?.bedrooms || 1}</span>

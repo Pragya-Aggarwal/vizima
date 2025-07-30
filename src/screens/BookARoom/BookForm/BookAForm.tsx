@@ -121,10 +121,6 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
         fetchPropertyTitles();
     }, []);
 
-    // Debug log
-    console.log('propertyTitles:', propertyTitles);
-    console.log('preferredProperty:', formData.preferredProperty);
-
     // Form field data
     const formFields: FormField[] = [
         {
@@ -273,11 +269,8 @@ export const BookAForm = ({ propertyId }: BookAFormProps): JSX.Element => {
 
                     // Find the first property with microSiteLink
                     const propertyWithMicroSite = foundProperty?.micrositeLink;
-                    console.log(propertyWithMicroSite, "propertyWithMicroSite")
                     if (propertyWithMicroSite) {
-                        console.log(propertyWithMicroSite, "propertyWithMicroSite")
                         window.location.href = propertyWithMicroSite;
-                        console.log(propertyWithMicroSite, "propertyWithMicroSite")
                     }
                 } catch (error) {
                     console.error('Failed to fetch bulk accommodation data:', error);

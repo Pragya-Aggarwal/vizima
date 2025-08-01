@@ -230,8 +230,8 @@ const Contact = () => {
                                     <div>
                                         <h3 className="text-lg font-semibold text-gray-900 mb-1">Email</h3>
                                         <p className="text-gray-600 mb-2">We'll respond as soon as possible</p>
-                                        <a href="mailto:support@vizima.com" className="text-green hover:underline">
-                                            support@vizima.com
+                                        <a href="mailto:Stay@vizima.in" className="text-green hover:underline">
+                                        Stay@vizima.in
                                         </a>
                                     </div>
                                 </div>
@@ -247,7 +247,7 @@ const Contact = () => {
                                         <h3 className="text-lg font-semibold text-gray-900 mb-1">Our Office</h3>
                                         <p className="text-gray-600 mb-2">Visit us during business hours</p>
                                         <p className="text-gray-700">Vizima premium Girls Hostel
-                                        I-110, Raipur,  Behind Windsor,  sector 126 noida.</p>
+                                        I-110, Raipur Khadar, near Windsor Grand, sector 126,  noida</p>
                                     </div>
                                 </div>
                             </Card>
@@ -262,13 +262,14 @@ const Contact = () => {
                     <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">Find Us on Map</h2>
                     <div className="rounded-xl overflow-hidden shadow-lg h-96">
                         <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.2648587677!2d72.82751431490086!3d19.07598398710211!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c9c676018b43%3A0x75f29a4205098f99!2sMumbai%2C%20Maharashtra%2C%20India!5e0!3m2!1sen!2sus!4v1648123456789!5m2!1sen!2sus"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3507.1234567890123!2d77.3322121!3d28.5415074!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjjCsDMyJzI5LjQiTiA3N8KwMTknNTUuOSJF!5e0!3m2!1sen!2sin!5m2!1sen!2sin&markers=color:red%7C28.5415074,77.3322121&markers=icon:https://maps.google.com/mapfiles/ms/icons/blue-dot.png%7C28.5415074,77.3322121"
                             width="100%"
                             height="100%"
                             style={{ border: 0 }}
                             allowFullScreen
+                            title="Vizima Premium Girls Hostel Location"
                             loading="lazy"
-                            title="Our Location on Map"
+                            referrerPolicy="no-referrer-when-downgrade"
                         ></iframe>
                     </div>
                 </div>

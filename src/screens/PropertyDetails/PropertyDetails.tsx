@@ -594,10 +594,10 @@ function PropertyDetails() {
                                         <div>
                                             <h3 className="text-sm font-medium text-white/80 mb-1">Email us</h3>
                                             <a 
-                                                href="mailto:bookings@vizima.com" 
+                                                href="mailto:Stay@vizima.in" 
                                                 className="text-base font-medium hover:text-white transition-colors inline-flex items-center group"
                                             >
-                                                bookings@vizima.com
+                                                Stay@vizima.in
                                                 <ArrowUpRight className="w-3.5 h-3.5 ml-1.5 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </a>
                                         </div>

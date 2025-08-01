@@ -8,6 +8,7 @@ import { HeroSection } from "./HeroSection";
 import { FeaturedPropertiesSection } from "./FeaturedPropertiesSection/FeaturedPropertiesSection";
 import { PartnershipSection } from "./PartnershipSection/PartnershipSection";
 import { CorporateInfoSection } from "./CorporateInfoSection";
+import { MealPlanSection } from "./MealPlanSection/MealPlanSection";
 import { bannerService, Banner } from '../../api/services/bannerService';
 import { home } from "../../assets";
 
@@ -132,6 +133,7 @@ export const Homepage = (): JSX.Element => {
                     <WhyChooseUsSection />
                     <HeroSection />
                     <FeaturedPropertiesSection />
+                    <MealPlanSection />
                     <PartnershipSection />
                     <CorporateInfoSection />
                     <TestimonialsSection />

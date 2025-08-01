@@ -6,6 +6,7 @@ import { PartnershipsSection } from "./PartnershipsSection";
 import { FeaturesSection } from "./FeaturesSection";
 import { HeroSection } from "./HeroSection";
 import { TestimonialsSection } from "./TestimonialsSection";
+import { MealPlanSection } from "../Homepage/MealPlanSection/MealPlanSection";
 
 export const Blog = (): JSX.Element => {
     return (
@@ -26,6 +27,10 @@ export const Blog = (): JSX.Element => {
 
                 <div className="py-1">
                     <FeaturesSection />
+                </div>
+
+                <div className="py-16">
+                    <MealPlanSection />
                 </div>
 
                 <div className="py-16">

@@ -66,7 +66,7 @@ const SimpleMap2: React.FC<SimpleMapProps> = ({ locationGroups, mapCenter }) => 
       // Create map instance with higher zoom level
       const map = L.map(mapContainer.current, {
         center: [centerLat, centerLng],
-        zoom: 2, // Increased from 12 to 15 for closer zoom
+        zoom: 10, // Increased for closer zoom (2 is very far, 15 is street level)
         zoomControl: true,
         scrollWheelZoom: true,
         doubleClickZoom: true,

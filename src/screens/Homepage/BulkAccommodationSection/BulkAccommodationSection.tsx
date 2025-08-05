@@ -44,19 +44,30 @@ export const BulkAccommodationSection = (): JSX.Element => {
         }
     };
 
-    // Footer link data for mapping
+    // Footer link data for mapping with proper paths
     const footerLinks = [
         {
             title: "Company",
-            links: ["Home", "About us"],
+            links: [
+                { text: "Home", path: "/" },
+                { text: "About us", path: "/about" },
+                { text: "Contact us", path: "/contact" }
+            ],
         },
         {
             title: "Guests",
-            links: ["Blog", "FAQ", "Career"],
+            links: [
+                { text: "Blog", path: "/blog" },
+                { text: "FAQ", path: "/faq" },
+                { text: "Career", path: "/career" }
+            ],
         },
         {
             title: "Privacy",
-            links: ["Terms of Service", "Privacy Policy"],
+            links: [
+                { text: "Terms of Service", path: "/terms" },
+                { text: "Privacy Policy", path: "/privacy" }
+            ],
         },
     ];
 
@@ -86,11 +97,11 @@ export const BulkAccommodationSection = (): JSX.Element => {
                                     {section.links.map((link, linkIndex) => (
                                         <a
                                             key={linkIndex}
-                                            href="#" // TODO: Replace with real links
+                                            href={link.path}
                                             className="font-desktop-subtitle text-text hover:underline focus:underline text-xs sm:text-sm md:text-base transition-colors duration-150"
                                             tabIndex={0}
                                         >
-                                            {link}
+                                            {link.text}
                                         </a>
                                     ))}
                                 </div>

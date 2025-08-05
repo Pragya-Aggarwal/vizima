@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "../../../components/ui/card";
 import { useNavigate } from 'react-router-dom';
+import { managed } from "../../../assets";
 
 // Data for the cards to enable mapping
 const accommodationCards = [
@@ -28,7 +29,7 @@ const accommodationCards = [
     {
         title: "Managed Apartments",
         description: "",
-        backgroundImage: "https://c.animaapp.com/mbhmsf5eMRDRNk/img/4.png",
+        backgroundImage: managed,
         iconSrc:
             "https://c.animaapp.com/mbhmsf5eMRDRNk/img/stash-arrow-up-solid.svg",
     },

@@ -3,20 +3,46 @@ import { Card } from "../../components/ui/card"
 import { Input } from "../../components/ui/input"
 import { Label } from "../../components/ui/label"
 import { MapPin, Mail, Phone, MessageCircle, Loader2, Send, Clock, User } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Textarea } from "../../components/ui/textarea"
 import { contactService, type ContactMessageParams } from "../../api/services/contactService"
 import { useToast } from "../../components/ui/use-toast"
+import SimpleMap2 from "../../components/Map/SimpleMap2"
+import { geocodeAddress } from "../../utils/geocode"
 
 const Contact = () => {
     const { toast } = useToast()
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [mapCenter, setMapCenter] = useState<[number, number]>([28.5415, 77.3322]) // Default to Noida coordinates
+    const [isMapLoading, setIsMapLoading] = useState(true)
     const [formData, setFormData] = useState<Omit<ContactMessageParams, 'mobileNumber'> & { phone: string }>({
         fullName: '',
         email: '',
         phone: '',
         message: ''
     })
+
+    // Geocode the address when component mounts
+    useEffect(() => {
+        const loadMap = async () => {
+            try {
+                setIsMapLoading(true)
+                const coords = await geocodeAddress('I-110, Raipur Khadar, near Windsor Grand, sector 126, noida')
+                setMapCenter([coords.lat, coords.lng])
+            } catch (error) {
+                console.error('Error loading map:', error)
+                toast({
+                    title: 'Map Error',
+                    description: 'Could not load map. Please try again later.',
+                    variant: 'destructive'
+                })
+            } finally {
+                setIsMapLoading(false)
+            }
+        }
+
+        loadMap()
+    }, [toast])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target
@@ -260,17 +286,30 @@ const Contact = () => {
             <div className="bg-gray-50 py-16">
                 <div className="container mx-auto px-4">
                     <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">Find Us on Map</h2>
-                    <div className="rounded-xl overflow-hidden shadow-lg h-96">
-                        <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3507.1234567890123!2d77.3322121!3d28.5415074!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjjCsDMyJzI5LjQiTiA3N8KwMTknNTUuOSJF!5e0!3m2!1sen!2sin!5m2!1sen!2sin&markers=color:red%7C28.5415074,77.3322121&markers=icon:https://maps.google.com/mapfiles/ms/icons/blue-dot.png%7C28.5415074,77.3322121"
-                            width="100%"
-                            height="100%"
-                            style={{ border: 0 }}
-                            allowFullScreen
-                            title="Vizima Premium Girls Hostel Location"
-                            loading="lazy"
-                            referrerPolicy="no-referrer-when-downgrade"
-                        ></iframe>
+                    <div className="rounded-xl overflow-hidden shadow-lg h-96 bg-white">
+                        {isMapLoading ? (
+                            <div className="w-full h-full flex items-center justify-center">
+                                <div className="flex flex-col items-center">
+                                    <Loader2 className="h-8 w-8 text-green animate-spin mb-2" />
+                                    <p className="text-gray-600">Loading map...</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <SimpleMap2 
+                                mapCenter={mapCenter}
+                                locationGroups={[{
+                                    lat: mapCenter[0],
+                                    lng: mapCenter[1],
+                                    count: 1,
+                                    number: 1,
+                                    properties: [{
+                                        title: 'Vizima Premium Girls Hostel',
+                                        city: 'Noida',
+                                        address: 'I-110, Raipur Khadar, near Windsor Grand, sector 126, noida'
+                                    }]
+                                }]}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

@@ -30,10 +30,10 @@ export const MealPlanSection = (): JSX.Element => {
             <div className="container mx-auto px-4">
                 <div className="max-w-4xl mx-auto text-center mb-12">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mb-6">
-                        <Utensils className="w-8 h-8" />
+                    <span className="text-3xl">🥗</span>
                     </div>
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                        🥗 Pure Veg Meal Plan at Vizima Hostels
+                         Pure Veg Meal Plan at Vizima Hostels
                     </h2>
                     <p className="text-xl text-gray-600 mb-8">
                         Nutritious. Hygienic. Homely.

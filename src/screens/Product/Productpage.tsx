@@ -1,4 +1,4 @@
-import { MinusIcon, PlusIcon, MapIcon, ListIcon } from "lucide-react";
+import { MapIcon, ListIcon } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import { ApartmentListingsSection } from "./ApartmentListingsSection/ApartmentListingsSection";
@@ -26,32 +26,75 @@ export const ProductPage = (): JSX.Element => {
     const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
     const [sortBy, setSortBy] = useState<string>('availability');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-    // Initialize searchQuery from URL params
-    const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
-    // Add local state for the search input (not applied until Search is clicked)
-    const [searchInput, setSearchInput] = useState(searchQuery);
+    // Initialize search states from URL params
+    const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || searchParams.get('city') || '');
+    const [searchInput, setSearchInput] = useState(searchParams.get('search') || searchParams.get('city') || '');
+
+    // Handle search submission
+    const handleSearch = useCallback(() => {
+        // Update URL with search query
+        const params = new URLSearchParams(searchParams);
+        if (searchInput.trim()) {
+            params.set('search', searchInput.trim());
+            // Also set city parameter if it's a location search
+            params.set('city', searchInput.trim().toLowerCase());
+        } else {
+            params.delete('search');
+            params.delete('city');
+        }
+        navigate(`/property-listing?${params.toString()}`, { replace: true });
+
+        // Update the search query state which will trigger filtering
+        setSearchQuery(searchInput.trim());
+    }, [searchInput, searchParams, navigate]);
+
+    // Handle input change
+    const handleInputChange = useCallback((value: string) => {
+        setSearchInput(value);
+    }, []);
+
+    // Sync URL search params with state on initial load and when params change
+    useEffect(() => {
+        const searchParam = searchParams.get('search') || searchParams.get('city') || '';
+        if (searchParam !== searchQuery) {
+            setSearchQuery(searchParam);
+            setSearchInput(searchParam);
+        }
+    }, [searchParams, searchQuery]);
 
     // Filter accommodations based on search query, city, gender, and other filters
     const filterAccommodations = useCallback((data: Accommodation[]) => {
         return data.filter(acc => {
             const searchLower = searchQuery.toLowerCase().trim();
+            const accTitle = String(acc.title || '').toLowerCase();
+            const accLocation = String(acc.location || '').toLowerCase();
+            const accCity = String(acc.city || '').toLowerCase();
+            const accGender = String(acc.gender || '').toLowerCase();
+            const accType = String(acc.type || '').toLowerCase();
+
+            // Check if the search query matches title or location
             const matchesSearch = !searchLower ||
-                (acc.title && acc.title.toLowerCase().includes(searchLower)) ||
-                (acc.location && acc.location.toLowerCase().includes(searchLower));
+                accTitle.includes(searchLower) ||
+                accLocation.includes(searchLower);
 
-            const matchesCity = !city || (acc.city && acc.city.toLowerCase() === city);
-            const matchesGender = !gender || (acc.gender && acc.gender.toLowerCase() === gender);
+            // Check if the city filter matches
+            const matchesCity = !city || accCity === city.toLowerCase();
 
-            // Apply active filters
-            const matchesLocation = !activeFilters.location ||
-                (acc.location && acc.location.toLowerCase().includes(activeFilters.location.toLowerCase()));
-            const matchesPropertyType = !activeFilters.propertyType ||
-                (acc.type && acc.type.toLowerCase() === activeFilters.propertyType.toLowerCase());
-            const matchesSharingType = !activeFilters.sharingType ||
-                (acc.sharingType && Array.isArray(acc.sharingType) &&
-                    acc.sharingType.some(type => type.toLowerCase() === activeFilters.sharingType.toLowerCase()));
-            const matchesGenderFilter = !activeFilters.gender ||
-                (acc.gender && acc.gender.toLowerCase() === activeFilters.gender.toLowerCase());
+            // Check if the gender filter matches
+            const matchesGender = !gender || accGender === gender.toLowerCase();
+
+            // Apply active filters with null checks
+            const activeLocation = String(activeFilters.location || '').toLowerCase();
+            const activePropertyType = String(activeFilters.propertyType || '').toLowerCase();
+            const activeSharingType = String(activeFilters.sharingType || '').toLowerCase();
+            const activeGenderFilter = String(activeFilters.gender || '').toLowerCase();
+
+            const matchesLocation = !activeLocation || accLocation.includes(activeLocation);
+            const matchesPropertyType = !activePropertyType || accType === activePropertyType;
+            const matchesSharingType = !activeSharingType ||
+                (Array.isArray(acc.sharingType) &&
+                    acc.sharingType.some(type => String(type).toLowerCase() === activeSharingType));
+            const matchesGenderFilter = !activeGenderFilter || accGender === activeGenderFilter;
 
             return (
                 matchesSearch &&
@@ -92,29 +135,52 @@ export const ProductPage = (): JSX.Element => {
         });
     }, [sortBy, sortOrder]);
 
-    // Handle clearing all filters
-    const handleClearAll = () => {
-        // Reset filtered accommodations to show all
-        setFilteredAccommodations([...allAccommodations]);
-        // Clear active filters
+    // Handler for clearing all filters
+    const handleClearAll = useCallback(() => {
         setActiveFilters({});
-        // Clear search query and reset URL
         setSearchQuery('');
         navigate('/property-listing', { replace: true });
-    };
+    }, [navigate]);
 
-    // Handle filter changes from the FiltersAndSortingSection
-    const handleFilterChange = (filters: Record<string, string>) => {
-        setActiveFilters(filters);
+    // Handler for filter changes
+    const handleFilterChange = useCallback((filters: Record<string, string>) => {
+        setActiveFilters(prev => ({
+            ...prev,
+            ...filters
+        }));
+    }, []);
 
-        // Always filter accommodations, even if no filters (do not fallback to all)
+    // Handler for sort changes
+    const handleSortChange = useCallback((sortOption: string) => {
+        if (sortOption === 'price-desc') {
+            setSortBy('price');
+            setSortOrder('desc');
+        } else {
+            setSortBy(sortOption);
+            setSortOrder('asc');
+        }
+    }, []);
+
+    // Apply filters and sorting whenever dependencies change
+    useEffect(() => {
+        if (allAccommodations.length === 0) return;
+
         let result = [...allAccommodations];
 
-        // Apply each active filter
-        Object.entries(filters).forEach(([key, value]) => {
+        // Apply search query filter
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase();
+            result = result.filter(acc =>
+                String(acc.title || '').toLowerCase().includes(query) ||
+                String(acc.location || '').toLowerCase().includes(query) ||
+                String(acc.city || '').toLowerCase().includes(query)
+            );
+        }
+
+        // Apply active filters
+        Object.entries(activeFilters).forEach(([key, value]) => {
             if (value && value !== 'all') {
                 result = result.filter(acc => {
-                    // Handle different filter types
                     const accValue = acc[key as keyof typeof acc];
                     if (Array.isArray(accValue)) {
                         return accValue.includes(value);
@@ -124,30 +190,10 @@ export const ProductPage = (): JSX.Element => {
             }
         });
 
+        // Apply sorting
+        result = sortAccommodations(result);
         setFilteredAccommodations(result);
-    };
-
-    // Handle sort changes from the FiltersAndSortingSection
-    const handleSortChange = (sortOption: string) => {
-
-
-        // Handle special cases for price-desc
-        if (sortOption === 'price-desc') {
-            setSortBy('price');
-            setSortOrder('desc');
-            return;
-        }
-
-        // For all other cases, check if we're toggling the same sort option
-        if (sortOption === sortBy) {
-            // Toggle sort order if clicking the same sort option
-            setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
-        } else {
-            // Set new sort option with default ascending order
-            setSortBy(sortOption);
-            setSortOrder('asc');
-        }
-    };
+    }, [allAccommodations, searchQuery, activeFilters, sortAccommodations]);
 
     // Fetch data on initial load
     useEffect(() => {
@@ -210,66 +256,57 @@ export const ProductPage = (): JSX.Element => {
         setShowMap(!showMap);
     };
 
+
+
     return (
-        <div className="bg-[#ffffff] flex flex-row justify-center w-full overflow-x-hidden">
-            <div className="bg-white w-full relative">
-                {/* Search Bar Section */}
-                <div className="w-full max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12">
+        <div className="bg-white min-h-screen">
+            {/* Search Bar Section */}
+            <div className="w-full bg-white shadow-sm sticky top-0 z-10">
+                <div className="max-w-7xl mx-auto px-4 py-2">
                     <SearchBarSection
                         value={searchInput}
-                        onChange={setSearchInput}
-                        onSearch={() => {
-                            // Only update searchQuery (and thus trigger filtering) when Search is clicked
-                            setSearchQuery(searchInput);
-                            // Optionally update the URL param as before
-                            const newParams = new URLSearchParams(searchParams);
-                            if (searchInput.trim()) {
-                                newParams.set('search', searchInput.trim().toLowerCase());
-                            } else {
-                                newParams.delete('search');
-                            }
-                            navigate(`/property-listing?${newParams.toString()}`);
-                        }}
+                        onChange={handleInputChange}
+                        onSearch={handleSearch}
                     />
                 </div>
+            </div>
 
-                {/* Filters and Sorting Section */}
-                <div className="sticky top-0 z-30 bg-white border-b border-gray-100">
-                    <div className="max-w-[1440px] mx-auto">
+            {/* Mobile View Toggle */}
+            <div className="fixed bottom-24 right-4 z-50 lg:hidden">
+                <Button
+                    onClick={toggleView}
+                    className="bg-green hover:bg-green/90 text-white rounded-full px-4 py-2 sm:px-6 sm:py-3 flex items-center gap-2 shadow-lg transition-all duration-200 text-sm sm:text-base"
+                >
+                    {showMap ? (
+                        <>
+                            <ListIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <span>Show List</span>
+                        </>
+                    ) : (
+                        <>
+                            <MapIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <span>Show Map</span>
+                        </>
+                    )}
+                </Button>
+            </div>
+
+            {/* Main content area with listings and map */}
+            <div className="max-w-[1440px] mx-auto px-4 sm:px-2 md:px-8 lg:px-12 mt-2 sticky top-[80px]">
+                <div className="flex flex-col w-full">
+                    {/* Filters and Sorting Section */}
+                    <div className="w-full mb-6 bg-white p-2 rounded-lg shadow-sm border border-gray-100">
                         <FiltersAndSortingSection
+                            accommodations={allAccommodations}
                             onFilterChange={handleFilterChange}
                             onSortChange={handleSortChange}
                             onClearAll={handleClearAll}
-                            accommodations={allAccommodations}
                         />
                     </div>
-                </div>
 
-                {/* Mobile View Toggle */}
-                <div className="fixed bottom-24 right-4 z-20 lg:hidden">
-                    <Button
-                        onClick={toggleView}
-                        className="bg-green hover:bg-green/90 text-white rounded-full px-6 py-3 flex items-center gap-2 shadow-lg"
-                    >
-                        {showMap ? (
-                            <>
-                                <ListIcon className="w-5 h-5" />
-                                Show List
-                            </>
-                        ) : (
-                            <>
-                                <MapIcon className="w-5 h-5" />
-                                Show Map
-                            </>
-                        )}
-                    </Button>
-                </div>
-
-                {/* Main content area with listings and map */}
-                <div className="max-w-[1440px] mx-auto px-4 sm:px-2 md:px-8 lg:px-12 mt-6">
-                    <div className="flex flex-col lg:flex-row gap-6 sm:gap-2">
+                    <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
                         {/* Left column - Apartment listings */}
-                        <div className={`flex-1 min-w-0 ${showMap ? 'hidden lg:block' : 'block'}`}>
+                        <div className={`w-full ${showMap ? 'hidden lg:block lg:flex-1' : 'block'}`}>
                             <ApartmentListingsSection
                                 accommodations={filteredAccommodations}
                                 loading={loading}
@@ -279,38 +316,29 @@ export const ProductPage = (): JSX.Element => {
                         </div>
 
                         {/* Right column - Map */}
-                        <div className={`lg:w-[500px] xl:w-[600px] sticky top-[80px] h-[900px] lg:h-[calc(100vh-120px)] ${showMap ? 'block' : 'hidden lg:block'}`}>
-                            <div className="relative w-full h-full rounded-2xl overflow-hidden border border-gray-200">
-                                <LocationMapSection />
-                                {/* Map Controls */}
-                                {/* <div className="absolute top-4 right-4 flex flex-col gap-2">
-                                    <button className="p-2 bg-green hover:bg-green/90 rounded-lg transition-colors shadow-md">
-                                        <PlusIcon className="w-5 h-5 text-white" />
-                                    </button>
-                                    <button className="p-2 bg-green hover:bg-green/90 rounded-lg transition-colors shadow-md">
-                                        <MinusIcon className="w-5 h-5 text-white" />
-                                    </button>
-                                </div> */}
+                        <div className={`w-full lg:w-[500px] xl:w-[600px] ${showMap ? 'block' : 'hidden lg:block'}`}>
+                            <div className="relative w-full h-[400px] sm:h-[500px] lg:h-[calc(100vh-200px)] lg:sticky lg:top-[100px] rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                                <LocationMapSection searchQuery={searchQuery} />
                             </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Page Title and FAQ Sections */}
-                <div className="bg-gray-50 mt-12">
-                    <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12">
-                        {/* Page Title Section */}
-                        <div className="py-8 sm:py-12 border-b border-gray-200">
-                            <PageTitleSection />
-                        </div>
+                    {/* Page Title and FAQ Sections */}
+                    <div className="bg-gray-50 mt-12">
+                        <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12">
+                            {/* Page Title Section */}
+                            <div className="py-8 sm:py-12 border-b border-gray-200">
+                                <PageTitleSection />
+                            </div>
 
-                        {/* FAQ Section */}
-                        <div className="py-8 sm:py-12">
-                            <FAQSection />
+                            {/* FAQ Section */}
+                            <div className="py-8 sm:py-12">
+                                <FAQSection />
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    );
+            );
 };

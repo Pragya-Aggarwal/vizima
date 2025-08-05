@@ -86,7 +86,7 @@ export const BookARoom = (): JSX.Element => {
 
     return (
         <div className="min-h-screen bg-white">
-            <div className="bg-gradient-to-b from-white to-gray-50 mt-12">
+            {/* <div className="bg-gradient-to-b from-white to-gray-50 mt-12">
                 <div className="container mx-auto px-4 py-12">
                     <div className="max-w-6xl mx-auto">
                         <div className="flex flex-col md:flex-row gap-8">
@@ -101,7 +101,11 @@ export const BookARoom = (): JSX.Element => {
                                     </h1>
                                     <div className="flex items-center text-gray-600 mt-2">
                                         <MapPin className="w-4 h-4 mr-1.5 text-gray-400 flex-shrink-0" />
-                                        <span>{property.location}</span>
+                                        <span>{
+                                            typeof property.location === 'string' 
+                                                ? property.location 
+                                                : property.location?.address || property.location?.city || 'Location not specified'
+                                        }</span>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3">
@@ -142,15 +146,15 @@ export const BookARoom = (): JSX.Element => {
                         </div>
                     </div>
                 </div>
-            </div>
-            <div className="container mx-auto px-3 sm:px-4 py-8 sm:py-12">
+            </div> */}
+            <div className="container mx-auto px-3 mt-12 sm:px-4 py-8 sm:py-12">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
                         <div className="lg:col-span-8">
-                            <Card className="overflow-hidden border border-gray-200 shadow-sm">
-                                <div className="bg-gray-50 border-b border-gray-100 px-4 sm:px-6 py-3 sm:py-4">
-                                    <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Schedule a Visit</h2>
-                                    <p className="text-xs sm:text-sm text-gray-500 mt-1">Book a time to visit our property</p>
+                            {/* <Card className="overflow-hidden "> */}
+                                <div className="px-4 bg-gray-50 sm:px-6 py-3 sm:py-4">
+                                    <p className="md:text-4xl sm:text-xl font-bold text-green">Schedule a Visit</p>
+                                    <p className="text-[14px] sm:text-sm text-green mt-1">Book a time to visit our property</p>
                                 </div>
                                 {/* <Tabs defaultValue={defaultTab} className="w-full">
                                     <TabsList className="w-full h-14 sm:h-16 bg-white border-b rounded-none flex">
@@ -200,131 +204,115 @@ export const BookARoom = (): JSX.Element => {
                                 <div className="mt-6">
                                     <ScheduleAForm propertyId={id} propertyName={property.title} />
                                 </div>
-                            </Card>
+                            {/* </Card> */}
                         </div>
                         <div className="lg:col-span-4 space-y-4 sm:space-y-6 sticky top-6">
-                            <Card className="border border-gray-200 shadow-sm overflow-hidden">
+                            <Card className="border border-gray-200 shadow-sm overflow-hidden bg-green">
                                 <div className="p-4 sm:p-6">
-                                    <div className="flex items-start justify-between mb-4 sm:mb-6">
+                                    <div className="flex items-start justify-between mb-6">
                                         <div>
-                                            <h3 className="text-base sm:text-lg font-semibold text-gray-900">Your Stay</h3>
-                                            <p className="text-xs sm:text-sm text-gray-500 mt-1">Review your booking details</p>
+                                            <h3 className="text-lg font-semibold text-white">Schedule a Visit</h3>
+                                            <p className="text-sm text-white mt-1">Choose your preferred way to explore the property</p>
                                         </div>
-                                        <div className="bg-green p-1.5 sm:p-2 rounded-lg">
-                                            <Home className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                                        <div className="bg-teal-100 p-2 rounded-lg">
+                                            <Calendar className="w-5 h-5 text-green" />
                                         </div>
                                     </div>
 
-                                    <div className="space-y-5">
-                                        <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
-                                            <div className="bg-white p-2 rounded-lg shadow-sm">
-                                                <Home className="w-5 h-5 text-green" />
-                                            </div>
-                                            <div className="flex-1">
-                                                <h4 className="font-medium text-gray-900">{property.title}</h4>
-                                                <p className="text-sm text-gray-500 mt-0.5">1 Bed, 1 Bath, 32 sq.m</p>
-                                                <div className="mt-2 flex flex-wrap gap-2">
-                                                    <span className="inline-flex items-center gap-1.5 bg-green text-white text-xs px-2.5 py-1 rounded-full">
-                                                        <Check className="w-3 h-3" />
-                                                        Free WiFi
-                                                    </span>
-                                                    <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-full">
-                                                        <Check className="w-3 h-3" />
-                                                        AC
-                                                    </span>
+                                    <div className="space-y-4">
+                                        {/* Physical Visit Option */}
+                                        <div className="p-4 border border-teal-100 rounded-lg hover:bg-white hover:border-teal-200 transition-colors cursor-pointer group">
+                                            <div className="flex items-start gap-4">
+                                                <div className="bg-teal-50 p-2.5 rounded-lg group-hover:bg-teal-100 transition-colors">
+                                                    <MapPin className="w-5 h-5 text-teal-600" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h4 className="font-medium text-white group-hover:text-gray-900">In-Person Visit</h4>
+                                                    <p className="text-sm text-white group-hover:text-gray-900 mt-1">
+                                                        Visit the property in person and take a guided tour
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
-                                            <div className="flex items-start gap-3">
-                                                <div className="bg-white p-2 rounded-lg shadow-sm">
-                                                    <Calendar className="w-5 h-5 text-blue-600" />
+                                        {/* Virtual Tour Option */}
+                                        <div className="p-4 border border-teal-100 rounded-lg hover:bg-white hover:border-teal-200 transition-colors cursor-pointer group">
+                                            <div className="flex items-start gap-4">
+                                                <div className="bg-teal-50 p-2.5 rounded-lg group-hover:bg-teal-100 transition-colors">
+                                                    <svg className="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                    </svg>
                                                 </div>
-                                                <div>
-                                                    <h4 className="font-medium text-gray-900">Stay Duration</h4>
-                                                    <p className="text-sm text-gray-500">1 Month • Jul 1 - Jul 31, 2025</p>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                                                <span className="text-sm font-medium text-gray-700">Monthly Rate</span>
-                                                <span className="text-base font-semibold text-gray-900">₹{propertyPrice}</span>
-                                            </div>
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-sm text-gray-500">Service Fee</span>
-                                                <span className="text-sm text-gray-700">₹{serviceFee}</span>
-                                            </div>
-                                            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                                                <span className="text-base font-semibold text-gray-900">Total</span>
-                                                <div className="text-right">
-                                                    <div className="text-lg font-bold text-gray-900">₹{totalPrice}</div>
-                                                    <div className="text-xs text-gray-500">Including all taxes</div>
+                                                <div className="flex-1">
+                                                    <h4 className="font-medium text-white group-hover:text-gray-900">Virtual Tour</h4>
+                                                    <p className="text-sm text-white group-hover:text-gray-900 mt-1">
+                                                        Take a live virtual tour from the comfort of your home
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="mt-6 pt-6 border-t border-gray-100">
-                                        <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg border border-amber-100">
-                                            <div className="bg-amber-100 p-1.5 rounded-full">
-                                                <Zap className="w-4 h-4 text-amber-600" />
+                                        <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                                            <div className="bg-teal-50 p-1.5 rounded-full mt-0.5">
+                                                <svg className="w-4 h-4 text-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
                                             </div>
-                                            <p className="text-sm text-amber-700">
-                                                <span className="font-medium">Only 2 rooms left</span> at this price
+                                            <p className="text-sm text-gray-600">
+                                                <span className="font-medium">Need to reschedule?</span> You can call to <a className="text-green hover:underline" href={`tel:${property?.phone}`}>{property?.phone}</a> on this no, and reschedule your appointment up to 2 hours before the scheduled time.
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                             </Card>
-                            <Card className="border border-gray-200 shadow-sm">
-                                <div className="p-6">
-                                    <div className="flex items-start gap-3 mb-5">
-                                        <div className="bg-blue-50 p-2 rounded-lg">
-                                            <Phone className="w-5 h-5 text-blue-600" />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-gray-900">Need help with your booking?</h3>
-                                            <p className="text-sm text-gray-500 mt-1">Our team is available 24/7 to assist you</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-3">
+                            <div className="bg-gradient-to-br from-[#064749] to-[#0a6c6f] p-6 rounded-xl shadow-lg text-white overflow-hidden relative">
+                                {/* Decorative elements */}
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
+                                <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full -ml-16 -mb-16"></div>
+                                
+                                <div className="relative z-10">
+                                    <h2 className="text-xl font-bold mb-2">Need help with your booking?</h2>
+                                    <p className="text-white/80 text-sm mb-6">Our dedicated support team is available 24/7 to assist you with any questions or concerns</p>
+                                    
+                                    <div className="space-y-4">
                                         <a
-                                            href="tel:+919876543210"
-                                            className="flex items-center gap-3 px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors group"
+                                            href={`tel:${property?.phone}`}
+                                            className="flex items-center gap-4 p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-colors group"
                                         >
-                                            <div className="bg-white p-2 rounded-lg shadow-sm group-hover:shadow transition-shadow">
-                                                <Phone className="w-5 h-5 text-blue-600" />
+                                            <div className="bg-white/10 p-2.5 rounded-lg flex-shrink-0">
+                                                <Phone className="w-5 h-5" />
                                             </div>
                                             <div>
-                                                <div className="text-sm font-medium text-gray-900">Call us</div>
-                                                <div className="text-sm text-blue-600">+919667300983</div>
+                                                <div className="text-sm font-medium text-white/80">Call us</div>
+                                                <div className="text-lg font-semibold">{property?.phone}</div>
                                             </div>
                                         </a>
                                         <a
                                             href="mailto:bookings@example.com"
-                                            className="flex items-center gap-3 px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors group"
+                                            className="flex items-center gap-4 p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-colors group"
                                         >
-                                            <div className="bg-white p-2 rounded-lg shadow-sm group-hover:shadow transition-shadow">
-                                                <Mail className="w-5 h-5 text-blue-600" />
+                                            <div className="bg-white/10 p-2.5 rounded-lg flex-shrink-0">
+                                                <Mail className="w-5 h-5" />
                                             </div>
                                             <div>
-                                                <div className="text-sm font-medium text-gray-900">Email us</div>
-                                                <div className="text-sm text-blue-600">bookings@example.com</div>
+                                                <div className="text-sm font-medium text-white/80">Email us</div>
+                                                <div className="text-lg font-semibold">bookings@example.com</div>
                                             </div>
                                         </a>
                                     </div>
 
-                                    <div className="mt-6 pt-6 border-t border-gray-100">
-                                        <div className="flex items-center gap-3 p-3 bg-green rounded-lg">
+                                    <div className="mt-6 pt-6 border-t border-white/10">
+                                        <div className="flex items-center gap-3 p-3 bg-white/10 rounded-lg">
                                             <Shield className="w-5 h-5 text-white flex-shrink-0" />
-                                            <p className="text-sm text-white">
+                                            <p className="text-sm text-white/90">
                                                 <span className="font-medium">Secure booking</span> with SSL encryption. Your information is safe with us.
                                             </p>
                                         </div>
                                     </div>
                                 </div>
-                            </Card>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -339,11 +327,11 @@ export const BookARoom = (): JSX.Element => {
                     <TrustBoostersSection />
                 </div>
             </div>
-            <div className="bg-gray-50">
+            {/* <div className="bg-gray-50">
                 <div className="container mx-auto px-4">
                     <BookingFormSection />
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 };

@@ -255,8 +255,7 @@ export const ApartmentListingsSection = ({
             <div>
               <h3 className="text-lg font-medium text-gray-700">No properties found</h3>
               <p className="text-gray-500 mt-1">
-                No accommodations found for searching data. Please chlick on Below button to show all data.
-
+                No accommodations found matching your search criteria. Please try a different search or click the button below to view all properties.
               </p>
             </div>
             <Button
@@ -268,7 +267,7 @@ export const ApartmentListingsSection = ({
               className="mx-auto flex items-center gap-2 border-green text-green hover:bg-green hover:text-white rounded-full px-6 py-2 transition-all duration-200 whitespace-nowrap"
             >
               <RotateCcw className="w-4 h-4" />
-              <span className="text-sm font-medium">Show All Results</span>
+              <span className="text-sm font-medium">Show All Properties</span>
             </Button>
           </div>
         </div>
@@ -340,7 +339,7 @@ export const ApartmentListingsSection = ({
             </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">No properties found</h3>
             <p className="text-gray-600 mb-6">
-              No accommodations found for searching data. Please chlick on Below button to show all data.
+              We couldn't find any properties matching your search. Try adjusting your filters or search terms, or click below to view all available properties.
             </p>
             <Button
               variant="outline"

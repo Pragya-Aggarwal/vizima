@@ -34,18 +34,25 @@ export const ProductPage = (): JSX.Element => {
     const handleSearch = useCallback(() => {
         // Update URL with search query
         const params = new URLSearchParams(searchParams);
-        if (searchInput.trim()) {
-            params.set('search', searchInput.trim());
-            // Also set city parameter if it's a location search
-            params.set('city', searchInput.trim().toLowerCase());
+        const searchTerm = searchInput.trim();
+        
+        if (searchTerm) {
+            // Only update the search parameter
+            params.set('search', searchTerm);
+            // Remove city parameter to avoid conflicts
+            params.delete('city');
         } else {
             params.delete('search');
-            params.delete('city');
+            // Only delete city if it's not part of the URL params
+            if (!searchParams.get('city')) {
+                params.delete('city');
+            }
         }
+        
         navigate(`/property-listing?${params.toString()}`, { replace: true });
 
         // Update the search query state which will trigger filtering
-        setSearchQuery(searchInput.trim());
+        setSearchQuery(searchTerm);
     }, [searchInput, searchParams, navigate]);
 
     // Handle input change
@@ -72,13 +79,16 @@ export const ProductPage = (): JSX.Element => {
             const accGender = String(acc.gender || '').toLowerCase();
             const accType = String(acc.type || '').toLowerCase();
 
-            // Check if the search query matches title or location
+            // Check if the search query matches title, location, or city (case-insensitive partial match)
             const matchesSearch = !searchLower ||
                 accTitle.includes(searchLower) ||
-                accLocation.includes(searchLower);
+                accLocation.includes(searchLower) ||
+                accCity.includes(searchLower);
 
-            // Check if the city filter matches
-            const matchesCity = !city || accCity === city.toLowerCase();
+            // Check if the city filter matches (case-insensitive partial match)
+            const matchesCity = !city || 
+                accCity.includes(city.toLowerCase()) || 
+                accLocation.includes(city.toLowerCase());
 
             // Check if the gender filter matches
             const matchesGender = !gender || accGender === gender.toLowerCase();

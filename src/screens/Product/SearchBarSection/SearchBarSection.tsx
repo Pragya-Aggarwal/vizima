@@ -18,9 +18,21 @@ export const SearchBarSection = ({
   onSearch
 }: SearchBarSectionProps): JSX.Element => {
     const [isFocused, setIsFocused] = useState(false);
+    const [inputValue, setInputValue] = useState(value);
+
+    // Update internal state when value prop changes
+    React.useEffect(() => {
+        setInputValue(value);
+    }, [value]);
 
     const handleSearch = () => {
         onSearch();
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value;
+        setInputValue(newValue);
+        onChange(newValue);
     };
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -66,8 +78,8 @@ export const SearchBarSection = ({
                 {/* Input Field */}
                 <Input
                     type="text"
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
+                    value={inputValue}
+                    onChange={handleInputChange}
                     onKeyDown={handleKeyDown}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}

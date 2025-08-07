@@ -15,6 +15,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "../../../components/ui/dropdown-menu";
+import { logo } from "../../../assets";
 
 export const NavigationMenuSection = (): JSX.Element => {
     const navigate = useNavigate();
@@ -71,7 +72,7 @@ export const NavigationMenuSection = (): JSX.Element => {
                     <img
                         className="w-[100px] md:w-[141px] h-auto md:h-[47px] object-contain"
                         alt="Vizima logo"
-                        src="https://c.animaapp.com/mbi2us3vKS97yu/img/vizima--logo-01--1--1.png"
+                        src={logo}
                     />
                 </a>
 
@@ -263,7 +264,7 @@ export const NavigationMenuSection = (): JSX.Element => {
                             <img
                                 className="w-32"
                                 alt="Vizima logo"
-                                src="https://c.animaapp.com/mbi2us3vKS97yu/img/vizima--logo-01--1--1.png"
+                                src={logo}
                             />
                             <button
                                 onClick={() => setIsMobileMenuOpen(false)}

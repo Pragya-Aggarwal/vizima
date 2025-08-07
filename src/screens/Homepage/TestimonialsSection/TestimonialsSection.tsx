@@ -89,7 +89,7 @@ export const TestimonialsSection = (): JSX.Element => {
                             {testimonials.map((testimonial, index) => (
                                 <CarouselItem
                                     key={index}
-                                    className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+                                    className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/3"
                                 >
                                     <Card className="bg-white h-full border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
                                         <CardContent className="p-6 h-full flex flex-col">

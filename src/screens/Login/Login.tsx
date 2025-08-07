@@ -5,6 +5,7 @@ import { Input } from "../../components/ui/input";
 import { Card, CardContent } from "../../components/ui/card";
 import { setLoggedIn } from "../../utils/auth";
 import { sendPhoneOtp, verifyPhoneOtp } from "../../services/userService";
+import { logo } from "../../assets";
 
 export const Login = () => {
     const navigate = useNavigate();
@@ -101,7 +102,7 @@ export const Login = () => {
                     <div className="text-center mb-6 sm:mb-8">
                         <img
                             className="mx-auto h-8 sm:h-12 w-auto mb-2 sm:mb-4"
-                            src="https://c.animaapp.com/mbi2us3vKS97yu/img/vizima--logo-01--1--1.png"
+                            src={logo}
                             alt="Vizima logo"
                         />
                         <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">

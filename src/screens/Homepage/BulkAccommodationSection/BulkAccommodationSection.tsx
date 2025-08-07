@@ -2,6 +2,7 @@ import { FacebookIcon, TwitterIcon, Check, Phone } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
+import { logo } from "../../../assets";
 
 export const BulkAccommodationSection = (): JSX.Element => {
     // State for email input
@@ -78,7 +79,7 @@ export const BulkAccommodationSection = (): JSX.Element => {
                     <img
                         className="w-[120px] sm:w-[140px] md:w-[174px] h-auto"
                         alt="Logo"
-                        src="https://c.animaapp.com/mbhqlborYGJdod/img/logo.png"
+                        src={logo}
                     />
                 </div>
             </div>

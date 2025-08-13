@@ -70,7 +70,7 @@ export const NavigationMenuSection = (): JSX.Element => {
 
                 <a href="/" className="flex items-center h-full">
                     <img
-                        className="w-[100px] md:w-[141px] h-auto md:h-[47px] object-contain"
+                        className="w-[100px] md:w-[141px] h-auto md:h-[85px] object-contain"
                         alt="Vizima logo"
                         src={logo}
                     />

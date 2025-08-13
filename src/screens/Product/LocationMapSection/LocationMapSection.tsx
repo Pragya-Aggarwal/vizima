@@ -24,9 +24,10 @@ interface LocationGroup {
 
 interface LocationMapSectionProps {
   searchQuery?: string;
+  city?: string;
 }
 
-export const LocationMapSection = ({ searchQuery }: LocationMapSectionProps): JSX.Element => {
+export const LocationMapSection = ({ searchQuery, city: propCity }: LocationMapSectionProps): JSX.Element => {
   const [locationGroups, setLocationGroups] = useState<LocationGroup[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isClient, setIsClient] = useState(false);
@@ -188,7 +189,7 @@ export const LocationMapSection = ({ searchQuery }: LocationMapSectionProps): JS
       const centerLng = (Math.min(...lngs) + Math.max(...lngs)) / 2;
       
       setMapCenter([centerLat, centerLng]);
-      setZoom(12); // Zoom in more when showing search results
+      setZoom(10); // Zoom in more when showing search results
     } else {
       // If no matches, show default view
       setMapCenter([20.5937, 78.9629]);
@@ -221,7 +222,8 @@ export const LocationMapSection = ({ searchQuery }: LocationMapSectionProps): JS
   
   useEffect(() => {
     const handleSearch = async () => {
-      if (!searchQuery) {
+      const query = searchQuery || propCity || '';
+      if (!query) {
         setSearchedLocation(null);
         return;
       }
@@ -236,13 +238,22 @@ export const LocationMapSection = ({ searchQuery }: LocationMapSectionProps): JS
         'faridabad': [28.4089, 77.3178]
       };
 
-      const normalizedQuery = searchQuery.toLowerCase().trim();
+      const normalizedQuery = query.toLowerCase().trim();
+      let foundMatch = false;
       
+      // First try exact match
       if (predefinedLocations[normalizedQuery]) {
         setSearchedLocation(predefinedLocations[normalizedQuery]);
-      } else {
-        // Try to geocode the location
-        const coords = await geocodeLocation(searchQuery);
+        foundMatch = true;
+      } 
+      // If no exact match, try partial match for Noida
+      else if (normalizedQuery.includes('noida')) {
+        setSearchedLocation([28.5355, 77.3910]);
+        foundMatch = true;
+      }
+      // Then try geocoding if no match found
+      else if (!foundMatch) {
+        const coords = await geocodeLocation(query);
         if (coords) {
           setSearchedLocation(coords);
         }
@@ -250,7 +261,7 @@ export const LocationMapSection = ({ searchQuery }: LocationMapSectionProps): JS
     };
 
     handleSearch();
-  }, [searchQuery, geocodeLocation]);
+  }, [searchQuery, propCity, geocodeLocation]);
 
   // Calculate the center point and check if we need to show a fallback marker
   const fallbackMarker = useMemo(() => {

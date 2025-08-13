@@ -328,7 +328,7 @@ export const ProductPage = (): JSX.Element => {
                         {/* Right column - Map */}
                         <div className={`w-full lg:w-[500px] xl:w-[600px] ${showMap ? 'block' : 'hidden lg:block'}`}>
                             <div className="relative w-full h-[400px] sm:h-[500px] lg:h-[calc(100vh-200px)] lg:sticky lg:top-[100px] rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
-                                <LocationMapSection searchQuery={searchQuery} />
+                                <LocationMapSection searchQuery={searchQuery} city={city} />
                             </div>
                         </div>
                     </div>

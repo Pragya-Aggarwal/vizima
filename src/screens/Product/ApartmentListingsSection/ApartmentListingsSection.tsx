@@ -111,7 +111,11 @@ const AccommodationCard = ({ apartment, onViewDetails }: AccommodationCardProps)
                       <Users className="w-4 h-4 text-gray-600" />
                       <div>
                         <p className="text-xs font-medium text-gray-900">{apartment.bedrooms}</p>
-                        <p className="text-[10px] text-gray-500">{apartment.sharingType} Sharing</p>
+                        <p className="text-[10px] text-gray-500">
+                          {Array.isArray(apartment.sharingType) 
+                            ? apartment.sharingType.join(', ') + ' Sharing' 
+                            : apartment.sharingType + ' Sharing'}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">

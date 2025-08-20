@@ -36,9 +36,9 @@ const PropertyCard = ({ property, onViewDetails }: PropertyCardProps) => (
           target.src = '';
         }}
       />
-      <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded-full text-xs font-medium">
+      {/* <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded-full text-xs font-medium">
         ₹{property.price}/month
-      </div>
+      </div> */}
     </div>
     <CardContent className="p-4">
       <h3 className="text-lg font-semibold mb-1 line-clamp-1">{property.title}</h3>

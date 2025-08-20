@@ -1,5 +1,5 @@
-import { MapPinIcon, SearchIcon, UsersIcon, Loader2 } from "lucide-react";
-import React, { useState } from "react";
+import { MapPinIcon, SearchIcon, UsersIcon, Loader2, X } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
@@ -16,7 +16,12 @@ export const SearchSection = ({ onSearchStart }: SearchSectionProps): JSX.Elemen
     const [city, setCity] = useState("");
     const [gender, setGender] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [showLocations, setShowLocations] = useState(false);
+    const [inputValue, setInputValue] = useState("");
+    const dropdownRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
+
+    const locations = ["Noida", "Greater Noida"];
 
     const handleSearch = async (searchCity: string, searchGender: string) => {
         try {
@@ -57,29 +62,91 @@ export const SearchSection = ({ onSearchStart }: SearchSectionProps): JSX.Elemen
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
-            handleSearch(city, gender);
+            e.preventDefault();
+            setShowLocations(false);
+            // Use inputValue if it exists, otherwise use city
+            const searchCity = inputValue.trim() || city;
+            handleSearch(searchCity, gender);
         }
     };
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setShowLocations(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     return (
         <div className="w-full px-3 sm:px-4 md:px-6">
             <div className="relative w-full max-w-[900px] mx-auto">
                 <form onSubmit={(e) => {
                     e.preventDefault();
-                    handleSearch(city, gender);
+                    // Use inputValue if it exists, otherwise use city
+                    const searchCity = inputValue.trim() || city;
+                    handleSearch(searchCity, gender);
                 }}>
                     <div className="flex flex-col sm:flex-row w-full items-center justify-between p-2 sm:p-2 bg-white rounded-xl border border-green shadow-md gap-2 sm:gap-3 hover:shadow-lg transition-shadow duration-300">
                         {/* City input with proper focus */}
-                        <div className="flex items-center flex-1 w-full sm:w-auto gap-2 rounded-lg px-2 sm:px-3 py-1 focus-within:ring-1 focus-within:ring-green focus-within:bg-white transition-all duration-200">
-                            <MapPinIcon className="w-6 h-6 text-gray-500 flex-shrink-0" />
-                            <Input
-                                value={city}
-                                onChange={(e) => setCity(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                placeholder="Search your PG or hostel location..."
-                                className="flex-1 h-12 md:h-12 text-lg border-0 focus:border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 font-medium placeholder:text-gray-400 text-gray-800 bg-transparent shadow-none"
-                                disabled={isLoading}
-                            />
+                        <div className="relative flex-1 w-full" ref={dropdownRef}>
+                            <div className="flex items-center w-full gap-2 rounded-lg px-2 sm:px-3 py-1">
+                                <MapPinIcon className="w-6 h-6 text-gray-500 flex-shrink-0" />
+                                <div className="relative w-full">
+                                    <input
+                                        type="text"
+                                        value={inputValue}
+                                        onChange={(e) => {
+                                            setInputValue(e.target.value);
+                                            setShowLocations(true);
+                                        }}
+                                        onFocus={() => setShowLocations(true)}
+                                        onKeyDown={handleKeyDown}
+                                        placeholder="Search location..."
+                                        className="w-full h-12 px-2 text-md font-medium border-0 focus:ring-0 focus:outline-none bg-transparent"
+                                        disabled={isLoading}
+                                    />
+                                    {inputValue && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setInputValue('');
+                                                setCity('');
+                                            }}
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                            {showLocations && (
+                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                    {locations
+                                        .filter(location => 
+                                            location.toLowerCase().includes(inputValue.toLowerCase())
+                                        )
+                                        .map((location) => (
+                                            <div
+                                                key={location}
+                                                className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
+                                                onClick={() => {
+                                                    setCity(location.toLowerCase());
+                                                    setInputValue(location);
+                                                    setShowLocations(false);
+                                                }}
+                                            >
+                                                {location}
+                                            </div>
+                                        ))}
+                                </div>
+                            )}
                         </div>
 
                         {/* Vertical Separator - hidden on mobile */}
@@ -96,7 +163,7 @@ export const SearchSection = ({ onSearchStart }: SearchSectionProps): JSX.Elemen
                                     <SelectItem value="select" >Select</SelectItem>
                                     <SelectItem value="male">Male</SelectItem>
                                     <SelectItem value="female">Female</SelectItem>
-                                    <SelectItem value="unisex">Unisex</SelectItem>
+                                    <SelectItem value="unisex">Co-Living</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

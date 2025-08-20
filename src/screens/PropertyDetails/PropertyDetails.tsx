@@ -34,6 +34,7 @@ import { accommodationService } from '../../api/services/accommodationService';
 import { ExtendedAccommodation, transformToExtended, Location, Amenity } from '../../lib/types';
 import { toast } from '../../components/ui/use-toast';
 import { Badge } from '../../components/ui/badge';
+import { FaGenderless, FaTransgender } from 'react-icons/fa';
 
 interface RoomOption {
     type: string;
@@ -695,11 +696,11 @@ function PropertyDetails() {
                                         >
                                             <div className="relative aspect-video overflow-hidden">
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10"></div>
-                                                <div className="absolute top-4 right-4 z-20">
+                                                {/* <div className="absolute top-4 right-4 z-20">
                                                     <button className="bg-white/90 hover:bg-white rounded-full p-2 shadow-md transition-all hover:scale-110">
                                                         <Heart className="w-4 h-4 text-gray-700" />
                                                     </button>
-                                                </div>
+                                                </div> */}
                                                 <img
                                                     src={imageUrl}
                                                     alt={propertyTitle}
@@ -760,9 +761,10 @@ function PropertyDetails() {
                                                         </span>
                                                     </div>
                                                     <div className="flex flex-col items-center text-center">
-                                                        <Ruler className="w-5 h-5 text-gray-500 mb-1" />
+                                                    
+                                                        <FaTransgender className="w-5 h-5 text-gray-500 mb-1" />
                                                         <span className="text-xs text-gray-600">
-                                                            {property.area ? `${property.area} sq.ft` : 'N/A'}
+                                                            {property.gender ? property.gender : 'N/A'}
                                                         </span>
                                                     </div>
                                                 </div>

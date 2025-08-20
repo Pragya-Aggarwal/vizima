@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../../../components/ui/button";
 import {
     NavigationMenu,
     NavigationMenuItem,
@@ -8,13 +7,7 @@ import {
     NavigationMenuList,
 } from "../../../components/ui/navigation-menu";
 import { isLoggedIn, logout } from "../../../utils/auth";
-import { LogIn, LogOut, Menu, X, User, FileText, Settings, Calendar } from "lucide-react";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "../../../components/ui/dropdown-menu";
+import { Menu, X } from "lucide-react";
 import { logo } from "../../../assets";
 
 export const NavigationMenuSection = (): JSX.Element => {
@@ -48,7 +41,7 @@ export const NavigationMenuSection = (): JSX.Element => {
         { label: "Home", href: "/" },
         { label: "Find PG/Hostel", href: "/property-listing" },
         // { label: "Book a Visit", href: "/book" },
-        { label: "AboutUs", href: "/aboutUs" },
+        { label: "About Us", href: "/aboutUs" },
         // { label: "Contact Us", href: "/contact" },
     ];
 
@@ -133,7 +126,7 @@ export const NavigationMenuSection = (): JSX.Element => {
                         </Button>
                     )} */}
 <div className="flex flex-col text-sm text-center">
-                               <span className="font-semibold">Contact for Support</span>
+                               <span className="font-semibold">Call for Enquiry</span>
                                <span>9667300983</span>
                                </div>
 
@@ -217,29 +210,16 @@ export const NavigationMenuSection = (): JSX.Element => {
                                     </Button>
                                 )} */}
                                <a 
-                                    href="tel:9667300983"
-                                    className="group flex flex-col items-center gap-1.5 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-green-50"
+                                    href="tel:919667300983"
+                                    className="group flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-green-50"
                                 >
-                                    <div className="flex items-center gap-2">
-                                        <svg 
-                                            className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" 
-                                            fill="none" 
-                                            stroke="currentColor" 
-                                            viewBox="0 0 24 24" 
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path 
-                                                strokeLinecap="round" 
-                                                strokeLinejoin="round" 
-                                                strokeWidth="2" 
-                                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                                            ></path>
-                                        </svg>
-                                        <span className="font-semibold text-green-700 group-hover:text-green-800">Support</span>
+                                    <div className="flex flex-col">
+                                        <span className="text-xs font-medium text-gray-500 group-hover:text-green-600 transition-colors">Call for Enquiry</span>
+                                        <span className="text-base font-semibold text-gray-800 group-hover:text-green-700 transition-colors whitespace-nowrap">
+                                            +91 9667 300 983
+                                        </span>
                                     </div>
-                                    <span className="text-sm font-medium text-gray-700 group-hover:text-green-700 transition-colors">
-                                        +91 96673 00983
-                                    </span>
+                                    
                                 </a>
                             </NavigationMenuItem>
                         </NavigationMenuList>

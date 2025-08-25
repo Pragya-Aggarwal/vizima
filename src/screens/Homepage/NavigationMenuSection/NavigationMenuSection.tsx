@@ -127,7 +127,7 @@ export const NavigationMenuSection = (): JSX.Element => {
                     )} */}
 <div className="flex flex-col text-sm text-center">
                                <span className="font-semibold">Call</span>
-                               <span>+91-9667300983 / +91 96678 40277</span>
+                               <span>09667300983 | 09667840277</span>
                                </div>
 
                     <button
@@ -216,7 +216,7 @@ export const NavigationMenuSection = (): JSX.Element => {
                                     <div className="flex flex-col">
                                         <span className="text-xs font-medium text-gray-500 group-hover:text-green-600 transition-colors">Call</span>
                                         <span className="text-base font-semibold text-gray-800 group-hover:text-green-700 transition-colors whitespace-nowrap">
-                                        +91 9667 300 983
+                                        09667300983 | 09667840277
                                         </span>
                                     </div>
                                     

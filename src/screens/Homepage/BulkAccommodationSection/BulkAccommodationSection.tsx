@@ -156,16 +156,18 @@ export const BulkAccommodationSection = (): JSX.Element => {
                             </div>
                         </form>
                         <div className="mt-3 sm:mt-4 md:mt-6 flex flex-col gap-3 sm:gap-4 md:gap-5">
+                           <span>
                             <a
-                                href="tel:9667300983"
+                                href="tel:9667840277"
                                 className="font-desktop-text-regular text-text text-xs sm:text-sm md:text-base flex items-center gap-2 hover:underline focus:underline"
                                 tabIndex={0}
                                 title="Call us"
                             >
                                 <Phone className="w-4 h-4 text-green" />
-                                9667300983
+                                +91 96678 40277
                             </a>
-
+                           </span>
+                             
                             <div className="flex flex-col gap-2 sm:gap-3">
                                 <div className="flex items-center gap-2 sm:gap-3">
                                     <a

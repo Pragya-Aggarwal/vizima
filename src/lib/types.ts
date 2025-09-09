@@ -103,6 +103,7 @@ export interface ExtendedAccommodation {
     visitBookings?: any[];
     scheduleVisits?: any[];
     microSiteLink?: string;
+    youtubeVideoId?: string;
     createdAt?: string;
     updatedAt?: string;
     __v?: number;

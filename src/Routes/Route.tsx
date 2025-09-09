@@ -13,6 +13,9 @@ import { Login } from '../screens/Login/Login';
 import { BookingsPage } from '../screens/UserProfile/BookingsPage';
 import { DocumentsPage } from '../screens/UserProfile/DocumentPage';
 import { ProfilePage } from '../screens/UserProfile/ProfilePage';
+import PrivacyPolicy from '../screens/PrivacyPolicy/PrivacyPolicy';
+import TermsOfService from '../screens/TermsOfService/TermsOfService';
+import Career from '../screens/Career/Career';
 import WhatsAppButton from '../components/WhatsAppButton';
 import { Toaster } from '../components/ui/toast';
 
@@ -35,6 +38,9 @@ const App = () => {
                         <Route path="/booking" element={<BookingsPage />} />
                         <Route path="/documents" element={<DocumentsPage />} />
                         <Route path="/profile" element={<ProfilePage />} />
+                        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                        <Route path="/terms-of-service" element={<TermsOfService />} />
+                        <Route path="/career" element={<Career />} />
                         <Route path="*" element={<Homepage />} />
                     </Routes>
                 </main>

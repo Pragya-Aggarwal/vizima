@@ -1,4 +1,4 @@
-import { FacebookIcon, TwitterIcon, Check, Phone } from "lucide-react";
+import { FacebookIcon, TwitterIcon, Check, Phone, Mail } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
@@ -48,26 +48,26 @@ export const BulkAccommodationSection = (): JSX.Element => {
     // Footer link data for mapping with proper paths
     const footerLinks = [
         {
-            title: "Company",
+            title: "",
             links: [
                 { text: "Home", path: "/" },
-                { text: "About us", path: "/about" },
+                { text: "About us", path: "/aboutUs" },
                 { text: "Contact us", path: "/contact" }
             ],
         },
         {
-            title: "Guests",
+            title: "",
             links: [
-                { text: "Blog", path: "/blog" },
-                { text: "FAQ", path: "/faq" },
+                { text: "Blog", path: "/" },
+                { text: "FAQ", path: "/property-listing" },
                 { text: "Career", path: "/career" }
             ],
         },
         {
-            title: "Privacy",
+            title: "",
             links: [
-                { text: "Terms of Service", path: "/terms" },
-                { text: "Privacy Policy", path: "/privacy" }
+                { text: "Terms of Service", path: "/terms-of-service" },
+                { text: "Privacy Policy", path: "/privacy-policy" }
             ],
         },
     ];
@@ -156,6 +156,18 @@ export const BulkAccommodationSection = (): JSX.Element => {
                             </div>
                         </form>
                         <div className="mt-3 sm:mt-4 md:mt-6 flex flex-col gap-3 sm:gap-4 md:gap-5">
+                        <span>
+                        <a
+                                href="mailto:Stay@vizima.in"
+                                className="font-desktop-text-regular text-text text-xs sm:text-sm md:text-base flex items-center gap-2 hover:underline focus:underline"
+                                tabIndex={0}
+                                title="Email us"
+                            >
+                                <Mail className="w-4 h-4 text-green" />
+                                Stay@vizima.in
+                            </a>
+                            
+                           </span>
                            <span>
                             <a
                                 href="tel:9667840277"

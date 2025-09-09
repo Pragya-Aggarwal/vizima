@@ -50,7 +50,7 @@ const PropertyCard = ({ property, onViewDetails }: PropertyCardProps) => (
 
       <div className="flex items-center justify-between mt-4">
         <div className="flex space-x-2">
-          <div className="flex items-center text-xs text-gray-500">
+          {/* <div className="flex items-center text-xs text-gray-500">
             <span>⭐ {getRatingDisplay(property.rating)}</span>
           </div>
           <div className="flex items-center text-xs text-gray-500">
@@ -58,7 +58,7 @@ const PropertyCard = ({ property, onViewDetails }: PropertyCardProps) => (
           </div>
           <div className="flex items-center text-xs text-gray-500">
             <span>🚿 {property?.bathrooms || 1}</span>
-          </div>
+          </div> */}
         </div>
         <Button
           onClick={() => onViewDetails(property.id)}

@@ -7,7 +7,7 @@ import {
     NavigationMenuList,
 } from "../../../components/ui/navigation-menu";
 import { isLoggedIn, logout } from "../../../utils/auth";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Phone } from "lucide-react";
 import { logo } from "../../../assets";
 
 export const NavigationMenuSection = (): JSX.Element => {
@@ -42,6 +42,7 @@ export const NavigationMenuSection = (): JSX.Element => {
         { label: "Find PG/Hostel", href: "/property-listing" },
         // { label: "Book a Visit", href: "/book" },
         { label: "About Us", href: "/aboutUs" },
+        { label: "Careers", href: "/career" },
         // { label: "Contact Us", href: "/contact" },
     ];
 
@@ -125,10 +126,10 @@ export const NavigationMenuSection = (): JSX.Element => {
                             Login
                         </Button>
                     )} */}
-<div className="flex flex-col text-sm text-center">
-                               <span className="font-semibold">Call</span>
+{/* <div className="flex items-center gap-2 text-sm">
+                               <Phone className="h-4 w-4" />
                                <span>09667300983 | 09667840277</span>
-                               </div>
+                               </div> */}
 
                     <button
                         className="md:hidden p-2"
@@ -213,13 +214,10 @@ export const NavigationMenuSection = (): JSX.Element => {
                                     href="tel:919667300983"
                                     className="group flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-green-50"
                                 >
-                                    <div className="flex flex-col">
-                                        <span className="text-xs font-medium text-gray-500 group-hover:text-green-600 transition-colors">Call</span>
-                                        <span className="text-base font-semibold text-gray-800 group-hover:text-green-700 transition-colors whitespace-nowrap">
+                                    <Phone className="h-4 w-4 text-gray-600" />
+                                    <span className="text-base font-semibold text-gray-800 group-hover:text-green-700 transition-colors whitespace-nowrap">
                                         09667300983 | 09667840277
-                                        </span>
-                                    </div>
-                                    
+                                    </span>
                                 </a>
                             </NavigationMenuItem>
                         </NavigationMenuList>
@@ -265,7 +263,17 @@ export const NavigationMenuSection = (): JSX.Element => {
                                     {item.label}
                                 </a>
                             ))}
-
+                            <div className="px-6 py-4 border-b border-gray-100">
+                                <a 
+                                    href="tel:919667300983"
+                                    className="flex items-center gap-3 text-gray-700 hover:text-green-700 transition-colors"
+                                >
+                                    <Phone className="h-5 w-5 text-green-600" />
+                                    <span className="font-medium">
+                                        09667300983 | 09667840277
+                                    </span>
+                                </a>
+                            </div>
                         </nav>
                     </div>
                 </div>

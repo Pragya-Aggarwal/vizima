@@ -105,6 +105,7 @@ const getLocationString = (location?: string | Location | null): string => {
 
 function PropertyDetails() {
     const { id } = useParams<{ id: string }>();
+    const [showVideo, setShowVideo] = useState(false);
     const [property, setProperty] = useState<ExtendedAccommodation | null>(null);
     const [relatedProperties, setRelatedProperties] = useState<ExtendedAccommodation[]>([]);
     const [loading, setLoading] = useState(true);
@@ -288,29 +289,86 @@ function PropertyDetails() {
         "Keep common areas clean",
     ];
 
+    // Extract YouTube video ID from URL
+    const getYoutubeId = (url: string) => {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
+    };
+
+    const videoId = property?.youtubeVideoId ? 
+        getYoutubeId(property.youtubeVideoId) || 
+        property.youtubeVideoId : 'mxj7BqI2VPk';
+
+    const VideoModal = () => (
+        <div 
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+            onClick={() => setShowVideo(false)}
+        >
+            <div className="relative w-full max-w-4xl" onClick={e => e.stopPropagation()}>
+                <button 
+                    className="absolute -top-12 right-0 text-white hover:text-gray-300 focus:outline-none"
+                    onClick={() => setShowVideo(false)}
+                    aria-label="Close video"
+                >
+                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                <div className="aspect-w-16 aspect-h-9 w-full">
+                    <iframe 
+                        className="w-full h-[60vh] rounded-lg"
+                        src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                        title="Property Video"
+                        frameBorder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowFullScreen
+                    ></iframe>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <div className="min-h-screen bg-gray-50 mt-16 md:mt-20">
+            {showVideo && <VideoModal />}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 md:py-6">
                 <div className="p-4 md:p-6">
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                         <div>
                             <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-2">{property.title}</h1>
                             <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-gray-600">
-                                <div className="flex items-center gap-2">
+                                <a 
+                                    href="#property-map" 
+                                    className="flex items-center gap-2 hover:text-green-700 transition-colors cursor-pointer"
+                                >
                                     <MapPin className="w-4 h-4" />
                                     <span>{getLocationString(property.location)}</span>
-                                </div>
-                                <div className="flex items-center text-sm text-gray-500 mb-2">
+                                </a>
+                                {/* <div className="flex items-center text-sm text-gray-500 mb-2">
                                     <Star className="w-4 h-4 text-yellow-400 mr-1" />
                                     <span className="font-medium text-gray-700">
                                         {property.rating?.average?.toFixed(1) || property.averageRating?.toFixed(1) || 'N/A'}
                                     </span>
                                     <span className="mx-1">•</span>
                                     <span>{property.rating?.count || property.reviews || 0} reviews</span>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="flex flex-wrap gap-3 md:gap-5 mt-3">
-                                <div className="flex items-center gap-2">
+                                <div 
+                                    className="flex items-center gap-2 cursor-pointer group"
+                                    onClick={() => setShowVideo(true)}
+                                >
+                                    <div className="relative w-10 h-10 bg-red-600 rounded-full flex items-center justify-center group-hover:bg-red-700 transition-colors">
+                                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M8 5v14l11-7z" />
+                                        </svg>
+                                    </div>
+                                    <span className="text-sm md:text-base font-medium text-gray-800 group-hover:text-red-600 transition-colors">
+                                        Watch Property Video
+                                    </span>
+                                </div>
+                                {/* <div className="flex items-center gap-2">
                                     <div className="relative w-5 h-5">
                                         <img className="w-[17px] h-3.5 absolute top-[3px] left-0.5" alt="Bedroom icon" src="https://c.animaapp.com/mbi2us3vKS97yu/img/group.png" />
                                     </div>
@@ -323,7 +381,7 @@ function PropertyDetails() {
                                 <div className="flex items-center gap-2">
                                     <span className="text-sm md:text-base font-semibold">PG Type:</span>
                                     <span className="text-sm md:text-base">{property.gender || 'Unisex'}</span>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
@@ -619,7 +677,7 @@ function PropertyDetails() {
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        {/* <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                             <div className="bg-gradient-to-r from-[#064749] to-[#0a6c6f] px-6 py-4">
                                 <h2 className="text-xl font-bold text-white flex items-center">
                                     <ShieldIcon className="w-5 h-5 mr-2" />
@@ -644,11 +702,11 @@ function PropertyDetails() {
                                     </p>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
                 {/* Map Section */}
-                <div className="mt-12 bg-white rounded-xl shadow-sm p-6">
+                <div id="property-map" className="mt-12 bg-white rounded-xl shadow-sm p-6">
                     <h2 className="text-2xl font-bold text-gray-900 mb-6">Location</h2>
                     {property?.location?.coordinates?.lat && property?.location?.coordinates?.lng ? (
                         <div className="w-full rounded-lg overflow-hidden" style={{ height: '400px' }}>

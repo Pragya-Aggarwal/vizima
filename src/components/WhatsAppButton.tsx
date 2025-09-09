@@ -13,13 +13,17 @@ const WhatsAppButton = () => {
 
   return (
     <div
-      className="fixed bottom-6 right-6 z-50 cursor-pointer"
+      className="fixed bottom-6 right-6 z-50 cursor-pointer flex items-center gap-3 group"
       onClick={handleClick}
       aria-label="Chat on WhatsApp"
     >
-      <div className="bg-[#25D366] hover:bg-[#128C7E] text-white p-2 rounded-full shadow-lg transition-all duration-300 hover:scale-110">
+       <span className=" text-green-800 text-[20px] font-medium bg-white px-4 py-2 rounded-full  shadow-md  transition-opacity duration-300 whitespace-nowrap">
+        Connect with us
+      </span>
+      <div className="bg-[#25D366] group-hover:bg-[#128C7E] text-white p-2 rounded-full shadow-lg transition-all duration-300 group-hover:scale-105">
         {FaIcons.FaWhatsapp && <FaIcons.FaWhatsapp size={40} />}
       </div>
+     
     </div>
   );
 };

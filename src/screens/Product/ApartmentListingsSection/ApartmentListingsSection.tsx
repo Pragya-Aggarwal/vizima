@@ -2,10 +2,9 @@ import { useEffect, useState, useMemo } from "react";
 import { Button } from "../../../components/ui/button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { accommodationService, Accommodation, Rating } from "../../../api/services/accommodationService";
-import { Star, MapPin, Wifi, Bath, Heart, Home, Users } from "lucide-react";
+import { Star, MapPin, Wifi, Bath, Heart, Home, Soup, Cctv, CctvIcon, SprayCan } from "lucide-react";
 import { Card } from "../../../components/ui/card";
 import { RotateCcw } from "lucide-react";
-
 interface ApartmentListingsSectionProps {
   accommodations?: Accommodation[];
   loading?: boolean;
@@ -88,7 +87,7 @@ const AccommodationCard = ({ apartment, onViewDetails }: AccommodationCardProps)
                     <h3 className="text-lg font-bold text-gray-900 mb-1">
                       {apartment.title}
                     </h3>
-                    <div className="flex items-center gap-2">
+                    {/* <div className="flex items-center gap-2">
                       <div className="flex items-center gap-1 px-2 py-0.5 bg-yellow-50 rounded-lg">
                         <Star className="w-3 h-3 text-yellow-400 fill-current" />
                         <span className="text-xs font-semibold text-gray-900">
@@ -102,37 +101,36 @@ const AccommodationCard = ({ apartment, onViewDetails }: AccommodationCardProps)
                           ? (apartment.rating as Rating).count
                           : apartment.reviews} reviews)
                       </span>
-                    </div>
+                    </div> */}
                   </div>
 
                   {/* Amenities Grid */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
                     <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                      <Users className="w-4 h-4 text-gray-600" />
+                      <Soup className="w-4 h-4 text-gray-600" />
                       <div>
-                        <p className="text-xs font-medium text-gray-900">{apartment.bedrooms}</p>
-                        <p className="text-[10px] text-gray-500">
-                          {Array.isArray(apartment.sharingType) 
-                            ? apartment.sharingType.join(', ') + ' Sharing' 
-                            : apartment.sharingType + ' Sharing'}
-                        </p>
+                        {/* <p className="text-xs font-medium text-gray-900">Meals Included</p> */}
+                        <p className="text-[10px] font-medium text-gray-900">Meals Included</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                      <Bath className="w-4 h-4 text-gray-600" />
+                      <CctvIcon className="w-4 h-4 text-gray-600" />
                       <div>
-                        <p className="text-xs font-medium text-gray-900">{apartment.bathrooms}</p>
-                        <p className="text-[10px] text-gray-500">Attached</p>
+                        <p className="text-[10px] font-medium text-gray-900">CCTV</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                      <SprayCan className="w-4 h-4 text-gray-600" />
+                      <div>
+                        <p className="text-[10px] font-medium text-gray-900">Daily Cleaning</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
                       <Wifi className="w-4 h-4 text-gray-600" />
                       <div>
-                        <p className="text-xs font-medium text-gray-900">{apartment.amenities?.includes("wifi") ? "Yes" : "No"}</p>
-                        <p className="text-[10px] text-gray-500">High Speed</p>
+                        <p className="text-[10px] font-medium text-gray-900">High Speed</p>
                       </div>
                     </div>
-
                   </div>
 
                   {/* Footer */}

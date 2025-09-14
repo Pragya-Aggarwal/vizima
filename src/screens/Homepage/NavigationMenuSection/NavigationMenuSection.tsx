@@ -42,7 +42,6 @@ export const NavigationMenuSection = (): JSX.Element => {
         { label: "Find PG/Hostel", href: "/property-listing" },
         // { label: "Book a Visit", href: "/book" },
         { label: "About Us", href: "/aboutUs" },
-        { label: "Careers", href: "/career" },
         // { label: "Contact Us", href: "/contact" },
     ];
 

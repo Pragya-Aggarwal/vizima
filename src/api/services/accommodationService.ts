@@ -45,7 +45,8 @@ export interface Accommodation {
   createdAt: string;
   updatedAt: string;
   __v: number;
-  micrositeLink: string;
+  microSiteLink: string;
+  youtubeLink: string;
   // For backward compatibility
   latitude?: number;
   longitude?: number;
@@ -97,7 +98,8 @@ export const accommodationService = {
           createdAt: item.createdAt || '',
           updatedAt: item.updatedAt || '',
           __v: item.__v || 0,
-          micrositeLink: item.microSiteLink || "",
+          microSiteLink: item.microSiteLink || "",
+          youtubeLink: item.youtubeLink || "",
           description: item.description || 'No description available',
           phone:item.phone || ""
         };

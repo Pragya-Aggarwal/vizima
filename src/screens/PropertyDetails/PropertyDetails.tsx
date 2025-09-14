@@ -1,49 +1,51 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button } from '../../components/ui/button';
-import SimpleMap2 from '../../components/Map/SimpleMap2';
-import {
-    MapPin,
-    Star,
-    ChevronLeft,
-    ChevronRight,
-    Bed,
-    Bath,
-    Ruler,
-    Shield as ShieldIcon,
-    Wifi as WifiIcon,
-    Utensils as UtensilsIcon,
-    Car as CarIcon,
-    Users as UsersIcon,
-    Battery,
-    Video,
-    Sofa,
-    Dumbbell,
-    Check,
-    Phone,
-    Mail,MessageCircle,
-    Heart,
-    ArrowUpRight,
-    ShieldCheck,
-    Info,
-    BathIcon,
-    WarehouseIcon
+import { 
+  MapPin, 
+  Phone, 
+  Mail, 
+  ArrowUpRight, 
+  Utensils,
+  Star,
+  ChevronLeft,
+  ChevronRight,
+  Bed,
+  Shield,
+  MessageCircle,
+  Check,
+  Users,
+  Wifi,
+  Battery,
+  Video,
+  Car,
+  Sofa,
+  Dumbbell,
+  Bath,
+  Building2,
+  BathIcon,
+  ShieldIcon,
+  WarehouseIcon,
+  UtensilsIcon,
+  UsersIcon,
+  CarIcon,
+  WifiIcon
 } from 'lucide-react';
 import { home } from '../../assets';
 import { accommodationService } from '../../api/services/accommodationService';
 import { ExtendedAccommodation, transformToExtended, Location, Amenity } from '../../lib/types';
 import { toast } from '../../components/ui/use-toast';
-import { Badge } from '../../components/ui/badge';
-import { FaGenderless, FaTransgender } from 'react-icons/fa';
+import { Button } from '../../components/ui/button';
+import SimpleMap2 from '../../components/Map/SimpleMap2';
+import { FaTransgender } from 'react-icons/fa';
+
 
 interface RoomOption {
     type: string;
     rent: string;
-    security: string;
-    availableFrom: string;
-    acType: string;
     isAvailable: boolean;
     mealsIncluded: boolean;
+    acType?: string;
+    security?: string;
 }
 
 
@@ -191,18 +193,17 @@ function PropertyDetails() {
 
     const handleBookRoom = useCallback(() => {
         if (property) {
-            const propertyWithMicroSite = property?.micrositeLink;
+            const propertyWithMicroSite = property?.microSiteLink;
+            console.log(propertyWithMicroSite);
             if (propertyWithMicroSite) {
                 window.location.href = propertyWithMicroSite;
-            }
-        }else{
+            } 
+        } else {
             toast({
-                            title: "Property Not Found",
-                            description: "There is some issue to book this property",
-                            variant: "destructive",
-                        });
-                        
-            // navigate(`/book/${property.id}`);
+                title: "Property Not Found",
+                description: "There is an issue with this property",
+                variant: "destructive",
+            });
         }
     }, [navigate, property]);
 
@@ -253,82 +254,127 @@ function PropertyDetails() {
         )
     }
 
-    const roomOptions: RoomOption[] = property.roomOptions?.length ? property.roomOptions : [
-        { type: "Single Sharing", rent: "₹8,500", security: "₹17,000", availableFrom: "15 Jan 2024", acType: "Non-AC", isAvailable: true, mealsIncluded: true },
-        { type: "Double Sharing", rent: "₹7,500", security: "₹15,000", availableFrom: "20 Jan 2024", acType: "AC", isAvailable: true, mealsIncluded: false },
-        { type: "Triple Sharing", rent: "₹6,500", security: "₹13,000", availableFrom: "25 Jan 2024", acType: "AC", isAvailable: false, mealsIncluded: true }
-    ];
-
-    // Get amenities and house rules with proper type checking
-    const amenities: (string | Amenity)[] = Array.isArray(property.amenities)
-        ? property.amenities.map(amenity => {
-            console.log(amenity);
-            if (typeof amenity === 'string') return amenity;
-            if (amenity && typeof amenity === 'object') {
-                if ('icon' in amenity && 'label' in amenity) {
-                    return amenity as Amenity;
+    const roomOptions: RoomOption[] = [];
+    
+    if (Array.isArray(property.sharingType)) {
+        property.sharingType.forEach(room => {
+            if (room && typeof room === 'object' && 'type' in room) {
+                // Ensure type is a string
+                let roomType = 'Room';
+                if (room.type) {
+                    if (typeof room.type === 'string') {
+                        roomType = `${room.type.charAt(0).toUpperCase()}${room.type.slice(1)} Sharing`;
+                    } else if (typeof room.type === 'number') {
+                        roomType = `${room.type} Sharing`;
+                    }
                 }
-                if ('name' in amenity) {
-                    // Convert to proper Amenity type
-                    const details = getAmenityDetails(amenity);
-                    console.log(details);
-                    return {
+                
+                // Ensure price is properly formatted
+                let price = 'Price on request';
+                if (room && 'price' in room) {
+                    const priceValue = Number(room.price);
+                    if (!isNaN(priceValue)) {
+                        price = `₹${priceValue.toLocaleString('en-IN')}`;
+                    }
+                }
+                
+                // Ensure security is properly formatted
+                
+                const hasAC = Array.isArray(property.amenities) && 
+                    property.amenities.some(a => 
+                        (typeof a === 'string' && a === 'ac') || 
+                        (typeof a === 'object' && a !== null && 'name' in a && a.name === 'ac')
+                    );
+                
+                roomOptions.push({
+                    type: roomType,
+                    rent: price,
+                    isAvailable: true,
+                    mealsIncluded: true,
+                    acType: hasAC ? 'AC' : 'Non-AC',
+                    security: "0",
+                });
+            }
+        });
+    }
+
+    const amenities: (string | Amenity)[] = [];
+    if (Array.isArray(property.amenities)) {
+        property.amenities.forEach(amenity => {
+            if (typeof amenity === 'string') {
+                amenities.push(amenity);
+            } else if (amenity && typeof amenity === 'object') {
+                if ('icon' in amenity && 'label' in amenity) {
+                    amenities.push(amenity as Amenity);
+                } else if ('name' in amenity) {
+                    const details = getAmenityDetails(amenity.name);
+                    amenities.push({
                         icon: details.icon,
                         label: details.label
-                    };
+                    });
                 }
             }
-            return '';
-        }).filter(Boolean)
-        : [];
-    const houseRules = Array.isArray(property.houseRules) ? property.houseRules : [
-        "No Loud Music after 10 PM",
-        "No Smoking inside premises",
-        "Entry time till 11 PM",
-        "Visitors allowed with prior notice",
-        "Keep common areas clean",
-    ];
+        });
+    }
 
-    // Extract YouTube video ID from URL
     const getYoutubeId = (url: string) => {
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
         const match = url.match(regExp);
         return (match && match[2].length === 11) ? match[2] : null;
     };
 
-    const videoId = property?.youtubeVideoId ? 
-        getYoutubeId(property.youtubeVideoId) || 
-        property.youtubeVideoId : 'mxj7BqI2VPk';
+    const getEmbedUrl = (url: string) => {
+        // If it's already an embed URL, return as is
+        if (url.includes('youtube.com/embed/')) {
+            return url;
+        }
+        
+        // Extract video ID from watch URL
+        const videoId = getYoutubeId(url);
+        if (videoId) {
+            return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        }
+        
+        // Default fallback
+        return 'https://www.youtube.com/embed/mxj7BqI2VPk?autoplay=1';
+    };
 
-    const VideoModal = () => (
-        <div 
-            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
-            onClick={() => setShowVideo(false)}
-        >
-            <div className="relative w-full max-w-4xl" onClick={e => e.stopPropagation()}>
-                <button 
-                    className="absolute -top-12 right-0 text-white hover:text-gray-300 focus:outline-none"
-                    onClick={() => setShowVideo(false)}
-                    aria-label="Close video"
-                >
-                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-                <div className="aspect-w-16 aspect-h-9 w-full">
-                    <iframe 
-                        className="w-full h-[60vh] rounded-lg"
-                        src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
-                        title="Property Video"
-                        frameBorder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowFullScreen
-                    ></iframe>
+    const VideoModal = () => {
+        if (!property?.youtubeLink) return null;
+        
+        const embedUrl = getEmbedUrl(property.youtubeLink);
+        
+        return (
+            <div 
+                className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+                onClick={() => setShowVideo(false)}
+            >
+                <div className="relative w-full max-w-4xl" onClick={e => e.stopPropagation()}>
+                    <button 
+                        className="absolute -top-12 right-0 text-white hover:text-gray-300 focus:outline-none z-10"
+                        onClick={() => setShowVideo(false)}
+                        aria-label="Close video"
+                    >
+                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                    <div className="aspect-w-16 aspect-h-9 w-full">
+                        <iframe 
+                            className="w-full h-[60vh] rounded-lg"
+                            src={embedUrl}
+                            title="Property Video"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        ></iframe>
+                    </div>
                 </div>
             </div>
-        </div>
-    );
+        );
+    };
 
+// ... (rest of the code remains the same)
     return (
         <div className="min-h-screen bg-gray-50 mt-16 md:mt-20">
             {showVideo && <VideoModal />}
@@ -345,16 +391,8 @@ function PropertyDetails() {
                                     <MapPin className="w-4 h-4" />
                                     <span>{getLocationString(property.location)}</span>
                                 </a>
-                                {/* <div className="flex items-center text-sm text-gray-500 mb-2">
-                                    <Star className="w-4 h-4 text-yellow-400 mr-1" />
-                                    <span className="font-medium text-gray-700">
-                                        {property.rating?.average?.toFixed(1) || property.averageRating?.toFixed(1) || 'N/A'}
-                                    </span>
-                                    <span className="mx-1">•</span>
-                                    <span>{property.rating?.count || property.reviews || 0} reviews</span>
-                                </div> */}
                             </div>
-                            <div className="flex flex-wrap gap-3 md:gap-5 mt-3">
+                            {property.youtubeLink && <div className="flex flex-wrap gap-3 md:gap-5 mt-3">
                                 <div 
                                     className="flex items-center gap-2 cursor-pointer group"
                                     onClick={() => setShowVideo(true)}
@@ -368,21 +406,7 @@ function PropertyDetails() {
                                         Watch Property Video
                                     </span>
                                 </div>
-                                {/* <div className="flex items-center gap-2">
-                                    <div className="relative w-5 h-5">
-                                        <img className="w-[17px] h-3.5 absolute top-[3px] left-0.5" alt="Bedroom icon" src="https://c.animaapp.com/mbi2us3vKS97yu/img/group.png" />
-                                    </div>
-                                    <span className="text-sm md:text-base">{property.bedrooms} bedroom</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <img className="w-5 h-5" alt="Bath icon" src="https://c.animaapp.com/mbi2us3vKS97yu/img/fa-solid-bath.svg" />
-                                    <span className="text-sm md:text-base">{property.bathrooms} bath</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm md:text-base font-semibold">PG Type:</span>
-                                    <span className="text-sm md:text-base">{property.gender || 'Unisex'}</span>
-                                </div> */}
-                            </div>
+                            </div>}
                         </div>
                         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                             <Button onClick={handleBookRoom} className="w-full sm:w-auto py-3 md:py-5 bg-green hover:bg-green flex rounded-[40px] items-center px-6 md:px-9 justify-center gap-2 text-sm md:text-base">
@@ -493,7 +517,7 @@ function PropertyDetails() {
                                             <div
                                                 key={index}
                                             className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
-                                                isAvailable 
+                                                true 
                                                     ? 'bg-gray-50 hover:bg-gray-100' 
                                                     : 'bg-gray-50 opacity-60'
                                             }`}
@@ -543,6 +567,7 @@ function PropertyDetails() {
                                 })}
                             </div>
                         </div>
+                        {roomOptions.length > 0 && (
                         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                             <h2 className="text-lg sm:text-xl md:text-2xl font-semibold p-4 sm:p-6">Room Options</h2>
                             <div className="block md:hidden">
@@ -553,25 +578,23 @@ function PropertyDetails() {
                                                 <h3 className="font-medium text-base">{room.type}</h3>
                                                 <div className="text-green font-semibold text-sm mt-1">{room.rent}/month</div>
                                             </div>
-                                            <span className="text-sm bg-gray-100 px-2 py-1 rounded">{room.acType}</span>
+                                            <span className="text-sm bg-gray-100 px-2 py-1 rounded">{room.acType || 'N/A'}</span>
                                         </div>
                                         <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
+                                           
                                             <div className="flex items-center gap-1">
-                                                <ShieldIcon className="w-4 h-4" />
-                                                <span>Security: {room.security}</span>
-                                            </div>
-                                            <div className="flex items-center gap-1">
-                                                <UtensilsIcon className="w-4 h-4" />
+                                                <Utensils className="w-4 h-4" />
                                                 <span>Meals: {room.mealsIncluded ? "Included" : "Not Included"}</span>
                                             </div>
                                         </div>
                                         <button
                                             onClick={handleBookRoom}
                                             disabled={!room.isAvailable}
-                                            className={`w-full py-2 px-4 rounded-full text-sm font-medium ${room.isAvailable
-                                                ? "bg-[#064749] text-white hover:bg-[#053a3c]"
-                                                : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                                                }`}
+                                            className={`w-full py-2 px-4 rounded-full text-sm font-medium ${
+                                                room.isAvailable 
+                                                    ? "bg-[#064749] text-white hover:bg-[#053a3c]"
+                                                    : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                                            }`}
                                         >
                                             {room.isAvailable ? "Book Now" : "Not Available"}
                                         </button>
@@ -584,8 +607,6 @@ function PropertyDetails() {
                                         <tr className="border-b">
                                             <th className="text-left py-3 px-3 text-sm font-medium">Room Type</th>
                                             <th className="text-left py-3 px-3 text-sm font-medium">Monthly Rent</th>
-                                            <th className="text-left py-3 px-3 text-sm font-medium">Security</th>
-                                            <th className="text-left py-3 px-3 text-sm font-medium">AC/Non-AC</th>
                                             <th className="text-left py-3 px-3 text-sm font-medium">Meals</th>
                                             <th className="text-left py-3 px-3 text-sm font-medium"></th>
                                         </tr>
@@ -595,14 +616,12 @@ function PropertyDetails() {
                                             <tr key={index} className="hover:bg-gray-50">
                                                 <td className="py-4 px-3 font-medium text-sm">{room.type}</td>
                                                 <td className="py-4 px-3 text-green font-semibold text-sm">{room.rent}</td>
-                                                <td className="py-4 px-3 text-sm">{room.security}</td>
-                                                <td className="py-4 px-3 text-sm">{room.acType}</td>
                                                 <td className="py-4 px-3 text-sm">{room.mealsIncluded ? "Yes" : "No"}</td>
                                                 <td className="py-4 px-3">
                                                     <button
                                                         onClick={handleBookRoom}
                                                         disabled={!room.isAvailable}
-                                                        className={`text-white text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-full whitespace-nowrap ${room.isAvailable
+                                                        className={`text-white text-xs sm:text-sm px-3 sm:px-4 py-1.5 rounded-full whitespace-nowrap ${true
                                                             ? "bg-[#064749] hover:bg-[#053a3c]"
                                                             : "bg-gray-400 cursor-not-allowed"
                                                             }`}
@@ -616,8 +635,7 @@ function PropertyDetails() {
                                 </table>
                             </div>
                         </div>
-
-                        
+                        )}
                     </div>
                     <div className="space-y-6 sm:space-y-0">
                         <div className="bg-gradient-to-br mb-4 sm:mb-4 from-[#064749] to-[#0a6c6f] p-6 rounded-xl shadow-lg text-white overflow-hidden relative">
@@ -665,7 +683,7 @@ function PropertyDetails() {
                                     <div className="pt-4 mt-4 border-t border-white/10">
                                         <div className="flex items-center">
                                             <div className="bg-white/10 p-2 rounded-lg mr-3">
-                                                <MessageCircle className="w-5 h-5" />
+                                                <MessageCircle className="w-4 h-4" />
                                             </div>
                                             <div>
                                                 <p className="text-xs text-white/70">Prefer to chat?</p>

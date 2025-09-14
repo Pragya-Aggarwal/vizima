@@ -60,7 +60,12 @@ export interface ExtendedAccommodation {
     gender?: string;
     bulkAccommodation?: boolean;
     bulkAccommodationType?: string[];
-    sharingType?: string[];
+    sharingType?: Array<{
+        type: string;
+        price: number;
+        _id?: string;
+        id?: string;
+    }>;
     price: number;
     rent?: number;
     amenities?: string[] | { name: string; available: boolean }[];
@@ -103,6 +108,7 @@ export interface ExtendedAccommodation {
     visitBookings?: any[];
     scheduleVisits?: any[];
     microSiteLink?: string;
+    youtubeLink?: string;
     youtubeVideoId?: string;
     createdAt?: string;
     updatedAt?: string;

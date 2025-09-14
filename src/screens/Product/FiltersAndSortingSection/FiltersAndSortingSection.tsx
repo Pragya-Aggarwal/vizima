@@ -1,5 +1,12 @@
-import { ChevronDownIcon, SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X } from "lucide-react";
 import React, { useState, useEffect } from "react";
+
+type SharingType = {
+    type: string | number;
+    price?: number;
+    _id?: string;
+    id?: string;
+};
 import {
     Select,
     SelectContent,
@@ -72,12 +79,6 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
         if (!accommodations || accommodations.length === 0) return;
 
         // Get unique values for each filter type
-        const locations = Array.from(new Set(
-            accommodations
-                .map(acc => acc.location)
-                .filter((location): location is string => Boolean(location))
-        ));
-
         const propertyTypes = Array.from(new Set(
             accommodations
                 .map(acc => acc.type)
@@ -86,8 +87,19 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
 
         const sharingTypes = Array.from(new Set(
             accommodations
-                .flatMap(acc => acc.sharingType || [])
-                .filter((type): type is string => Boolean(type))
+                .flatMap(acc => {
+                    const sharing = acc.sharingType as (string | SharingType)[] || [];
+                    return sharing
+                        .map(item => {
+                            // Handle both string and object sharing types
+                            if (typeof item === 'string') return item;
+                            if (item && typeof item === 'object' && 'type' in item) {
+                                return String(item.type || '');
+                            }
+                            return null;
+                        })
+                        .filter((type): type is string => Boolean(type));
+                })
         ));
 
         const genders = Array.from(new Set(
@@ -157,7 +169,7 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
     const removeFilter = (index: number) => {
         setActiveFilters(prev => {
             const newFilters = [...prev];
-            const [removedFilter] = newFilters.splice(index, 1);
+            newFilters.splice(index, 1);
 
             // Update parent component with current filters
             const filtersObj = newFilters.reduce<Record<string, string>>((acc, filter) => ({
@@ -210,11 +222,14 @@ export const FiltersAndSortingSection: React.FC<FiltersAndSortingSectionProps> =
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">All {filter.name}s</SelectItem>
-                    {filter.options.map((option, idx) => (
-                        <SelectItem key={idx} value={option}>
-                            {option}
-                        </SelectItem>
-                    ))}
+                    {filter.options.map((option) => {
+                        const value = typeof option === 'string' ? option : String(option);
+                        return (
+                            <SelectItem key={value} value={value}>
+                                {value}
+                            </SelectItem>
+                        );
+                    })}
                 </SelectContent>
             </Select>
         </div>

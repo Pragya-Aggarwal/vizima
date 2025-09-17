@@ -25,6 +25,7 @@ const AccommodationCard = ({ apartment, onViewDetails }: AccommodationCardProps)
     onViewDetails(id);
     navigate(`/property-details/${id}`);
   };
+  console.log(apartment)
   return (
 
     <section className="py-3 sm:py-6 bg-gray-50">
@@ -79,8 +80,8 @@ const AccommodationCard = ({ apartment, onViewDetails }: AccommodationCardProps)
                     <div className="flex items-center gap-2 text-gray-500 mb-1">
                       <MapPin className="w-4 h-4 text-green" />
                       <span className="text-xs font-medium">
-                        {typeof apartment.location === 'string' 
-                          ? apartment.location 
+                        {typeof apartment.location === 'string'
+                          ? apartment.location
                           : apartment.location?.address || 'Location not specified'}
                       </span>
                     </div>
@@ -138,7 +139,32 @@ const AccommodationCard = ({ apartment, onViewDetails }: AccommodationCardProps)
                     <div>
                       <p className="text-xs text-gray-500">Starting from</p>
                       <div className="flex items-baseline gap-1">
-                        <span className="text-xl font-bold text-gray-900">₹{apartment.price}</span>
+                        <span className="text-xl font-bold text-gray-900">
+                          ₹{(() => {
+                            // If sharingType doesn't exist or is empty, use apartment.price
+                            if (!apartment.sharingType || apartment.sharingType.length === 0) {
+                              return apartment?.price || '0';
+                            }
+                            
+                            // Handle case where sharingType is an array of strings
+                            if (typeof apartment.sharingType[0] === 'string') {
+                              return apartment?.price || '0';
+                            }
+                            
+                            // Handle case where sharingType is an array of objects with price
+                            try {
+                              const prices = (apartment.sharingType as any[])
+                                .filter(room => room?.price !== undefined && room.price !== null)
+                                .map(room => room.price);
+                                
+                              return prices.length > 0 
+                                ? Math.min(...prices)
+                                : apartment?.price || '0';
+                            } catch (e) {
+                              return apartment?.price || '0';
+                            }
+                          })()}
+                        </span>
                         <span className="text-sm text-gray-600">/month</span>
                       </div>
                     </div>

@@ -795,10 +795,7 @@ function PropertyDetails() {
                                             <div className="p-5 pt-4">
                                                 <div className="flex justify-between items-start mb-2">
                                                     <h3 className="font-semibold text-gray-900 text-lg line-clamp-1">{propertyTitle}</h3>
-                                                    <div className="flex items-center bg-green-50 text-green-700 text-xs font-medium px-2 py-1 rounded">
-                                                        <Star className="w-3.5 h-3.5 mr-1 fill-current" />
-                                                        {typeof property.rating === 'number' ? property.rating.toFixed(1) : property.rating?.average?.toFixed(1) || 'New'}
-                                                    </div>
+                                                   
                                                 </div>
                                                 <p className="text-sm text-gray-500 flex items-center mb-3">
                                                     <MapPin className="w-3.5 h-3.5 mr-1.5 text-gray-400 flex-shrink-0" />
@@ -806,42 +803,11 @@ function PropertyDetails() {
                                                 </p>
 
                                                 <div className="flex items-center justify-between mb-3">
-                                                    <div className="flex items-center bg-blue-50 px-2 py-1 rounded-full">
-                                                        <Star className="w-4 h-4 text-yellow-400 fill-yellow-400 mr-1" />
-                                                        <span className="text-sm font-medium text-blue-700">
-                                                            {property.rating?.average?.toFixed(1) || property.averageRating?.toFixed(1) || 'N/A'}
-                                                        </span>
-                                                        <span className="text-xs text-blue-600 ml-1">
-                                                            ({property.rating?.count || property.reviews || 0})
-                                                        </span>
-                                                    </div>
                                                     <div className="text-right">
                                                         <span className="text-lg font-bold text-gray-900">
                                                             ₹{(property.price || property.rent)?.toLocaleString() || 'N/A'}
                                                         </span>
                                                         <span className="text-sm text-gray-500">/month</span>
-                                                    </div>
-                                                </div>
-
-                                                <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-gray-100">
-                                                <div className="flex flex-col items-center text-center">
-                                                    <Bed className="w-5 h-5 text-gray-500 mb-1" />
-                                                    <span className="text-xs text-gray-600">
-                                                        {property.bedrooms || 'N/A'} Beds
-                                                    </span>
-                                                    </div>
-                                                    <div className="flex flex-col items-center text-center">
-                                                        <Bath className="w-5 h-5 text-gray-500 mb-1" />
-                                                        <span className="text-xs text-gray-600">
-                                                            {property.bathrooms || 'N/A'} Baths
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex flex-col items-center text-center">
-                                                    
-                                                        <FaTransgender className="w-5 h-5 text-gray-500 mb-1" />
-                                                        <span className="text-xs text-gray-600">
-                                                            {property.gender ? property.gender : 'N/A'}
-                                                        </span>
                                                     </div>
                                                 </div>
 

@@ -282,7 +282,7 @@ export const ProductPage = (): JSX.Element => {
             </div>
 
             {/* Mobile View Toggle */}
-            <div className="fixed bottom-24 right-4 z-50 lg:hidden">
+            <div className="fixed bottom-40 right-4 z-50 lg:hidden">
                 <Button
                     onClick={toggleView}
                     className="bg-green hover:bg-green/90 text-white rounded-full px-4 py-2 sm:px-6 sm:py-3 flex items-center gap-2 shadow-lg transition-all duration-200 text-sm sm:text-base"

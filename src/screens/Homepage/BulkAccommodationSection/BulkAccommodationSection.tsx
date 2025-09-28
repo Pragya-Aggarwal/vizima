@@ -1,4 +1,4 @@
-import { FacebookIcon, TwitterIcon, Check, Phone, Mail } from "lucide-react";
+import { FacebookIcon, TwitterIcon, Check, Phone, Mail, LinkedinIcon, Facebook, YoutubeIcon, InstagramIcon } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
@@ -183,20 +183,16 @@ export const BulkAccommodationSection = (): JSX.Element => {
                             <div className="flex flex-col gap-2 sm:gap-3">
                                 <div className="flex items-center gap-2 sm:gap-3">
                                     <a
-                                        href="https://instagram.com"
+                                        href="https://www.instagram.com/vizima.hostels.noida?igsh=eXAzcWRnbHpyeGlr&utm_source=qr"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-tr from-pink-500 to-yellow-400 hover:from-pink-600 hover:to-yellow-500 transition-colors duration-200 shadow group"
                                         title="Instagram"
                                     >
-                                        <img
-                                            className="w-4 h-4 sm:w-5 sm:h-5"
-                                            alt="Instagram"
-                                            src="https://c.animaapp.com/mbhqlborYGJdod/img/group-3.png"
-                                        />
+                                        <InstagramIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                                     </a>
                                     <a
-                                        href="https://facebook.com"
+                                        href="https://www.facebook.com/share/1AHXd7JMxU/?mibextid=wwXIfr"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 transition-colors duration-200 shadow group"
@@ -205,13 +201,22 @@ export const BulkAccommodationSection = (): JSX.Element => {
                                         <FacebookIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                                     </a>
                                     <a
-                                        href="https://twitter.com"
+                                        href="https://www.linkedin.com/company/vizima-hospitality/"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-400 hover:bg-sky-500 transition-colors duration-200 shadow group"
-                                        title="Twitter"
+                                        className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 transition-colors duration-200 shadow group"
+                                        title="LinkedIn"
                                     >
-                                        <TwitterIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                                        <LinkedinIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                                    </a>
+                                    <a
+                                        href="https://youtube.com/@vizimahostelspg?si=ySyPfjsAKIZI559D"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-500 transition-colors duration-200 shadow group"
+                                        title="Youtube"
+                                    >
+                                        <YoutubeIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                                     </a>
                                 </div>
                             </div>

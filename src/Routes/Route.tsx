@@ -17,6 +17,7 @@ import PrivacyPolicy from '../screens/PrivacyPolicy/PrivacyPolicy';
 import TermsOfService from '../screens/TermsOfService/TermsOfService';
 import Career from '../screens/Career/Career';
 import WhatsAppButton from '../components/WhatsAppButton';
+import CustomerDetailButton from '../components/CustomerDetailButton';
 import { Toaster } from '../components/ui/toast';
 
 const App = () => {
@@ -46,13 +47,14 @@ const App = () => {
                 </main>
                 <BulkAccommodationSection />
 
-                {/* WhatsApp Floating Button */}
+                {/* Floating Buttons */}
+                <CustomerDetailButton />
                 <WhatsAppButton />
 
                 {/* Dropdown Icon - Using Lucide Icon instead of image */}
-                <div className="fixed top-[30px] left-[834px]">
+                {/* <div className="fixed top-[30px] left-[834px]">
                     <ChevronDownIcon className="w-6 h-6" />
-                </div>
+                </div> */}
             </div>
         </Router>
     );

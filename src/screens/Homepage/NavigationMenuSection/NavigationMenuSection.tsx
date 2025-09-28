@@ -9,11 +9,49 @@ import {
 import { isLoggedIn, logout } from "../../../utils/auth";
 import { Menu, X, Phone } from "lucide-react";
 import { logo } from "../../../assets";
+import { toast } from "../../../components/ui/use-toast";
+
+interface ContactNumber {
+    _id: string;
+    number: string;
+    description: string;
+    isActive: boolean;
+    order: number;
+    createdAt: string;
+    id: string;
+}
 
 export const NavigationMenuSection = (): JSX.Element => {
     const navigate = useNavigate();
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [contactNumbers, setContactNumbers] = useState<ContactNumber[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Fetch contact numbers on mount
+    useEffect(() => {
+        const fetchContactNumbers = async () => {
+            try {
+                const response = await fetch('https://api.vizima.in/api/contact-numbers/active');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch contact numbers');
+                }
+                const { data } = await response.json();
+                setContactNumbers(data?.contactNumbers || []);
+            } catch (error) {
+                console.error('Error fetching contact numbers:', error);
+                toast({
+                    title: 'Error',
+                    description: 'Failed to load contact numbers',
+                    variant: 'destructive'
+                });
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchContactNumbers();
+    }, []);
 
     // Check login status on mount and when localStorage changes
     useEffect(() => {
@@ -209,15 +247,28 @@ export const NavigationMenuSection = (): JSX.Element => {
                                         Login
                                     </Button>
                                 )} */}
-                               <a 
-                                    href="tel:919667300983"
-                                    className="group flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-green-50"
-                                >
-                                    <Phone className="h-4 w-4 text-gray-600" />
-                                    <span className="text-base font-semibold text-gray-800 group-hover:text-green-700 transition-colors whitespace-nowrap">
-                                        09667300983 | 09667840277
-                                    </span>
-                                </a>
+                               {isLoading ? (
+                                    <div className="h-6 w-48 bg-gray-200 rounded animate-pulse"></div>
+                                ) : contactNumbers.length > 0 ? (
+                                    <div className="flex flex-col gap-1">
+                                        {contactNumbers.map((number) => (
+                                            <a 
+                                                key={number._id}
+                                                href={`tel:${number.number}`}
+                                                className="group flex items-center gap-2 px-4 py-1 rounded-lg transition-all duration-200 hover:bg-green-50"
+                                                title={number.description || 'Contact us'}
+                                            >
+                                                <Phone className="h-4 w-4 text-gray-600" />
+                                                <span className="text-base font-semibold text-gray-800 group-hover:text-green-700 transition-colors whitespace-nowrap">
+                                                    {number.number}
+                                                </span>
+                                               
+                                            </a>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <></>
+                                )}
                             </NavigationMenuItem>
                         </NavigationMenuList>
                     </NavigationMenu>
@@ -262,17 +313,27 @@ export const NavigationMenuSection = (): JSX.Element => {
                                     {item.label}
                                 </a>
                             ))}
-                            <div className="px-6 py-4 border-b border-gray-100">
-                                <a 
-                                    href="tel:919667300983"
-                                    className="flex items-center gap-3 text-gray-700 hover:text-green-700 transition-colors"
-                                >
-                                    <Phone className="h-5 w-5 text-green-600" />
-                                    <span className="font-medium">
-                                        09667300983 | 09667840277
-                                    </span>
-                                </a>
-                            </div>
+                            {isLoading ? (
+                                <div className="px-6 py-4 border-b border-gray-100">
+                                    <div className="h-6 w-full bg-gray-200 rounded animate-pulse"></div>
+                                </div>
+                            ) : contactNumbers.length > 0 ? (
+                                <div className="border-b border-gray-100">
+                                    {contactNumbers.map((number) => (
+                                        <a 
+                                            key={`mobile-${number._id}`}
+                                            href={`tel:${number.number}`}
+                                            className="flex items-center gap-3 px-6 py-4 text-gray-700 hover:bg-gray-50 transition-colors"
+                                            title={number.description || 'Contact us'}
+                                        >
+                                            <Phone className="h-5 w-5 text-green-600" />
+                                            <span className="font-medium">
+                                                {number.number}
+                                            </span>
+                                        </a>
+                                    ))}
+                                </div>
+                            ) : null}
                         </nav>
                     </div>
                 </div>

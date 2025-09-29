@@ -33,21 +33,21 @@ import {
 import { home } from '../../assets';
 import { accommodationService } from '../../api/services/accommodationService';
 import { ExtendedAccommodation, transformToExtended, Location, Amenity } from '../../lib/types';
-import { toast } from '../../components/ui/use-toast';
 import { Button } from '../../components/ui/button';
+import { toast } from '../../components/ui/use-toast';
 import SimpleMap2 from '../../components/Map/SimpleMap2';
 import { FaTransgender } from 'react-icons/fa';
 
 
 interface RoomOption {
-    type: string;
-    rent: string;
-    isAvailable: boolean;
-    mealsIncluded: boolean;
-    acType?: string;
-    security?: string;
+  type: string;
+  rent: string;
+  isAvailable: boolean;
+  mealsIncluded: boolean;
+  acType?: string;
+  security?: string;
+  description?: string;
 }
-
 
 
 // Helper function to get amenity details
@@ -293,6 +293,7 @@ function PropertyDetails() {
                     mealsIncluded: true,
                     acType: hasAC ? 'AC' : 'Non-AC',
                     security: "0",
+                    description: 'description' in room ? String(room.description) : ''
                 });
             }
         });
@@ -409,13 +410,13 @@ function PropertyDetails() {
                             </div>}
                         </div>
                         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                            <Button onClick={handleBookRoom} className="w-full sm:w-auto py-3 md:py-5 bg-green hover:bg-green flex rounded-[40px] items-center px-6 md:px-9 justify-center gap-2 text-sm md:text-base">
-                                Book This Room
-                            </Button>
-                            <Button onClick={handleScheduleRoom} className="w-full sm:w-auto py-3 md:py-5 bg-green hover:bg-green flex rounded-[40px] items-center px-6 md:px-9 justify-center gap-2 text-sm md:text-base">
-                                Schedule Visit
-                            </Button>
-                        </div>
+                        <Button onClick={handleBookRoom} className="w-full sm:w-auto py-3 md:py-5 bg-green hover:bg-green flex rounded-[40px] items-center px-6 md:px-9 justify-center gap-2 text-sm md:text-base">
+                            Book This Room
+                        </Button>
+                        <Button onClick={handleScheduleRoom} className="w-full sm:w-auto py-3 md:py-5 bg-green hover:bg-green flex rounded-[40px] items-center px-6 md:px-9 justify-center gap-2 text-sm md:text-base">
+                            Schedule Visit
+                        </Button>
+                    </div>
                     </div>
                 </div>
                 <div className="rounded-lg overflow-hidden p-2 sm:p-4">
@@ -580,24 +581,26 @@ function PropertyDetails() {
                                             </div>
                                             <span className="text-sm bg-gray-100 px-2 py-1 rounded">{room.acType || 'N/A'}</span>
                                         </div>
-                                        <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
-                                           
+                                        <div className="grid grid-cols-1 gap-2 text-sm text-gray-600 mb-3">
+                                            {room.description && (
+                                                <p className="text-gray-700 mb-2">{room.description}</p>
+                                            )}
                                             <div className="flex items-center gap-1">
                                                 <Utensils className="w-4 h-4" />
                                                 <span>Meals: {room.mealsIncluded ? "Included" : "Not Included"}</span>
                                             </div>
                                         </div>
-                                        <button
+                                        <Button
                                             onClick={handleBookRoom}
                                             disabled={!room.isAvailable}
-                                            className={`w-full py-2 px-4 rounded-full text-sm font-medium ${
+                                            className={`w-full rounded-full ${
                                                 room.isAvailable 
-                                                    ? "bg-[#064749] text-white hover:bg-[#053a3c]"
+                                                    ? "bg-[#064749] hover:bg-[#053a3c]"
                                                     : "bg-gray-200 text-gray-500 cursor-not-allowed"
                                             }`}
                                         >
                                             {room.isAvailable ? "Book Now" : "Not Available"}
-                                        </button>
+                                        </Button>
                                     </div>
                                 ))}
                             </div>
@@ -614,7 +617,12 @@ function PropertyDetails() {
                                     <tbody className="divide-y">
                                         {roomOptions.map((room, index) => (
                                             <tr key={index} className="hover:bg-gray-50">
-                                                <td className="py-4 px-3 font-medium text-sm">{room.type}</td>
+                                                <td className="py-4 px-3">
+                                                    <div className="font-medium text-sm">{room.type}</div>
+                                                    {room.description && (
+                                                        <div className="text-xs text-gray-500 mt-1">{room.description}</div>
+                                                    )}
+                                                </td>
                                                 <td className="py-4 px-3 text-green font-semibold text-sm">{room.rent}</td>
                                                 <td className="py-4 px-3 text-sm">{room.mealsIncluded ? "Yes" : "No"}</td>
                                                 <td className="py-4 px-3">

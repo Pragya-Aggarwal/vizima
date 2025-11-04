@@ -4,7 +4,7 @@ import * as FaIcons from "react-icons/fa";
 
 const WhatsAppButton = () => {
   const phoneNumber = '9667300983'; // WhatsApp number with country code
-  const message = 'Hello, I have a question about your service.'; // Optional message
+  const message = 'Hey, I am looking for PG or Hostel in Noida.'; // Optional message
 
   const handleClick = () => {
     // Open WhatsApp with the specified number and message

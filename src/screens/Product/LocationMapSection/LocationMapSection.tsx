@@ -1,17 +1,20 @@
 'use client';
 
-'use client';
-
-import { useEffect, useState, useMemo, lazy, Suspense, useCallback } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { accommodationService, type Accommodation } from '../../../api/services/accommodationService';
+import dynamic from 'next/dynamic';
 
-// Create a client-side only wrapper for the map
-const SimpleMap = lazy(() => import('../../../components/Map/SimpleMap'));
-
-const MapLoader = () => (
-  <div className="w-full h-full flex items-center justify-center bg-gray-50">
-    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-  </div>
+// Dynamically import GoogleMapComponent with no SSR
+const GoogleMapComponent = dynamic(
+  () => import('../../../components/Map/GoogleMapComponent'),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    )
+  }
 );
 
 interface LocationGroup {
@@ -290,18 +293,19 @@ export const LocationMapSection = ({ searchQuery, city: propCity }: LocationMapS
   return (
     <section className="w-full h-full">
       <div className="w-full h-full">
-        <div className="w-full h-full min-h-[400px] relative overflow-hidden rounded-lg border border-gray-200 bg-white">
-          <Suspense fallback={<MapLoader />}>
-            <div className="absolute inset-0 w-full h-full">
-              <SimpleMap 
-                locationGroups={filteredGroups} 
-                mapCenter={mapCenter || [20.5937, 78.9629]} // Use calculated center or default to India
-                zoom={zoom}
-                fallbackMarker={fallbackMarker}
-                key={`${mapCenter?.[0]}-${mapCenter?.[1]}-${zoom}`} // Force re-render when center/zoom changes
-              />
-            </div>
-          </Suspense>
+        <div className="w-full h-full min-h-[500px] relative overflow-hidden rounded-lg border border-gray-200 bg-white">
+          <div className="absolute inset-0 w-full h-full">
+            <GoogleMapComponent 
+              locationGroups={filteredGroups}
+              mapCenter={mapCenter || [20.5937, 78.9629]}
+              zoom={zoom}
+              fallbackMarker={fallbackMarker}
+              onMarkerClick={(marker) => {
+                console.log('Marker clicked:', marker);
+              }}
+              key={`${mapCenter?.[0]}-${mapCenter?.[1]}-${zoom}`}
+            />
+          </div>
         </div>
       </div>
     </section>

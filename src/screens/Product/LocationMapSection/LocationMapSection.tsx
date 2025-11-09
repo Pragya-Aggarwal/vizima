@@ -1,20 +1,16 @@
 'use client';
 
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo, useCallback, lazy, Suspense } from 'react';
 import { accommodationService, type Accommodation } from '../../../api/services/accommodationService';
-import dynamic from 'next/dynamic';
 
-// Dynamically import GoogleMapComponent with no SSR
-const GoogleMapComponent = dynamic(
-  () => import('../../../components/Map/GoogleMapComponent'),
-  { 
-    ssr: false,
-    loading: () => (
-      <div className="w-full h-full flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    )
-  }
+// Lazy load the GoogleMapComponent
+const GoogleMapComponent = lazy(() => import('../../../components/Map/GoogleMapComponent'));
+
+// Loading component
+const MapLoading = () => (
+  <div className="w-full h-full flex items-center justify-center bg-gray-50">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
 );
 
 interface LocationGroup {
@@ -173,12 +169,15 @@ export const LocationMapSection = ({ searchQuery, city: propCity }: LocationMapS
       return group.properties.some(property => {
         const title = property.title?.toLowerCase() || '';
         const locationStr = typeof property.location === 'string' 
-          ? property.location.toLowerCase() 
+          ? property.location
           : (property.location && typeof property.location === 'object' && 'address' in property.location)
-            ? String(property.location.address || '').toLowerCase()
+            ? String(property.location.address || '')
             : '';
+            
+        const query = searchQuery?.toLowerCase() || '';
+        const locationStrLower = locationStr.toLowerCase();
         
-        return title.includes(query) || locationStr.includes(query);
+        return title.toLowerCase().includes(query) || locationStrLower.includes(query);
       });
     });
 
@@ -266,20 +265,6 @@ export const LocationMapSection = ({ searchQuery, city: propCity }: LocationMapS
     handleSearch();
   }, [searchQuery, propCity, geocodeLocation]);
 
-  // Calculate the center point and check if we need to show a fallback marker
-  const fallbackMarker = useMemo(() => {
-    if (searchedLocation) {
-      return {
-        position: searchedLocation as [number, number],
-        title: searchQuery ? `No Properties Found in ${searchQuery}` : 'No Properties Found',
-        description: searchQuery 
-          ? `No properties found matching "${searchQuery}"`
-          : 'No properties available in this area'
-      };
-    }
-    
-    return undefined;
-  }, [searchedLocation, searchQuery]);
 
   // Show loading state while data is being fetched
   if (!isClient || isLoading) {
@@ -290,25 +275,31 @@ export const LocationMapSection = ({ searchQuery, city: propCity }: LocationMapS
     );
   }
 
+  // Prepare the fallback marker if we have a searched location but no results
+  const fallback = searchedLocation && filteredGroups.length === 0 ? {
+    position: searchedLocation as [number, number],
+    title: searchQuery ? `No Properties Found in ${searchQuery}` : 'No Properties Found',
+    description: searchQuery 
+      ? `No properties found matching "${searchQuery}"`
+      : 'No properties available in this area'
+  } : undefined;
+
   return (
-    <section className="w-full h-full">
-      <div className="w-full h-full">
-        <div className="w-full h-full min-h-[500px] relative overflow-hidden rounded-lg border border-gray-200 bg-white">
-          <div className="absolute inset-0 w-full h-full">
-            <GoogleMapComponent 
-              locationGroups={filteredGroups}
-              mapCenter={mapCenter || [20.5937, 78.9629]}
-              zoom={zoom}
-              fallbackMarker={fallbackMarker}
-              onMarkerClick={(marker) => {
-                console.log('Marker clicked:', marker);
-              }}
-              key={`${mapCenter?.[0]}-${mapCenter?.[1]}-${zoom}`}
-            />
-          </div>
+    <div className="w-full">
+      <Suspense fallback={<MapLoading />}>
+        <div className="w-full h-[500px] rounded-lg overflow-hidden">
+          <GoogleMapComponent
+            locationGroups={filteredGroups}
+            mapCenter={mapCenter || [20.5937, 78.9629]}
+            zoom={zoom}
+            fallbackMarker={fallback}
+            onMarkerClick={(marker) => {
+              console.log('Marker clicked:', marker);
+            }}
+          />
         </div>
-      </div>
-    </section>
+      </Suspense>
+    </div>
   );
 };
 

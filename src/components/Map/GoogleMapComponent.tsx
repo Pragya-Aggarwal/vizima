@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { GoogleMap, LoadScript, MarkerF, InfoWindowF } from '@react-google-maps/api';
 
 // Define types for our location data
@@ -8,7 +8,7 @@ interface Property {
   title?: string;
   city?: string;
   price?: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface LocationGroup {
@@ -20,7 +20,7 @@ interface LocationGroup {
 }
 
 interface GoogleMapComponentProps {
-  locationGroups: LocationGroup[];
+  locationGroups?: LocationGroup[];
   mapCenter: [number, number];
   zoom?: number;
   fallbackMarker?: {
@@ -29,23 +29,14 @@ interface GoogleMapComponentProps {
     description: string;
   };
   onMarkerClick?: (marker: LocationGroup) => void;
+  onError?: (error: Error) => void;
 }
-
 // Google Maps API key - Make sure to enable 'Maps JavaScript API' in Google Cloud Console
 // For production, use environment variables instead of hardcoding the key
 const GOOGLE_MAPS_API_KEY = 'AIzaSyA-2pt2V1S0Ik319sDimuDogUt8I8zSDLo';
 
 if (!GOOGLE_MAPS_API_KEY) {
-  console.error('Google Maps API key is missing. Please provide a valid API key.');
-}
-
-// Check if Google Maps API is loaded
-declare global {
-  interface Window {
-    google?: {
-      maps: any;
-    };
-  }
+  console.error('Google Maps API key is missing. Please set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your environment variables.');
 }
 
 const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
@@ -53,12 +44,17 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
   mapCenter,
   zoom = 5,
   fallbackMarker,
-  onMarkerClick = () => {}
+  onMarkerClick = () => {},
+  onError = () => {}
 }) => {
   const [selectedMarker, setSelectedMarker] = useState<LocationGroup | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<Error | null>(null);
+  const [loadTimeout, setLoadTimeout] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<Record<string, unknown>>({});
+  const mapRef = useRef<HTMLDivElement>(null);
 
   // Map container style
   const containerStyle = {
@@ -76,16 +72,11 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
   }, []);
 
   // Handle map load error
-  const onError = useCallback((error: Error) => {
+  const handleLoadError = useCallback((error: Error) => {
     console.error('Error loading Google Maps:', error);
-    console.error('Error details:', {
-      message: error.message,
-      name: error.name,
-      stack: error.stack
-    });
     setLoadError(error);
-    setIsLoaded(false);
-  }, []);
+    onError(error);
+  }, [onError]);
 
   // Update map bounds when location groups change
   useEffect(() => {
@@ -94,12 +85,10 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
     try {
       const bounds = new window.google.maps.LatLngBounds();
       
-      // Extend bounds for all markers
       locationGroups.forEach(group => {
         bounds.extend(new window.google.maps.LatLng(group.lat, group.lng));
       });
       
-      // If we have a fallback marker, include it in the bounds
       if (fallbackMarker && locationGroups.length === 0) {
         bounds.extend(new window.google.maps.LatLng(
           fallbackMarker.position[0],
@@ -107,9 +96,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
         ));
       }
 
-      // Only fit bounds if we have valid bounds
       if (!bounds.isEmpty()) {
-        // Add padding to the bounds
         map.fitBounds(bounds, {
           top: 50,
           right: 50,
@@ -125,9 +112,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
   // Handle marker click
   const handleMarkerClick = useCallback((marker: LocationGroup) => {
     setSelectedMarker(marker);
-    if (onMarkerClick) {
-      onMarkerClick(marker);
-    }
+    onMarkerClick(marker);
   }, [onMarkerClick]);
 
   // Add debug logging
@@ -141,13 +126,8 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
     });
   }, [isLoaded, loadError, locationGroups, mapCenter, zoom]);
 
-  // State for handling loading and errors
-  const [loadTimeout, setLoadTimeout] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
-  const [debugInfo, setDebugInfo] = useState<Record<string, any>>({});
-  
+  // Check API key and set up loading timeout
   useEffect(() => {
-    // Check if the API key is present
     if (!GOOGLE_MAPS_API_KEY) {
       const error = 'Google Maps API key is missing. Please check your configuration.';
       console.error(error);
@@ -155,7 +135,6 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
       return;
     }
 
-    // Log environment info for debugging
     const debugInfo = {
       hasWindow: typeof window !== 'undefined',
       hasGoogle: typeof window !== 'undefined' && !!window.google,
@@ -174,7 +153,6 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
         console.warn('Debug Info:', debugInfo);
         setLoadTimeout(true);
         
-        // More detailed error detection
         if (!window.google) {
           setApiError('Google Maps API script failed to load. This could be due to:');
         } else if (!window.google.maps) {
@@ -183,20 +161,8 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
           setApiError('Map failed to initialize. Please check your API key and network connection.');
         }
       }
-    }, 3000); // 3 second timeout
+    }, 3000);
     
-    return () => clearTimeout(timer);
-  }, [isLoaded]);
-
-  // Set a timeout to handle cases where the map fails to load
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!isLoaded) {
-        console.log('Map loading timeout reached');
-        setLoadTimeout(true);
-      }
-    }, 5000); // 5 second timeout
-
     return () => clearTimeout(timer);
   }, [isLoaded]);
 
@@ -306,26 +272,21 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
 
   // Main map render
   return (
-    <div className="w-full h-full relative">
+    <div className="w-full h-full relative" ref={mapRef}>
       <LoadScript
         googleMapsApiKey={GOOGLE_MAPS_API_KEY}
         onLoad={() => {
           console.log('Google Maps API script loaded successfully');
-          // Check if google.maps is available
-          if (window.google && window.google.maps) {
+          if (window.google?.maps) {
             console.log('google.maps API is available');
             setIsLoaded(true);
           } else {
             const error = new Error('Google Maps API is not available after load');
             console.error(error);
-            onError(error);
+            handleLoadError(error);
           }
         }}
-        onError={(error) => {
-          const errorMsg = error instanceof Error ? error : new Error(String(error));
-          console.error('Error in LoadScript onError:', errorMsg);
-          onError(errorMsg);
-        }}
+        onError={handleLoadError}
         loadingElement={
           <div className="w-full h-full flex items-center justify-center bg-gray-50">
             <div className="text-center">
@@ -363,7 +324,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
               key={`${location.lat}-${location.lng}-${index}`}
               position={{ lat: location.lat, lng: location.lng }}
               onClick={() => handleMarkerClick(location)}
-              title={location.properties[0]?.title || `Location ${index + 1}`}
+              title={location.properties[0]?.title as string || `Location ${index + 1}`}
               options={{
                 label: {
                   text: String(location.number || index + 1),
@@ -379,15 +340,13 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
                   onCloseClick={() => setSelectedMarker(null)}
                 >
                   <div className="max-w-xs p-2">
-                    <h3 className="font-medium text-gray-900">
-                      {location.properties[0]?.title || `Location ${index + 1}`}
-                    </h3>
+                    <h3 className="font-medium">{location.properties[0]?.title || `Location ${index + 1}`}</h3>
                     {location.properties[0]?.city && (
                       <p className="text-sm text-gray-600">{location.properties[0].city}</p>
                     )}
                     {location.properties[0]?.price && (
-                      <p className="text-sm text-gray-800 mt-1">
-                        ₹{location.properties[0].price.toLocaleString()}
+                      <p className="text-sm font-medium text-blue-600 mt-1">
+                        ${location.properties[0].price.toLocaleString()} / night
                       </p>
                     )}
                   </div>
@@ -396,7 +355,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
             </MarkerF>
           ))}
 
-          {/* Fallback marker when no locations are available */}
+          {/* Fallback marker when no locations are found */}
           {fallbackMarker && locationGroups.length === 0 && (
             <MarkerF
               position={{
@@ -412,7 +371,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
                 }}
               >
                 <div className="max-w-xs p-2">
-                  <h3 className="font-medium text-gray-900">{fallbackMarker.title}</h3>
+                  <h3 className="font-medium">{fallbackMarker.title}</h3>
                   <p className="text-sm text-gray-600">{fallbackMarker.description}</p>
                 </div>
               </InfoWindowF>

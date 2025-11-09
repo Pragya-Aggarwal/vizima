@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useState } from 'react';
 import { GoogleMap, LoadScript, MarkerF, InfoWindowF } from '@react-google-maps/api';
 
 // Define types for our location data
@@ -21,7 +21,7 @@ interface LocationGroup {
 
 interface GoogleMapComponentProps {
   locationGroups?: LocationGroup[];
-  mapCenter: [number, number];
+  mapCenter?: [number, number];
   zoom?: number;
   fallbackMarker?: {
     position: [number, number];
@@ -30,84 +30,58 @@ interface GoogleMapComponentProps {
   };
   onMarkerClick?: (marker: LocationGroup) => void;
   onError?: (error: Error) => void;
+  className?: string;
+  style?: React.CSSProperties;
 }
-// Google Maps API key - Make sure to enable 'Maps JavaScript API' in Google Cloud Console
-// For production, use environment variables instead of hardcoding the key
-const GOOGLE_MAPS_API_KEY = 'AIzaSyA-2pt2V1S0Ik319sDimuDogUt8I8zSDLo';
+// Google Maps API key - Load from Vite environment variables
+const getGoogleMapsApiKey = (): string => {
+  // In Vite, environment variables prefixed with VITE_ are exposed under import.meta.env
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  
+  if (import.meta.env.DEV) {
+    if (!apiKey) {
+      console.error('❌ Google Maps API Key is missing. Please set VITE_GOOGLE_MAPS_API_KEY in your .env file');
+    } else if (apiKey.startsWith('YOUR_') || apiKey.includes('example')) {
+      console.error('❌ Please replace the placeholder API key in your .env file with a valid Google Maps API key');
+    } else {
+      console.log('✅ Google Maps API Key loaded successfully');
+    }
+  }
+  
+  return apiKey || '';
+};
 
-if (!GOOGLE_MAPS_API_KEY) {
-  console.error('Google Maps API key is missing. Please set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your environment variables.');
-}
+const GOOGLE_MAPS_API_KEY = getGoogleMapsApiKey();
+
+const DEFAULT_CENTER: [number, number] = [20.5937, 78.9629]; // Default to India
+const DEFAULT_ZOOM = 5;
 
 const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
   locationGroups = [],
-  mapCenter,
-  zoom = 5,
+  mapCenter = DEFAULT_CENTER,
+  zoom = DEFAULT_ZOOM,
   fallbackMarker,
   onMarkerClick = () => {},
-  onError = () => {}
+  onError = () => {},
+  className = '',
+  style = {}
 }) => {
   const [selectedMarker, setSelectedMarker] = useState<LocationGroup | null>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<Error | null>(null);
-  const [loadTimeout, setLoadTimeout] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
-  const [debugInfo, setDebugInfo] = useState<Record<string, unknown>>({});
-  const mapRef = useRef<HTMLDivElement>(null);
 
-  // Map container style
   const containerStyle = {
     width: '100%',
     height: '100%',
     minHeight: '400px',
-    borderRadius: '8px'
+    borderRadius: '8px',
+    ...style
   };
 
-  // Handle map load
-  const onLoad = useCallback((map: google.maps.Map) => {
-    console.log('Google Map instance loaded successfully');
-    setMap(map);
-    setIsLoaded(true);
-  }, []);
-
-  // Handle map load error
   const handleLoadError = useCallback((error: Error) => {
-    console.error('Error loading Google Maps:', error);
+    console.error('Google Maps API error:', error);
     setLoadError(error);
     onError(error);
   }, [onError]);
-
-  // Update map bounds when location groups change
-  useEffect(() => {
-    if (!map || !isLoaded || locationGroups.length === 0) return;
-
-    try {
-      const bounds = new window.google.maps.LatLngBounds();
-      
-      locationGroups.forEach(group => {
-        bounds.extend(new window.google.maps.LatLng(group.lat, group.lng));
-      });
-      
-      if (fallbackMarker && locationGroups.length === 0) {
-        bounds.extend(new window.google.maps.LatLng(
-          fallbackMarker.position[0],
-          fallbackMarker.position[1]
-        ));
-      }
-
-      if (!bounds.isEmpty()) {
-        map.fitBounds(bounds, {
-          top: 50,
-          right: 50,
-          bottom: 50,
-          left: 50
-        });
-      }
-    } catch (error) {
-      console.error('Error updating map bounds:', error);
-    }
-  }, [map, isLoaded, locationGroups, fallbackMarker]);
 
   // Handle marker click
   const handleMarkerClick = useCallback((marker: LocationGroup) => {
@@ -115,122 +89,24 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
     onMarkerClick(marker);
   }, [onMarkerClick]);
 
-  // Add debug logging
-  useEffect(() => {
-    console.log('GoogleMapComponent state:', {
-      isLoaded,
-      loadError,
-      locationGroups: locationGroups?.length,
-      mapCenter,
-      zoom
-    });
-  }, [isLoaded, loadError, locationGroups, mapCenter, zoom]);
-
-  // Check API key and set up loading timeout
-  useEffect(() => {
-    if (!GOOGLE_MAPS_API_KEY) {
-      const error = 'Google Maps API key is missing. Please check your configuration.';
-      console.error(error);
-      setApiError(error);
-      return;
-    }
-
-    const debugInfo = {
-      hasWindow: typeof window !== 'undefined',
-      hasGoogle: typeof window !== 'undefined' && !!window.google,
-      hasGoogleMaps: typeof window !== 'undefined' && !!(window.google?.maps),
-      apiKeyFirstChars: GOOGLE_MAPS_API_KEY.substring(0, 6) + '...',
-      currentUrl: typeof window !== 'undefined' ? window.location.href : '',
-      timestamp: new Date().toISOString()
-    };
-    
-    console.log('Google Maps Debug Info:', debugInfo);
-    setDebugInfo(debugInfo);
-
-    const timer = setTimeout(() => {
-      if (!isLoaded) {
-        console.warn('Map loading is taking too long. Showing fallback UI.');
-        console.warn('Debug Info:', debugInfo);
-        setLoadTimeout(true);
-        
-        if (!window.google) {
-          setApiError('Google Maps API script failed to load. This could be due to:');
-        } else if (!window.google.maps) {
-          setApiError('Google Maps API is loaded but maps module is not available.');
-        } else {
-          setApiError('Map failed to initialize. Please check your API key and network connection.');
-        }
-      }
-    }, 3000);
-    
-    return () => clearTimeout(timer);
-  }, [isLoaded]);
-
-  // Loading state
-  if (!isLoaded || loadTimeout) {
+  // Handle missing API key
+  if (!GOOGLE_MAPS_API_KEY) {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50 p-6 text-center">
-        <div className="max-w-2xl w-full bg-white p-6 rounded-lg shadow-md">
-          {loadTimeout ? (
-            <div className="text-center">
-              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-yellow-100 mb-4">
-                <svg className="h-8 w-8 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-              </div>
-              <h2 className="text-xl font-bold text-gray-900 mb-2">Map Loading is Taking Too Long</h2>
-              <p className="text-gray-600">Please check your internet connection and try again.</p>
-              
-              {apiError && (
-                <div className="max-w-md mx-auto mt-6 text-left">
-                  <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
-                    <div className="flex">
-                      <div className="flex-shrink-0">
-                        <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <div className="ml-3">
-                        <h3 className="text-sm font-medium text-red-800">Error Details</h3>
-                        <div className="mt-2 text-sm text-red-700">
-                          <p>{apiError}</p>
-                          <p className="mt-2">
-                            API Key: {debugInfo.apiKeyFirstChars || 'Not found'}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
-                    <h3 className="text-sm font-medium text-blue-800">Troubleshooting Steps:</h3>
-                    <ol className="mt-2 text-sm text-blue-700 list-decimal pl-5 space-y-1">
-                      <li>Verify API key is enabled for <strong>Maps JavaScript API</strong></li>
-                      <li>Check that billing is enabled for your project</li>
-                      <li>Ensure your domain is in the API key's allowed referrers</li>
-                      <li>Try in an incognito window to rule out extensions</li>
-                    </ol>
-                  </div>
-                </div>
-              )}
-              
-              <button 
-                onClick={() => window.location.reload()} 
-                className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center mx-auto"
-              >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                </svg>
-                Try Again
-              </button>
-            </div>
-          ) : (
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-              <h2 className="text-xl font-bold text-gray-900 mt-4">Loading Map...</h2>
-              <p className="text-gray-600">This may take a moment</p>
-            </div>
-          )}
+      <div className="w-full h-full flex items-center justify-center bg-yellow-50 border border-yellow-200 rounded-md p-6">
+        <div className="text-center max-w-md">
+          <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 mb-4">
+            <svg className="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-medium text-yellow-800">Google Maps API Key Missing</h3>
+          <div className="mt-2 text-sm text-yellow-700">
+            <p>Please set the following environment variable in your <code className="bg-yellow-100 px-1 rounded">.env.local</code> file:</p>
+            <pre className="mt-2 p-2 bg-gray-800 text-gray-100 rounded text-left text-xs overflow-x-auto">
+              VITE_GOOGLE_MAPS_API_KEY=your_api_key_here
+            </pre>
+            <p className="mt-2">Make sure to restart your development server after adding the API key.</p>
+          </div>
         </div>
       </div>
     );
@@ -272,27 +148,19 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
 
   // Main map render
   return (
-    <div className="w-full h-full relative" ref={mapRef}>
+    <div className={`w-full h-full relative ${className}`} style={style}>
       <LoadScript
         googleMapsApiKey={GOOGLE_MAPS_API_KEY}
         onLoad={() => {
           console.log('Google Maps API script loaded successfully');
-          if (window.google?.maps) {
-            console.log('google.maps API is available');
-            setIsLoaded(true);
-          } else {
-            const error = new Error('Google Maps API is not available after load');
-            console.error(error);
-            handleLoadError(error);
-          }
         }}
         onError={handleLoadError}
         loadingElement={
           <div className="w-full h-full flex items-center justify-center bg-gray-50">
-            <div className="text-center">
+            <div className="text-center p-4">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-              <p className="mt-2 text-gray-600">Loading Google Maps...</p>
-              <p className="text-xs text-gray-500 mt-1">Please wait while we load the map</p>
+              <p className="mt-3 text-gray-600 font-medium">Loading Map</p>
+              <p className="text-sm text-gray-500 mt-1">Please wait while we load the map</p>
             </div>
           </div>
         }
@@ -300,9 +168,8 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
       >
         <GoogleMap
           mapContainerStyle={containerStyle}
-          center={{ lat: mapCenter[0], lng: mapCenter[1] }}
+          center={mapCenter ? { lat: mapCenter[0], lng: mapCenter[1] } : { lat: DEFAULT_CENTER[0], lng: DEFAULT_CENTER[1] }}
           zoom={zoom}
-          onLoad={onLoad}
           options={{
             streetViewControl: false,
             mapTypeControl: false,
@@ -312,6 +179,11 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
             styles: [
               {
                 featureType: 'poi',
+                elementType: 'labels',
+                stylers: [{ visibility: 'off' }],
+              },
+              {
+                featureType: 'transit',
                 elementType: 'labels',
                 stylers: [{ visibility: 'off' }],
               },

@@ -21,5 +21,8 @@ export default defineConfig({
       '@radix-ui/react-label',
       // Add other Radix UI components you're using
     ]
-  }
+  },
+  // Environment variables are automatically loaded from .env files
+  // and exposed under import.meta.env in your application
+  // No need to manually define process.env
 });

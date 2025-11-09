@@ -27,12 +27,14 @@ interface LocationMapSectionProps {
 }
 
 export const LocationMapSection = ({ searchQuery, city: propCity }: LocationMapSectionProps): JSX.Element => {
+  // State definitions
   const [locationGroups, setLocationGroups] = useState<LocationGroup[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isClient, setIsClient] = useState(false);
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   const [zoom, setZoom] = useState<number>(5); // Default zoom level
-
+  const [searchedLocation, setSearchedLocation] = useState<[number, number] | null>(null);
+console.log(searchedLocation,searchQuery, "  searchedLocation");
   // Initialize client-side state
   useEffect(() => {
     setIsClient(true);
@@ -52,71 +54,38 @@ export const LocationMapSection = ({ searchQuery, city: propCity }: LocationMapS
         const groups: Record<string, LocationGroup> = {};
         const locationMap = new Map<string, string>(); // To track exact coordinates for each location
         
-        // First pass: group by exact coordinates
-        accommodations.forEach((accommodation) => {
-          const lat = accommodation.location?.coordinates?.lat;
-          const lng = accommodation.location?.coordinates?.lng;
+        // Create a unique group for each property with a small offset for properties at the same location
+        accommodations.forEach((accommodation, index) => {
+          const baseLat = accommodation.location?.coordinates?.lat;
+          const baseLng = accommodation.location?.coordinates?.lng;
           
-          if (lat !== undefined && lng !== undefined) {
-            // Use exact coordinates for the initial grouping
-            const exactKey = `${lat},${lng}`;
+          if (baseLat !== undefined && baseLng !== undefined) {
+            // Add a tiny offset to each property to prevent exact overlap
+            // This ensures each property gets its own marker
+            const lat = baseLat + (Math.random() * 0.0001 - 0.00005); // ±0.00005 degrees (~5m)
+            const lng = baseLng + (Math.random() * 0.0001 - 0.00005); // ±0.00005 degrees (~5m)
             
-            if (!groups[exactKey]) {
-              groups[exactKey] = {
-                lat,
-                lng,
-                count: 0,
-                number: 0, // Will be updated later with sequential numbers
-                properties: []
-              };
-            }
+            const exactKey = `${accommodation.id}`; // Use a unique key for each property
             
-            groups[exactKey].count += 1;
-            groups[exactKey].properties.push(accommodation);
+            groups[exactKey] = {
+              lat,
+              lng,
+              count: 1, // Each group has exactly one property
+              number: index + 1, // Sequential number for each property
+              properties: [accommodation] // Single property per group
+            };
+            
             locationMap.set(accommodation.id, exactKey);
           } else {
             console.warn('Accommodation missing coordinates:', accommodation.id, accommodation.title);
           }
         });
         
-        // Second pass: merge nearby locations
-        const finalGroups: Record<string, LocationGroup> = {};
-        const processed = new Set<string>();
+        // Convert groups object to array
+        const finalGroups = Object.values(groups);
         
-        Object.entries(groups).forEach(([key, group]) => {
-          if (processed.has(key)) return;
-          
-          // Create a new group for this location
-          const newGroup = { ...group, properties: [...group.properties] };
-          finalGroups[key] = newGroup;
-          processed.add(key);
-          
-          // Find and merge nearby locations
-          Object.entries(groups).forEach(([otherKey, otherGroup]) => {
-            if (processed.has(otherKey) || key === otherKey) return;
-            
-            // Calculate distance between points (simple Euclidean distance for small areas)
-            const dx = group.lat - otherGroup.lat;
-            const dy = group.lng - otherGroup.lng;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            // If locations are very close, merge them
-            if (distance < 0.002) { // ~200m at the equator
-              newGroup.count += otherGroup.count;
-              newGroup.properties.push(...otherGroup.properties);
-              processed.add(otherKey);
-              
-              // Update the center point based on weighted average
-              const total = newGroup.count + otherGroup.count;
-              newGroup.lat = (newGroup.lat * newGroup.count + otherGroup.lat * otherGroup.count) / total;
-              newGroup.lng = (newGroup.lng * newGroup.count + otherGroup.lng * otherGroup.count) / total;
-            }
-          });
-        });
-        
-        const newLocationGroups = Object.values(finalGroups);
-        console.log('Processed location groups:', newLocationGroups);
-        setLocationGroups(newLocationGroups);
+        console.log('Processed location groups:', finalGroups);
+        setLocationGroups(finalGroups);
       } catch (error) {
         console.error('Error fetching accommodations:', error);
       } finally {
@@ -127,40 +96,42 @@ export const LocationMapSection = ({ searchQuery, city: propCity }: LocationMapS
     fetchAccommodations();
   }, [isClient]);
 
-  // Process location groups to include city in properties
+  // Process location groups to include city in properties and add visual distinction
   const processedLocationGroups = useMemo(() => {
-    return locationGroups.map(group => ({
-      ...group,
-      properties: group.properties.map(property => ({
-        ...property,
-        // Ensure we have city information for the tooltip
-        _city: typeof property.location === 'object' && property.location 
-          ? (property.location.city || property.location.address || 'Unknown Location')
-          : String(property.location || 'Unknown Location')
-      }))
-    }));
+    return locationGroups.map((group, index) => {
+      // Add a small offset to prevent perfect alignment in a grid
+      const offset = index * 0.00001; // Very small offset for visual distinction
+      
+      return {
+        ...group,
+        // Apply minimal offset to the coordinates
+        lat: group.lat + (index % 2 === 0 ? offset : -offset),
+        lng: group.lng + (index % 3 === 0 ? offset : -offset),
+        properties: group.properties.map(property => ({
+          ...property,
+          // Ensure we have city information for the tooltip
+          _city: typeof property.location === 'object' && property.location 
+            ? (property.location.city || property.location.address || 'Unknown Location')
+            : String(property.location || 'Unknown Location')
+        }))
+      };
+    });
   }, [locationGroups]);
 
   // Filter accommodations based on search query and update map center/zoom
   const filteredGroups = useMemo(() => {
     if (!searchQuery) {
-      // When no search query, show all properties with appropriate zoom
+      // When no search query, show Delhi NCR region by default
+      setMapCenter([28.6139, 77.2090]); // Central Delhi NCR (Connaught Place)
+      setZoom(10); // Zoom level to show Delhi NCR region
+      
+      // If we have location groups, return them
       if (locationGroups.length > 0) {
-        // Calculate bounds of all locations
-        const allLats = locationGroups.map(g => g.lat);
-        const allLngs = locationGroups.map(g => g.lng);
-        
-        const centerLat = (Math.min(...allLats) + Math.max(...allLats)) / 2;
-        const centerLng = (Math.min(...allLngs) + Math.max(...allLngs)) / 2;
-        
-        setMapCenter([centerLat, centerLng]);
-        setZoom(5); // Wider zoom to show all properties
-      } else {
-        // Default to India if no locations
-        setMapCenter([20.5937, 78.9629]);
-        setZoom(5);
+        return processedLocationGroups;
       }
-      return processedLocationGroups;
+      
+      // If no location groups, return an empty array (will be handled by the map component)
+      return [];
     }
     
     // When there's a search query, filter the properties
@@ -174,10 +145,9 @@ export const LocationMapSection = ({ searchQuery, city: propCity }: LocationMapS
             ? String(property.location.address || '')
             : '';
             
-        const query = searchQuery?.toLowerCase() || '';
         const locationStrLower = locationStr.toLowerCase();
         
-        return title.toLowerCase().includes(query) || locationStrLower.includes(query);
+        return title.includes(query) || locationStrLower.includes(query);
       });
     });
 
@@ -191,27 +161,127 @@ export const LocationMapSection = ({ searchQuery, city: propCity }: LocationMapS
       const centerLng = (Math.min(...lngs) + Math.max(...lngs)) / 2;
       
       setMapCenter([centerLat, centerLng]);
-      setZoom(10); // Zoom in more when showing search results
+      setZoom(12); // Zoom in more when showing search results
     } else {
       // If no matches, show default view
-      setMapCenter([20.5937, 78.9629]);
-      setZoom(5);
+      setMapCenter([28.6139, 77.2090]);
+      setZoom(10);
     }
 
     return filtered;
   }, [locationGroups, searchQuery, processedLocationGroups]);
 
-  // Geocode location name to coordinates
+  // Predefined locations with verified coordinates for Delhi NCR region
+  const predefinedLocations: { [key: string]: [number, number] } = {
+    // Noida and its sectors
+    'noida': [28.5455, 77.4010], // Noida City Center (Sector 18)
+    'ncr': [28.6139, 77.2090],     // Central Delhi NCR (Connaught Place)
+    // Sectors with relative positioning from the main Noida coordinates
+    'sector 1 noida': [28.5455, 77.4010],
+    'sector 2 noida': [28.5455, 77.3810],
+    'sector 12 noida': [28.5355, 77.4010],
+    'sector 15 noida': [28.5355, 77.3810],
+    'sector 16 noida': [28.5255, 77.3910],
+    'sector 18 noida': [28.5355, 77.3910],  // City Center Metro Station (same as main Noida)
+    'sector 62 noida': [28.5555, 77.4010],
+    'sector 128 noida': [28.5155, 77.3710],
+    'sector 137 noida': [28.5255, 77.3810],
+    'sector 150 noida': [28.5255, 77.4010],
+    'sector 168 noida': [28.5155, 77.3910],
+    
+    // Major landmarks in Noida (relative to main coordinates)
+    'noida city center': [28.5355, 77.3910],  // Same as main Noida
+    'noida sector 18 metro': [28.5355, 77.3910],  // Same as main Noida
+    'noida golf course': [28.5455, 77.3910],
+    'noida stadium': [28.5255, 77.3910],
+    'noida sector 16 metro': [28.5255, 77.3910],
+    
+    // Nearby cities
+    'delhi': [28.6139, 77.2090],  // New Delhi city center
+    'gurgaon': [28.4595, 77.0266],
+    'gurugram': [28.4595, 77.0266],
+    'greater noida': [28.4744, 77.5040],
+    'ghaziabad': [28.6692, 77.4538],
+    'faridabad': [28.4089, 77.3178],
+    'noida extension': [28.5606, 77.3824],
+    
+    // Common misspellings and alternatives
+    'noida sector 18': [28.5355, 77.3910],  // Same as main Noida
+    'noida sector 62': [28.5555, 77.4010],
+    'noida sector 137': [28.5255, 77.3810],
+    'noida sector 150': [28.5255, 77.4010],
+    'noida sector 168': [28.5155, 77.3910],
+    'noida sec 18': [28.5355, 77.3910],  // Same as main Noida
+    'noida sec 62': [28.5555, 77.4010],
+    'noida sec 16': [28.5255, 77.3910]
+  };
+
+  // Geocode any location name to coordinates using Google Maps Geocoding API
   const geocodeLocation = useCallback(async (location: string): Promise<[number, number] | null> => {
+    if (!location) return null;
+    
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`
-      );
-      const data = await response.json();
+      // Normalize the search query - lowercase and trim
+      const normalizedQuery = location.toLowerCase().trim();
+      console.log('Geocoding location:', normalizedQuery);
       
-      if (data && data.length > 0) {
-        return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+      // First check if it's a predefined location (exact match)
+      if (predefinedLocations[normalizedQuery]) {
+        console.log('Found in predefined locations (exact match):', normalizedQuery);
+        return predefinedLocations[normalizedQuery];
       }
+      
+      // Try partial match for predefined locations
+      const matchedLocation = Object.keys(predefinedLocations).find(key => 
+        normalizedQuery.includes(key) || key.includes(normalizedQuery)
+      );
+      
+      if (matchedLocation) {
+        console.log('Found in predefined locations (partial match):', matchedLocation);
+        return predefinedLocations[matchedLocation];
+      }
+
+      // Try with Google Maps Geocoding API first (more reliable)
+      if (import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
+        try {
+          const googleResponse = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`
+          );
+          const googleData = await googleResponse.json();
+          
+          if (googleData.status === 'OK' && googleData.results.length > 0) {
+            const { lat, lng } = googleData.results[0].geometry.location;
+            console.log('Geocoding result from Google Maps:', { lat, lng }, 'for location:', location);
+            return [lat, lng];
+          }
+        } catch (googleError) {
+          console.warn('Google Geocoding failed, trying fallback:', googleError);
+        }
+      }
+
+      // Fallback to OpenStreetMap's Nominatim if Google fails
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`,
+          {
+            headers: {
+              'User-Agent': 'Vizima/1.0 (your-email@example.com)' // Required by Nominatim
+            }
+          }
+        );
+        
+        const data = await response.json();
+        
+        if (data && data.length > 0) {
+          const result = data[0];
+          console.log('Geocoding result from Nominatim:', result, 'for location:', location);
+          return [parseFloat(result.lat), parseFloat(result.lon)];
+        }
+      } catch (osmError) {
+        console.warn('OpenStreetMap geocoding failed:', osmError);
+      }
+      
+      console.warn('Could not geocode location:', location);
       return null;
     } catch (error) {
       console.error('Error geocoding location:', error);
@@ -220,51 +290,94 @@ export const LocationMapSection = ({ searchQuery, city: propCity }: LocationMapS
   }, []);
 
   // Handle search query changes
-  const [searchedLocation, setSearchedLocation] = useState<[number, number] | null>(null);
-  
   useEffect(() => {
     const handleSearch = async () => {
-      const query = searchQuery || propCity || '';
-      if (!query) {
-        setSearchedLocation(null);
-        return;
-      }
-
-      // Check for predefined locations first
-      const predefinedLocations: { [key: string]: [number, number] } = {
-        'noida': [28.5355, 77.3910],
-        'delhi': [28.7041, 77.1025],
-        'gurgaon': [28.4595, 77.0266],
-        'greater noida': [28.4744, 77.5040],
-        'ghaziabad': [28.6692, 77.4538],
-        'faridabad': [28.4089, 77.3178]
-      };
-
-      const normalizedQuery = query.toLowerCase().trim();
-      let foundMatch = false;
-      
-      // First try exact match
-      if (predefinedLocations[normalizedQuery]) {
-        setSearchedLocation(predefinedLocations[normalizedQuery]);
-        foundMatch = true;
-      } 
-      // If no exact match, try partial match for Noida
-      else if (normalizedQuery.includes('noida')) {
-        setSearchedLocation([28.5355, 77.3910]);
-        foundMatch = true;
-      }
-      // Then try geocoding if no match found
-      else if (!foundMatch) {
-        const coords = await geocodeLocation(query);
-        if (coords) {
-          setSearchedLocation(coords);
+      try {
+        // Prefer searchQuery over propCity if both are present
+        const query = (searchQuery || propCity || '').trim();
+        console.log('Search query changed - searchQuery:', searchQuery, 'propCity:', propCity, 'final query:', query);
+        
+        if (!query) {
+          console.log('No search query, resetting to default view');
+          setSearchedLocation(null);
+          setMapCenter([28.6139, 77.2090]); // Reset to Delhi NCR
+          setZoom(10);
+          return;
         }
+
+        const normalizedQuery = query.toLowerCase().trim();
+        
+        // Check for common variations of Noida
+        const noidaVariations = ['noida', 'noida up', 'noida uttar pradesh', 'noida, up', 'noida, uttar pradesh'];
+        if (noidaVariations.includes(normalizedQuery)) {
+          console.log('Matched Noida variation, using predefined coordinates');
+          setSearchedLocation(predefinedLocations['noida']);
+          setMapCenter(predefinedLocations['noida']);
+          setZoom(14);
+          return;
+        }
+        
+        // Try to geocode the location (this will also check predefined locations)
+        console.log('Attempting to geocode location:', query);
+        const coords = await geocodeLocation(query);
+        
+        if (coords) {
+          console.log('Geocoding successful, setting location:', coords);
+          setSearchedLocation(coords);
+          setMapCenter(coords);
+          setZoom(14); // Zoom in on the searched location
+        } else {
+          console.warn('Could not find location, falling back to Noida:', query);
+          // Fall back to Noida if the location can't be found
+          setSearchedLocation(predefinedLocations['noida']);
+          setMapCenter(predefinedLocations['noida']);
+          setZoom(14);
+        }
+      } catch (error) {
+        console.error('Error handling search:', error);
+        // Fall back to default view on error
+        setSearchedLocation(null);
+        setMapCenter([28.6139, 77.2090]);
+        setZoom(10);
       }
     };
 
-    handleSearch();
+    // Don't debounce the initial search when coming from home page
+    if (searchQuery || propCity) {
+      handleSearch();
+    } else {
+      // Only use debounce for subsequent searches
+      const timeoutId = setTimeout(handleSearch, 500);
+      return () => clearTimeout(timeoutId);
+    }
   }, [searchQuery, propCity, geocodeLocation]);
 
+
+  // Create a combined groups array that includes both processed groups and searched location if needed
+  const combinedGroups = useMemo(() => {
+    // If we have a searched location but no matching properties, show the searched location
+    if (searchedLocation && filteredGroups.length === 0) {
+      return [{
+        lat: searchedLocation[0],
+        lng: searchedLocation[1],
+        count: 1,
+        number: 1,
+        properties: [{
+          id: 'searched-location',
+          title: 'Searched Location',
+          location: {
+            address: searchQuery || 'Your searched location',
+            coordinates: {
+              lat: searchedLocation[0],
+              lng: searchedLocation[1]
+            }
+          },
+          _city: searchQuery || 'Searched Location'
+        }]
+      }];
+    }
+    return filteredGroups;
+  }, [filteredGroups, searchedLocation, searchQuery]);
 
   // Show loading state while data is being fetched
   if (!isClient || isLoading) {
@@ -285,20 +398,24 @@ export const LocationMapSection = ({ searchQuery, city: propCity }: LocationMapS
   } : undefined;
 
   return (
-    <div className="w-full">
-      <Suspense fallback={<MapLoading />}>
-        <div className="w-full h-[500px] rounded-lg overflow-hidden">
-          <GoogleMapComponent
-            locationGroups={filteredGroups}
-            mapCenter={mapCenter || [20.5937, 78.9629]}
-            zoom={zoom}
-            fallbackMarker={fallback}
-            onMarkerClick={(marker) => {
-              console.log('Marker clicked:', marker);
-            }}
-          />
-        </div>
-      </Suspense>
+    <div className="w-full h-full min-h-[400px] lg:min-h-[500px]">
+      {isClient ? (
+        <Suspense fallback={<MapLoading />}>
+          <div className="w-full h-full">
+            <GoogleMapComponent
+              locationGroups={combinedGroups}
+              mapCenter={mapCenter || [28.6139, 77.2090]} // Default to Delhi NCR
+              zoom={zoom}
+              fallbackMarker={fallback}
+              onMarkerClick={(marker) => {
+                console.log('Marker clicked:', marker);
+              }}
+            />
+          </div>
+        </Suspense>
+      ) : (
+        <MapLoading />
+      )}
     </div>
   );
 };

@@ -25,7 +25,6 @@ const AccommodationCard = ({ apartment, onViewDetails }: AccommodationCardProps)
     onViewDetails(id);
     navigate(`/property-details/${id}`);
   };
-  console.log(apartment)
   return (
 
     <section className="py-3 sm:py-6 bg-gray-50">
@@ -212,7 +211,6 @@ const useAccommodations = (propAccommodations?: Accommodation[]) => {
         setAccommodations(data);
         setError(null);
       } catch (err) {
-        console.error('Failed to fetch accommodations:', err);
         setError('Failed to load accommodations. Please try again later.');
         setAccommodations([]);
       } finally {

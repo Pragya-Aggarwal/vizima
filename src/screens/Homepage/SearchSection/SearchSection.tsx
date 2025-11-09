@@ -28,14 +28,18 @@ export const SearchSection = ({ onSearchStart }: SearchSectionProps): JSX.Elemen
             setIsLoading(true);
             onSearchStart?.();
 
-            const searchParams: { city?: string; gender?: string } = {};
-            if (searchCity.trim()) searchParams.city = searchCity.trim();
-            if (searchGender) searchParams.gender = searchGender;
-
             // Prepare search parameters
             const queryParams = new URLSearchParams();
-            if (searchParams.city) queryParams.set('city', searchParams.city.trim().toLowerCase());
-            if (searchParams.gender) queryParams.set('gender', searchParams.gender.toLowerCase());
+            
+            // Use 'city' parameter for consistency with the rest of the application
+            if (searchCity.trim()) {
+                queryParams.set('city', searchCity.trim().toLowerCase());
+            }
+            
+            // Keep gender filter if selected
+            if (searchGender) {
+                queryParams.set('gender', searchGender.toLowerCase());
+            }
 
             // Navigate to product page with search parameters
             navigate(`/property-listing?${queryParams.toString()}`);

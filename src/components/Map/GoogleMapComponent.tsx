@@ -35,20 +35,26 @@ interface GoogleMapComponentProps {
 }
 // Google Maps API key - Load from Vite environment variables
 const getGoogleMapsApiKey = (): string => {
-  // In Vite, environment variables prefixed with VITE_ are exposed under import.meta.env
-  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-  
-  if (import.meta.env.DEV) {
+  try {
+    // In Vite, environment variables prefixed with VITE_ are exposed under import.meta.env
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+    
+    // Always log in production to help with debugging
     if (!apiKey) {
-      console.error('❌ Google Maps API Key is missing. Please set VITE_GOOGLE_MAPS_API_KEY in your .env file');
+      console.error('❌ Google Maps API Key is missing. Please set VITE_GOOGLE_MAPS_API_KEY in your environment variables');
     } else if (apiKey.startsWith('YOUR_') || apiKey.includes('example')) {
-      console.error('❌ Please replace the placeholder API key in your .env file with a valid Google Maps API key');
+      console.error('❌ Please replace the placeholder API key with a valid Google Maps API key');
+    } else if (import.meta.env.PROD) {
+      console.log('✅ Google Maps API Key loaded in production');
     } else {
       console.log('✅ Google Maps API Key loaded successfully');
     }
+    
+    return apiKey;
+  } catch (error) {
+    console.error('❌ Error loading Google Maps API Key:', error);
+    return '';
   }
-  
-  return apiKey || '';
 };
 
 const GOOGLE_MAPS_API_KEY = getGoogleMapsApiKey();
@@ -147,6 +153,39 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
   }
 
   // Main map render
+  // Enhanced error state with retry button
+  if (loadError) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center bg-red-50 p-6 rounded-md">
+        <div className="text-center">
+          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+            <svg className="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-medium text-red-800">Failed to load Google Maps</h3>
+          <p className="mt-2 text-sm text-red-700">
+            {loadError.message || 'An error occurred while loading the map.'}
+          </p>
+          <div className="mt-4">
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            >
+              Retry
+            </button>
+          </div>
+          {GOOGLE_MAPS_API_KEY && (
+            <div className="mt-4 p-3 bg-gray-100 rounded text-xs break-all">
+              <p className="font-medium">API Key (first 10 chars): {GOOGLE_MAPS_API_KEY.substring(0, 10)}...</p>
+              <p className="mt-1 text-gray-600">Ensure this key is valid and has the required APIs enabled in Google Cloud Console.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`w-full h-full relative ${className}`} style={style}>
       <LoadScript
@@ -161,6 +200,11 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
               <p className="mt-3 text-gray-600 font-medium">Loading Map</p>
               <p className="text-sm text-gray-500 mt-1">Please wait while we load the map</p>
+              {!GOOGLE_MAPS_API_KEY && (
+                <p className="mt-2 text-xs text-yellow-600">
+                  No API key detected. Please check your environment variables.
+                </p>
+              )}
             </div>
           </div>
         }

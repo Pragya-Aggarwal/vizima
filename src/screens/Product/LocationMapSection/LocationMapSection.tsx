@@ -121,9 +121,31 @@ console.log(searchedLocation,searchQuery, "  searchedLocation");
   // Filter accommodations based on search query and update map center/zoom
   const filteredGroups = useMemo(() => {
     if (!searchQuery) {
-      // When no search query, show Delhi NCR region by default
-      setMapCenter([28.6139, 77.2090]); // Central Delhi NCR (Connaught Place)
-      setZoom(10); // Zoom level to show Delhi NCR region
+      // When no search query, check if we have a city from props
+      if (propCity) {
+        // Check if we have predefined coordinates for this city
+        const cityKey = propCity.toLowerCase().trim();
+        if (predefinedLocations[cityKey]) {
+          setMapCenter(predefinedLocations[cityKey]);
+          setZoom(14); // Default zoom for city view
+        } else {
+          // If no predefined coordinates, try to geocode the city
+          geocodeLocation(propCity).then(coords => {
+            if (coords) {
+              setMapCenter(coords);
+              setZoom(14);
+            } else {
+              // Fallback to default location if geocoding fails
+              setMapCenter([28.6139, 77.2090]); // Default to Delhi NCR
+              setZoom(10);
+            }
+          });
+        }
+      } else {
+        // If no city is specified, show default region
+        setMapCenter([28.6139, 77.2090]); // Default to Delhi NCR
+        setZoom(10);
+      }
       
       // If we have location groups, return them
       if (locationGroups.length > 0) {
@@ -171,10 +193,10 @@ console.log(searchedLocation,searchQuery, "  searchedLocation");
     return filtered;
   }, [locationGroups, searchQuery, processedLocationGroups]);
 
-  // Predefined locations with verified coordinates for Delhi NCR region
+  // Predefined locations with verified coordinates for common cities
   const predefinedLocations: { [key: string]: [number, number] } = {
-    // Noida and its sectors
-    'noida': [28.5455, 77.4010], // Noida City Center (Sector 18)
+    // Major cities
+    'noida': [28.5355, 77.3910], // Noida Sector 18
     'ncr': [28.6139, 77.2090],     // Central Delhi NCR (Connaught Place)
     // Sectors with relative positioning from the main Noida coordinates
     'sector 1 noida': [28.5455, 77.4010],
@@ -302,6 +324,16 @@ console.log(searchedLocation,searchQuery, "  searchedLocation");
           setSearchedLocation(null);
           setMapCenter([28.6139, 77.2090]); // Reset to Delhi NCR
           setZoom(10);
+          return;
+        }
+        
+        // Special handling for Noida
+        if (query.toLowerCase() === 'noida') {
+          console.log('Noida detected, using predefined coordinates');
+          const noidaCoords : [number, number] = [28.5355, 77.3910]; // Noida Sector 18 coordinates
+          setSearchedLocation(noidaCoords);
+          setMapCenter(noidaCoords);
+          setZoom(14);
           return;
         }
 

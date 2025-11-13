@@ -259,12 +259,31 @@ export const ApartmentListingsSection = ({
     if (!cityParam && !genderParam) return accommodations;
 
     return accommodations.filter(accommodation => {
-      const matchesCity = !cityParam ||
-        (accommodation.city?.toLowerCase().includes(cityParam));
+      // Get location details
+      const location = accommodation.location;
+      const searchText = cityParam?.toLowerCase() || '';
+      
+      // Handle both string and object location types
+      let address = '';
+      let city = '';
+      
+      if (typeof location === 'string') {
+        address = location.toLowerCase();
+      } else if (location) {
+        address = (location.address || '').toLowerCase();
+        city = (location.city || '').toLowerCase();
+      }
+      
+      // Check if search query matches either address or city
+      const matchesLocation = !cityParam || 
+        address.includes(cityParam) || 
+        city.includes(cityParam) ||
+        (accommodation.city || '').toLowerCase().includes(cityParam);
+      
       const matchesGender = !genderParam ||
         (accommodation.gender?.toLowerCase() === genderParam);
 
-      return matchesCity && matchesGender;
+      return matchesLocation && matchesGender;
     });
   }, [accommodations, cityParam, genderParam]);
 

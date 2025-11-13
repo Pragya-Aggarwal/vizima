@@ -72,23 +72,40 @@ export const ProductPage = (): JSX.Element => {
     // Filter accommodations based on search query, city, gender, and other filters
     const filterAccommodations = useCallback((data: Accommodation[]) => {
         return data.filter(acc => {
-            const searchLower = searchQuery.toLowerCase().trim();
+            const searchLower = searchQuery?.toLowerCase().trim() || '';
             const accTitle = String(acc.title || '').toLowerCase();
-            const accLocation = String(acc.location || '').toLowerCase();
             const accCity = String(acc.city || '').toLowerCase();
             const accGender = String(acc.gender || '').toLowerCase();
             const accType = String(acc.type || '').toLowerCase();
+            
+            // Handle location which could be string or object
+            let locationStr = '';
+            let address = '';
+            let state = '';
+            
+            if (typeof acc.location === 'string') {
+                locationStr = acc.location.toLowerCase();
+            } else if (acc.location) {
+                const loc = acc.location as any; // Temporary type assertion
+                locationStr = String(loc.city || loc.address || '').toLowerCase();
+                address = String(loc.address || '').toLowerCase();
+                state = String(loc.state || '').toLowerCase();
+            }
 
-            // Check if the search query matches title, location, or city (case-insensitive partial match)
-            const matchesSearch = !searchLower ||
-                accTitle.includes(searchLower) ||
-                accLocation.includes(searchLower) ||
-                accCity.includes(searchLower);
+            // Check if the search query matches any relevant field
+            const matchesSearch = !searchLower || [
+                accTitle,
+                accCity,
+                locationStr,
+                address,
+                state
+            ].some(field => field.includes(searchLower));
 
-            // Check if the city filter matches (case-insensitive partial match)
+            // Check if the city filter matches
             const matchesCity = !city || 
                 accCity.includes(city.toLowerCase()) || 
-                accLocation.includes(city.toLowerCase());
+                locationStr.includes(city.toLowerCase()) ||
+                address.includes(city.toLowerCase());
 
             // Check if the gender filter matches
             const matchesGender = !gender || accGender === gender.toLowerCase();
@@ -99,7 +116,10 @@ export const ProductPage = (): JSX.Element => {
             const activeSharingType = String(activeFilters.sharingType || '').toLowerCase();
             const activeGenderFilter = String(activeFilters.gender || '').toLowerCase();
 
-            const matchesLocation = !activeLocation || accLocation.includes(activeLocation);
+            const matchesLocation = !activeLocation || 
+                locationStr.includes(activeLocation) ||
+                address.includes(activeLocation);
+                
             const matchesPropertyType = !activePropertyType || accType === activePropertyType;
             const matchesSharingType = !activeSharingType ||
                 (Array.isArray(acc.sharingType) &&
@@ -179,12 +199,38 @@ export const ProductPage = (): JSX.Element => {
 
         // Apply search query filter
         if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            result = result.filter(acc =>
-                String(acc.title || '').toLowerCase().includes(query) ||
-                String(acc.location || '').toLowerCase().includes(query) ||
-                String(acc.city || '').toLowerCase().includes(query)
-            );
+            const query = searchQuery.toLowerCase().trim();
+            const queryWords = query.split(/\s+/).filter(Boolean);
+            
+            result = result.filter(acc => {
+                // Get all searchable text fields
+                const title = String(acc.title || '').toLowerCase();
+                const city = String(acc.city || '').toLowerCase();
+                const location = acc.location;
+                
+                // Handle location object or string
+                let address = '';
+                if (typeof location === 'string') {
+                    address = location.toLowerCase();
+                } else if (location) {
+                    address = String(location.address || '').toLowerCase();
+                    const locationCity = String(location.city || '').toLowerCase();
+                    // Check if any query word matches any field
+                    return queryWords.every(word => 
+                        title.includes(word) || 
+                        address.includes(word) || 
+                        city.includes(word) ||
+                        locationCity.includes(word)
+                    );
+                }
+                
+                // Fallback to simple matching if location is not an object
+                return queryWords.every(word => 
+                    title.includes(word) || 
+                    address.includes(word) || 
+                    city.includes(word)
+                );
+            });
         }
 
         // Apply active filters

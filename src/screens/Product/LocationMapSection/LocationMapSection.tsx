@@ -131,6 +131,7 @@ export const LocationMapSection = ({ searchQuery, city: propCity }: LocationMapS
     const handleSearch = async () => {
       const query = (searchQuery || propCity || '').trim();
       if (!query) {
+        // Reset to show all locations
         setSearchedLocation(null);
         setMapCenter([20.5937, 78.9629]); // Center of India
         setZoom(5);
@@ -143,13 +144,23 @@ export const LocationMapSection = ({ searchQuery, city: propCity }: LocationMapS
         setMapCenter(coords);
         setZoom(14);
       } else {
+        // If geocoding fails but we have a search query, still show the searched location
+        // even if we can't find coordinates, but keep the default view
         setSearchedLocation(null);
         setMapCenter([20.5937, 78.9629]);
         setZoom(5);
       }
     };
 
-    if (searchQuery || propCity) handleSearch();
+    // Handle both cases: when there's a search query and when it's cleared
+    if (searchQuery || propCity) {
+      handleSearch();
+    } else {
+      // Reset to show all locations when search is cleared
+      setSearchedLocation(null);
+      setMapCenter([20.5937, 78.9629]);
+      setZoom(5);
+    }
   }, [searchQuery, propCity, geocodeLocation]);
 
   const filteredGroups = useMemo(() => {
@@ -171,28 +182,31 @@ export const LocationMapSection = ({ searchQuery, city: propCity }: LocationMapS
   }, [searchQuery, processedLocationGroups]);
 
   const combinedGroups = useMemo(() => {
-    if (searchedLocation && filteredGroups.length === 0) {
-      return [
-        {
-          lat: searchedLocation[0],
-          lng: searchedLocation[1],
-          count: 1,
-          number: 1,
-          properties: [
-            {
-              id: 'searched-location',
-              title: 'Searched Location',
-              location: {
-                address: searchQuery || 'Your searched location',
-                coordinates: { lat: searchedLocation[0], lng: searchedLocation[1] },
-              },
-              _city: searchQuery || 'Searched Location',
+    const groups = [...filteredGroups];
+    
+    if (searchedLocation) {
+      // Add searched location as a special marker
+      groups.unshift({
+        lat: searchedLocation[0],
+        lng: searchedLocation[1],
+        count: 1,
+        number: 0, // Special number to identify searched location
+        properties: [
+          {
+            id: 'searched-location',
+            title: 'Searched Location',
+            location: {
+              address: searchQuery || 'Your searched location',
+              coordinates: { lat: searchedLocation[0], lng: searchedLocation[1] },
             },
-          ],
-        },
-      ];
+            _city: searchQuery || 'Searched Location',
+            isSearchedLocation: true, // Add a flag to identify this as the searched location
+          },
+        ],
+      });
     }
-    return filteredGroups;
+    
+    return groups;
   }, [filteredGroups, searchedLocation, searchQuery]);
 
   if (!isClient || isLoading) {
